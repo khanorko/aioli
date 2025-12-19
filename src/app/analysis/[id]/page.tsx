@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { prisma } from "@/lib/prisma";
+import { getAnalysis } from "@/lib/db";
 import { AnalysisResults, AnalysisSuggestions } from "@/types/analysis";
 import { ScoreGauge } from "@/components/ScoreGauge";
 import { AnalysisCard } from "@/components/AnalysisCard";
@@ -16,9 +16,7 @@ interface PageProps {
 export default async function AnalysisPage({ params }: PageProps) {
   const { id } = await params;
 
-  const analysis = await prisma.analysis.findUnique({
-    where: { id },
-  });
+  const analysis = await getAnalysis(id);
 
   if (!analysis) {
     notFound();

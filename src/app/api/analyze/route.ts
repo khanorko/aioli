@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { createAnalysis, updateAnalysis, initDb } from "@/lib/db";
 import { scrapePage } from "@/lib/scraper";
 import { analyzeSeo, calculateOverallSeoScore } from "@/lib/analyzers/seo";
 import {
@@ -9,12 +9,15 @@ import {
 import { generateSuggestions } from "@/lib/analyzers/suggestions";
 import { AnalysisResults } from "@/types/analysis";
 
+// Ensure database is initialized
+let dbInitialized = false;
+
 export async function POST(request: Request) {
+  // Parse request body
   let requestBody;
   try {
     requestBody = await request.json();
-  } catch (parseError) {
-    console.error("JSON parse error:", parseError);
+  } catch {
     return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
   }
 
@@ -25,15 +28,16 @@ export async function POST(request: Request) {
   }
 
   try {
-    // Create initial analysis record
-    const analysis = await prisma.analysis.create({
-      data: {
-        url,
-        status: "processing",
-      },
-    });
+    // Initialize database on first request
+    if (!dbInitialized) {
+      await initDb();
+      dbInitialized = true;
+    }
 
-    // Run analysis in background (for now, synchronously)
+    // Create initial analysis record
+    const analysis = await createAnalysis(url);
+
+    // Run analysis
     try {
       // Scrape the page
       const page = await scrapePage(url);
@@ -60,15 +64,12 @@ export async function POST(request: Request) {
       const suggestions = await generateSuggestions(results);
 
       // Update analysis with results
-      await prisma.analysis.update({
-        where: { id: analysis.id },
-        data: {
-          seoScore,
-          llmScore,
-          results: JSON.stringify(results),
-          suggestions: JSON.stringify({ suggestions, generatedAt: new Date().toISOString() }),
-          status: "completed",
-        },
+      await updateAnalysis(analysis.id, {
+        seoScore,
+        llmScore,
+        results: JSON.stringify(results),
+        suggestions: JSON.stringify({ suggestions, generatedAt: new Date().toISOString() }),
+        status: "completed",
       });
 
       return NextResponse.json({
@@ -80,14 +81,11 @@ export async function POST(request: Request) {
     } catch (analysisError) {
       console.error("Analysis error:", analysisError);
 
-      await prisma.analysis.update({
-        where: { id: analysis.id },
-        data: {
-          status: "failed",
-          results: JSON.stringify({
-            error: analysisError instanceof Error ? analysisError.message : "Unknown error",
-          }),
-        },
+      await updateAnalysis(analysis.id, {
+        status: "failed",
+        results: JSON.stringify({
+          error: analysisError instanceof Error ? analysisError.message : "Unknown error",
+        }),
       });
 
       return NextResponse.json(
@@ -96,7 +94,7 @@ export async function POST(request: Request) {
       );
     }
   } catch (error) {
-    console.error("Database/Request error:", error);
+    console.error("Database error:", error);
     const errorMessage = error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json(
       { error: "Database error", details: errorMessage },

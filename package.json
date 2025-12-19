@@ -4,17 +4,15 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && next build",
-    "postinstall": "prisma generate",
+    "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "db:init": "npx tsx scripts/init-db.ts"
   },
   "dependencies": {
     "@fluentui/react-components": "^9.72.9",
     "@fluentui/react-icons": "^2.0.316",
     "@libsql/client": "^0.15.15",
-    "@prisma/adapter-libsql": "^7.2.0",
-    "@prisma/client": "^6.19.1",
     "bcryptjs": "^3.0.3",
     "cheerio": "^1.1.0",
     "groq-sdk": "^0.37.0",
@@ -32,8 +30,8 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.1.0",
-    "prisma": "^6.19.1",
     "tailwindcss": "^4",
+    "tsx": "^4",
     "typescript": "^5"
   }
 }
