@@ -10,13 +10,21 @@ import { generateSuggestions } from "@/lib/analyzers/suggestions";
 import { AnalysisResults } from "@/types/analysis";
 
 export async function POST(request: Request) {
+  let requestBody;
   try {
-    const { url } = await request.json();
+    requestBody = await request.json();
+  } catch (parseError) {
+    console.error("JSON parse error:", parseError);
+    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+  }
 
-    if (!url) {
-      return NextResponse.json({ error: "URL is required" }, { status: 400 });
-    }
+  const { url } = requestBody;
 
+  if (!url) {
+    return NextResponse.json({ error: "URL is required" }, { status: 400 });
+  }
+
+  try {
     // Create initial analysis record
     const analysis = await prisma.analysis.create({
       data: {
@@ -88,10 +96,11 @@ export async function POST(request: Request) {
       );
     }
   } catch (error) {
-    console.error("Request error:", error);
+    console.error("Database/Request error:", error);
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json(
-      { error: "Invalid request" },
-      { status: 400 }
+      { error: "Database error", details: errorMessage },
+      { status: 500 }
     );
   }
 }
