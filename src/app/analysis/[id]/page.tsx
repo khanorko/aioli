@@ -7,6 +7,7 @@ import { SeoChecklist } from "@/components/SeoChecklist";
 import { LlmReadinessScore } from "@/components/LlmReadinessScore";
 import { SuggestionList } from "@/components/SuggestionList";
 import Link from "next/link";
+import Image from "next/image";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -25,11 +26,22 @@ export default async function AnalysisPage({ params }: PageProps) {
 
   if (analysis.status === "processing") {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen circuit-bg flex items-center justify-center" style={{ background: "var(--coral-pink)" }}>
         <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <h1 className="text-xl font-semibold text-gray-900">Analyserar...</h1>
-          <p className="text-gray-600 mt-2">Detta kan ta några sekunder</p>
+          <Image
+            src="/logo.png"
+            alt="AIoli"
+            width={120}
+            height={120}
+            className="mx-auto mb-6 retro-pulse"
+          />
+          <h1 className="retro-title text-2xl mb-2">Analyserar...</h1>
+          <p style={{ color: "var(--teal-dark)" }}>Vänta medan vi granskar din sajt</p>
+          <div className="flex justify-center gap-2 mt-4">
+            <span className="sparkle sparkle-small" style={{ animationDelay: "0s" }}></span>
+            <span className="sparkle sparkle-small" style={{ animationDelay: "0.2s" }}></span>
+            <span className="sparkle sparkle-small" style={{ animationDelay: "0.4s" }}></span>
+          </div>
         </div>
       </div>
     );
@@ -37,18 +49,15 @@ export default async function AnalysisPage({ params }: PageProps) {
 
   if (analysis.status === "failed") {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center max-w-md">
-          <div className="text-red-500 text-6xl mb-4">!</div>
-          <h1 className="text-xl font-semibold text-gray-900">Analysen misslyckades</h1>
-          <p className="text-gray-600 mt-2">
-            Vi kunde inte analysera denna URL. Kontrollera att adressen är korrekt och försök igen.
+      <div className="min-h-screen circuit-bg flex items-center justify-center" style={{ background: "var(--coral-pink)" }}>
+        <div className="text-center max-w-md retro-card p-8">
+          <div className="text-6xl mb-4">😵</div>
+          <h1 className="retro-title text-2xl mb-2">Hoppsan!</h1>
+          <p style={{ color: "var(--teal-dark)" }} className="mb-4">
+            Vi kunde inte analysera den här sajten. Kontrollera adressen och försök igen.
           </p>
-          <Link
-            href="/"
-            className="inline-block mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-          >
-            Försök igen
+          <Link href="/" className="retro-button px-6 py-3 rounded-lg inline-block">
+            ← Testa igen
           </Link>
         </div>
       </div>
@@ -58,37 +67,71 @@ export default async function AnalysisPage({ params }: PageProps) {
   const results: AnalysisResults = JSON.parse(analysis.results || "{}");
   const suggestionsData: AnalysisSuggestions = JSON.parse(analysis.suggestions || '{"suggestions":[]}');
 
+  const getScoreEmoji = (score: number) => {
+    if (score >= 80) return "🚀";
+    if (score >= 60) return "👍";
+    if (score >= 40) return "🤔";
+    return "😬";
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen circuit-bg" style={{ background: "var(--coral-pink)" }}>
+      {/* Header */}
+      <div className="border-b-4" style={{ borderColor: "var(--teal-dark)", background: "var(--turquoise)" }}>
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <Link href="/" className="flex items-center gap-3 retro-link">
+              <Image src="/logo.png" alt="AIoli" width={50} height={50} />
+              <span className="font-bold text-lg">← Ny analys</span>
+            </Link>
+            <div className="flex items-center gap-2">
+              <span className="sparkle sparkle-small"></span>
+              <span className="text-sm font-bold" style={{ color: "var(--teal-dark)" }}>
+                SEO & AI-SEARCHABLE
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <Link href="/" className="text-blue-600 hover:underline mb-4 inline-block">
-            &larr; Ny analys
-          </Link>
-          <h1 className="text-3xl font-bold text-gray-900">Analysresultat</h1>
-          <p className="text-gray-600 mt-1 break-all">{analysis.url}</p>
-          <p className="text-sm text-gray-500 mt-1">
+        {/* Page Title */}
+        <div className="mb-8 text-center">
+          <h1 className="retro-title text-3xl md:text-4xl mb-2">Analysresultat</h1>
+          <p className="font-mono text-sm break-all px-4 py-2 rounded-lg inline-block"
+             style={{ background: "var(--cream)", color: "var(--teal-dark)", border: "2px solid var(--teal-dark)" }}>
+            {analysis.url}
+          </p>
+          <p className="text-sm mt-2" style={{ color: "var(--teal-medium)" }}>
             Analyserad: {new Date(analysis.createdAt).toLocaleString("sv-SE")}
           </p>
         </div>
 
         {/* Score Overview */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <div className="retro-card p-6">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-lg font-semibold text-gray-900">SEO-poäng</h2>
-                <p className="text-sm text-gray-500">Traditionell sökmotoroptimering</p>
+                <h2 className="text-xl font-bold" style={{ color: "var(--teal-dark)" }}>
+                  {getScoreEmoji(analysis.seoScore || 0)} Klassisk SEO
+                </h2>
+                <p className="text-sm" style={{ color: "var(--teal-medium)" }}>
+                  Så ser Google på din sajt
+                </p>
               </div>
               <ScoreGauge score={analysis.seoScore || 0} label="" />
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <div className="retro-card p-6">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-lg font-semibold text-gray-900">LLM-readiness</h2>
-                <p className="text-sm text-gray-500">Synlighet för AI-assistenter</p>
+                <h2 className="text-xl font-bold" style={{ color: "var(--teal-dark)" }}>
+                  {getScoreEmoji(analysis.llmScore || 0)} AI-synlighet
+                </h2>
+                <p className="text-sm" style={{ color: "var(--teal-medium)" }}>
+                  Så ser ChatGPT & Claude på din sajt
+                </p>
               </div>
               <ScoreGauge score={analysis.llmScore || 0} label="" />
             </div>
@@ -99,13 +142,8 @@ export default async function AnalysisPage({ params }: PageProps) {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           {/* SEO Details */}
           <AnalysisCard
-            title="SEO-analys"
-            description="Tekniska och innehållsmässiga SEO-faktorer"
-            icon={
-              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-            }
+            title="🔍 SEO-detaljer"
+            description="Vad sökmotorer tittar på"
           >
             <div className="space-y-4">
               <SeoChecklist
@@ -170,13 +208,8 @@ export default async function AnalysisPage({ params }: PageProps) {
 
           {/* LLM Readiness Details */}
           <AnalysisCard
-            title="LLM-readiness"
-            description="Hur väl förberedd för AI-assistenter"
-            icon={
-              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-              </svg>
-            }
+            title="🤖 AI-synlighet"
+            description="Så uppfattar AI:n din sajt"
           >
             {results.llmReadiness && <LlmReadinessScore result={results.llmReadiness} />}
           </AnalysisCard>
@@ -185,18 +218,44 @@ export default async function AnalysisPage({ params }: PageProps) {
         {/* Suggestions */}
         {suggestionsData.suggestions.length > 0 && (
           <AnalysisCard
-            title="Förbättringsförslag"
-            description="Prioriterade åtgärder för bättre synlighet"
-            icon={
-              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
-            }
+            title="💡 Förbättringsförslag"
+            description="Så kan du bli ännu bättre"
           >
             <SuggestionList suggestions={suggestionsData.suggestions} />
           </AnalysisCard>
         )}
+
+        {/* CTA Section */}
+        <div className="mt-12 text-center">
+          <div className="retro-card p-8 inline-block">
+            <h2 className="text-2xl font-bold mb-2" style={{ color: "var(--teal-dark)" }}>
+              Vill du analysera en annan sajt?
+            </h2>
+            <p className="mb-4" style={{ color: "var(--teal-medium)" }}>
+              AIoli är redo för nästa utmaning!
+            </p>
+            <Link href="/" className="retro-button px-8 py-3 rounded-lg inline-block text-lg">
+              Kör ny analys →
+            </Link>
+          </div>
+        </div>
       </div>
+
+      {/* Footer */}
+      <footer className="retro-footer py-6 mt-12">
+        <div className="container mx-auto px-4 text-center">
+          <div className="flex items-center justify-center gap-2 mb-2">
+            <Image src="/logo.png" alt="AIoli" width={30} height={30} />
+            <span className="font-bold">AIoli</span>
+          </div>
+          <p className="text-sm opacity-80">SEO & AI-SEARCHABLE analys</p>
+          <div className="flex justify-center gap-2 mt-3">
+            <span className="sparkle sparkle-small"></span>
+            <span className="sparkle sparkle-small" style={{ background: "var(--turquoise)" }}></span>
+            <span className="sparkle sparkle-small"></span>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

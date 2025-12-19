@@ -4,11 +4,20 @@
   /* Aioli Retro-Tech Color Palette */
   --coral-pink: #F4A5A5;
   --coral-light: #FFE5E5;
+  --coral-dark: #E08080;
   --turquoise: #4ECDC4;
   --turquoise-light: #7EDDD6;
+  --turquoise-dark: #3BA99E;
   --teal-dark: #1A535C;
   --teal-medium: #2B6E79;
   --cream: #FFF8F0;
+  --cream-dark: #F5E6D3;
+
+  /* Score colors */
+  --score-great: #22C55E;
+  --score-good: #EAB308;
+  --score-okay: #F97316;
+  --score-poor: #EF4444;
 
   --background: var(--coral-pink);
   --foreground: var(--teal-dark);
@@ -24,7 +33,12 @@
 body {
   background: var(--coral-pink);
   color: var(--teal-dark);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}
+
+/* Circuit pattern background */
+.circuit-bg {
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0v10M30 50v10M0 30h10M50 30h10M30 20a10 10 0 0 1 10 10M30 40a10 10 0 0 0 10-10' stroke='%231A535C' stroke-width='1' fill='none' opacity='0.07'/%3E%3Ccircle cx='30' cy='30' r='3' fill='%231A535C' opacity='0.1'/%3E%3C/svg%3E");
 }
 
 /* Retro 3D Button Style */
@@ -78,6 +92,153 @@ body {
 .retro-title {
   color: var(--teal-dark);
   text-shadow: 3px 3px 0 var(--turquoise);
-  font-weight: 900;
+  font-family: var(--font-display), sans-serif;
+  font-weight: 700;
   letter-spacing: -0.02em;
+}
+
+/* Retro Analysis Card */
+.retro-analysis-card {
+  background: var(--cream);
+  border: 3px solid var(--teal-dark);
+  box-shadow: 6px 6px 0 var(--teal-dark);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.retro-analysis-card-header {
+  background: var(--turquoise);
+  border-bottom: 3px solid var(--teal-dark);
+  padding: 1rem 1.5rem;
+}
+
+/* Retro Score Badge */
+.retro-badge {
+  background: var(--turquoise);
+  border: 2px solid var(--teal-dark);
+  box-shadow: 2px 2px 0 var(--teal-dark);
+  border-radius: 6px;
+  font-weight: bold;
+  padding: 0.25rem 0.75rem;
+}
+
+.retro-badge-great {
+  background: var(--score-great);
+  color: white;
+}
+
+.retro-badge-good {
+  background: var(--score-good);
+  color: var(--teal-dark);
+}
+
+.retro-badge-okay {
+  background: var(--score-okay);
+  color: white;
+}
+
+.retro-badge-poor {
+  background: var(--score-poor);
+  color: white;
+}
+
+/* Retro Progress Bar */
+.retro-progress {
+  background: var(--cream-dark);
+  border: 2px solid var(--teal-dark);
+  border-radius: 4px;
+  height: 12px;
+  overflow: hidden;
+}
+
+.retro-progress-fill {
+  height: 100%;
+  transition: width 0.5s ease-out;
+}
+
+/* Retro Checklist */
+.retro-checklist-item {
+  background: var(--cream);
+  border: 2px solid var(--teal-dark);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.retro-checklist-pass {
+  border-left: 4px solid var(--score-great);
+}
+
+.retro-checklist-fail {
+  border-left: 4px solid var(--score-poor);
+}
+
+/* Retro Link */
+.retro-link {
+  color: var(--teal-dark);
+  font-weight: bold;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+  transition: all 0.1s ease;
+}
+
+.retro-link:hover {
+  color: var(--turquoise-dark);
+  text-decoration-color: var(--turquoise);
+}
+
+/* Sparkle decoration */
+.sparkle {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  background: var(--coral-dark);
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+}
+
+.sparkle-small {
+  width: 10px;
+  height: 10px;
+}
+
+/* Score Gauge Retro Style */
+.retro-gauge {
+  filter: drop-shadow(3px 3px 0 var(--teal-dark));
+}
+
+/* Animated pulse for loading */
+@keyframes retro-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.retro-pulse {
+  animation: retro-pulse 1.5s ease-in-out infinite;
+}
+
+/* Suggestion cards */
+.retro-suggestion-high {
+  background: #FEE2E2;
+  border: 2px solid var(--score-poor);
+  border-left: 6px solid var(--score-poor);
+}
+
+.retro-suggestion-medium {
+  background: #FEF3C7;
+  border: 2px solid var(--score-good);
+  border-left: 6px solid var(--score-good);
+}
+
+.retro-suggestion-low {
+  background: #DBEAFE;
+  border: 2px solid #3B82F6;
+  border-left: 6px solid #3B82F6;
+}
+
+/* Footer */
+.retro-footer {
+  background: var(--teal-dark);
+  color: var(--cream);
+  border-top: 4px solid var(--turquoise);
 }
