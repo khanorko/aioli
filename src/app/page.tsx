@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import {
   Card,
   CardHeader,
-  Title1,
   Title3,
   Body1,
   Caption1,
@@ -50,9 +50,14 @@ export default function Home() {
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
       <div className="container mx-auto px-4 py-16">
         <div className="flex flex-col items-center text-center">
-          <Title1 className="mb-4">
-            AI<span style={{ color: "var(--colorBrandForeground1)" }}>oli</span>
-          </Title1>
+          <Image
+            src="/logo.png"
+            alt="AIoli"
+            width={180}
+            height={180}
+            className="mb-4"
+            priority
+          />
           <Title3 className="mb-2" style={{ fontWeight: 400 }}>
             AI-stödd SEO-analys
           </Title3>
