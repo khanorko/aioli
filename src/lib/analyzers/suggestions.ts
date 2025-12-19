@@ -1,4 +1,5 @@
 import { Suggestion, AnalysisResults, SeoResult, LlmReadinessResult } from "@/types/analysis";
+import { generateWithGroq, isGroqAvailable } from "../groq";
 import { generateWithOllama, isOllamaAvailable } from "../ollama";
 
 export async function generateSuggestions(
@@ -10,15 +11,12 @@ export async function generateSuggestions(
   const ruleBased = generateRuleBasedSuggestions(results);
   suggestions.push(...ruleBased);
 
-  // Try to generate AI-powered suggestions
-  const ollamaAvailable = await isOllamaAvailable();
-  if (ollamaAvailable) {
-    try {
-      const aiSuggestions = await generateAiSuggestions(results);
-      suggestions.push(...aiSuggestions);
-    } catch (error) {
-      console.error("Failed to generate AI suggestions:", error);
-    }
+  // Try to generate AI-powered suggestions (Groq first, then Ollama)
+  try {
+    const aiSuggestions = await generateAiSuggestions(results);
+    suggestions.push(...aiSuggestions);
+  } catch (error) {
+    console.error("Failed to generate AI suggestions:", error);
   }
 
   return suggestions;
@@ -242,9 +240,25 @@ Ge konkreta förslag i JSON-format:
 
 Svara ENDAST med JSON-arrayen.`;
 
-  try {
-    const response = await generateWithOllama(prompt);
+  let response: string;
 
+  // Try Groq first (cloud), then Ollama (local)
+  if (isGroqAvailable()) {
+    try {
+      response = await generateWithGroq(prompt);
+    } catch (error) {
+      console.error("Groq failed, trying Ollama:", error);
+      const ollamaAvailable = await isOllamaAvailable();
+      if (!ollamaAvailable) return [];
+      response = await generateWithOllama(prompt);
+    }
+  } else {
+    const ollamaAvailable = await isOllamaAvailable();
+    if (!ollamaAvailable) return [];
+    response = await generateWithOllama(prompt);
+  }
+
+  try {
     // Try to parse JSON from response
     const jsonMatch = response.match(/\[[\s\S]*\]/);
     if (!jsonMatch) return [];
