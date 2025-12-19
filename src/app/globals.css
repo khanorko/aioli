@@ -1,8 +1,17 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Aioli Retro-Tech Color Palette */
+  --coral-pink: #F4A5A5;
+  --coral-light: #FFE5E5;
+  --turquoise: #4ECDC4;
+  --turquoise-light: #7EDDD6;
+  --teal-dark: #1A535C;
+  --teal-medium: #2B6E79;
+  --cream: #FFF8F0;
+
+  --background: var(--coral-pink);
+  --foreground: var(--teal-dark);
 }
 
 @theme inline {
@@ -12,15 +21,63 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+body {
+  background: var(--coral-pink);
+  color: var(--teal-dark);
+  font-family: Arial, Helvetica, sans-serif;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Retro 3D Button Style */
+.retro-button {
+  background: var(--turquoise);
+  color: var(--teal-dark);
+  border: 3px solid var(--teal-dark);
+  box-shadow: 5px 5px 0 var(--teal-dark);
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: all 0.1s ease;
+}
+
+.retro-button:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 3px 3px 0 var(--teal-dark);
+}
+
+.retro-button:active {
+  transform: translate(4px, 4px);
+  box-shadow: 1px 1px 0 var(--teal-dark);
+}
+
+/* Retro Card Style */
+.retro-card {
+  background: var(--turquoise);
+  border: 3px solid var(--teal-dark);
+  box-shadow: 6px 6px 0 var(--teal-dark);
+  border-radius: 8px;
+}
+
+/* Retro Input Style */
+.retro-input {
+  background: var(--cream);
+  border: 3px solid var(--teal-dark);
+  box-shadow: 4px 4px 0 var(--turquoise);
+  color: var(--teal-dark);
+}
+
+.retro-input:focus {
+  outline: none;
+  box-shadow: 4px 4px 0 var(--teal-dark);
+}
+
+.retro-input::placeholder {
+  color: var(--teal-medium);
+}
+
+/* Retro Title Style */
+.retro-title {
+  color: var(--teal-dark);
+  text-shadow: 3px 3px 0 var(--turquoise);
+  font-weight: 900;
+  letter-spacing: -0.02em;
 }
