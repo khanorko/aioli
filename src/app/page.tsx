@@ -1,27 +1,90 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
+import dynamic from "next/dynamic";
 import { UrlInput } from "@/components/UrlInput";
+import { Navigation } from "@/components/Navigation";
+import { AnimatedElement, StaggerContainer, StaggerItem } from "@/components/motion/AnimatedElement";
+import { HeroParallax } from "@/components/motion/ParallaxSection";
+import { SparkleEffect } from "@/components/decorative/SparkleEffect";
+import { PricingCard } from "@/components/PricingCard";
+import { UpgradeModal } from "@/components/UpgradeModal";
 
-export default function Home() {
+// Lazy load 3D components (no SSR)
+const Scene3D = dynamic(
+  () => import("@/components/three/Scene3D").then((mod) => mod.Scene3D),
+  { ssr: false }
+);
+const ParticleNetwork = dynamic(
+  () => import("@/components/three/ParticleNetwork").then((mod) => mod.ParticleNetwork),
+  { ssr: false }
+);
+
+function HomeContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [userEmail, setUserEmail] = useState("");
+  const [userPlan, setUserPlan] = useState<"free" | "pro">("free");
+  const [successMessage, setSuccessMessage] = useState("");
 
-  const handleAnalyze = async (url: string) => {
+  // Check for success/canceled query params from Stripe
+  useEffect(() => {
+    if (searchParams.get("success") === "true") {
+      setSuccessMessage("Tack för din uppgradering! Du har nu obegränsade analyser.");
+      // Clean URL
+      window.history.replaceState({}, "", "/");
+    }
+    if (searchParams.get("canceled") === "true") {
+      // Clean URL
+      window.history.replaceState({}, "", "/");
+    }
+  }, [searchParams]);
+
+  // Load user email from localStorage
+  useEffect(() => {
+    const email = localStorage.getItem("aioli_email");
+    if (email) {
+      setUserEmail(email);
+      // Check user status
+      fetch("/api/user", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.isPro) {
+            setUserPlan("pro");
+          }
+        })
+        .catch(console.error);
+    }
+  }, []);
+
+  const handleAnalyze = async (url: string, email: string) => {
     setIsLoading(true);
     setError("");
+    setUserEmail(email);
 
     try {
       const response = await fetch("/api/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url }),
+        body: JSON.stringify({ url, email }),
       });
 
       const data = await response.json();
+
+      if (data.limitReached) {
+        setShowUpgradeModal(true);
+        setIsLoading(false);
+        return;
+      }
 
       if (!response.ok) {
         throw new Error(data.error || "Något gick fel");
@@ -35,97 +98,208 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen" style={{ background: "var(--coral-pink)" }}>
-      <div className="container mx-auto px-4 py-12">
-        <div className="flex flex-col items-center text-center">
-          <Image
-            src="/logo.png"
-            alt="AIoli"
-            width={200}
-            height={200}
-            className="mb-6"
-            priority
-          />
-
-          <h2 className="retro-title text-3xl md:text-5xl mb-4">
-            Din sajt. AI:ns syn.
-          </h2>
-
-          <p className="max-w-xl mb-10 text-lg" style={{ color: "var(--teal-dark)" }}>
-            Se hur <strong>Google</strong> OCH <strong>ChatGPT</strong> uppfattar din sajt.
-            <br />
-            <span className="text-sm opacity-80">Få konkreta förslag på hur du blir mer synlig.</span>
-          </p>
-
-          <UrlInput onSubmit={handleAnalyze} isLoading={isLoading} />
-
-          {error && (
-            <p className="mt-4 font-bold" style={{ color: "#8B0000" }}>
-              {error}
-            </p>
-          )}
-
-          <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl w-full">
-            {/* Card 1: Traditionell SEO */}
-            <div className="retro-card p-6 transition-transform hover:-translate-y-1">
-              <div className="text-4xl mb-4">🔍</div>
-              <h3 className="text-xl font-bold mb-2" style={{ color: "var(--teal-dark)" }}>
-                Klassisk SEO
-              </h3>
-              <p className="text-sm" style={{ color: "var(--teal-dark)", opacity: 0.85 }}>
-                Meta-taggar, rubriker, alt-texter och teknisk optimering som Google älskar.
-              </p>
-            </div>
-
-            {/* Card 2: LLM-readiness */}
-            <div className="retro-card p-6 transition-transform hover:-translate-y-1">
-              <div className="text-4xl mb-4">🤖</div>
-              <h3 className="text-xl font-bold mb-2" style={{ color: "var(--teal-dark)" }}>
-                AI-synlighet
-              </h3>
-              <p className="text-sm" style={{ color: "var(--teal-dark)", opacity: 0.85 }}>
-                Schema.org, citerbarhet och hur väl AI-assistenter förstår ditt innehåll.
-              </p>
-            </div>
-
-            {/* Card 3: AI-förslag */}
-            <div className="retro-card p-6 transition-transform hover:-translate-y-1">
-              <div className="text-4xl mb-4">💡</div>
-              <h3 className="text-xl font-bold mb-2" style={{ color: "var(--teal-dark)" }}>
-                Smarta förslag
-              </h3>
-              <p className="text-sm" style={{ color: "var(--teal-dark)", opacity: 0.85 }}>
-                Konkreta förbättringsförslag genererade av AI baserat på din sajt.
-              </p>
-            </div>
-          </div>
-
-          {/* Tagline */}
-          <div className="mt-12 flex items-center gap-2">
-            <span className="sparkle sparkle-small"></span>
-            <span className="text-sm font-bold" style={{ color: "var(--teal-medium)" }}>
-              SEO & AI-SEARCHABLE
-            </span>
-            <span className="sparkle sparkle-small"></span>
-          </div>
-        </div>
+    <div className="relative min-h-screen overflow-hidden">
+      {/* Fixed 3D Background */}
+      <div className="canvas-container">
+        <Scene3D>
+          <ParticleNetwork count={90} connectionDistance={2.5} />
+        </Scene3D>
       </div>
 
-      {/* Footer */}
-      <footer className="retro-footer py-6">
-        <div className="container mx-auto px-4 text-center">
-          <div className="flex items-center justify-center gap-2 mb-2">
-            <Image src="/logo.png" alt="AIoli" width={30} height={30} />
-            <span className="font-bold">AIoli</span>
+      {/* Gradient overlay */}
+      <div
+        className="fixed inset-0 z-1 pointer-events-none"
+        style={{
+          background: `
+            radial-gradient(ellipse 80% 50% at 50% -20%, rgba(45, 91, 255, 0.12), transparent),
+            radial-gradient(ellipse 60% 40% at 80% 100%, rgba(45, 91, 255, 0.08), transparent)
+          `,
+        }}
+      />
+
+      {/* Sparkle decorations */}
+      <SparkleEffect count={5} />
+
+      {/* Scrollable Content */}
+      <div className="relative z-10">
+        {/* Navigation */}
+        <Navigation />
+
+        {/* Hero Section */}
+        <HeroParallax className="max-w-7xl mx-auto px-6 py-20 md:py-32">
+          <div className="flex flex-col items-center text-center max-w-3xl mx-auto">
+            <AnimatedElement delay={0.1} animation="scaleIn">
+              <Image
+                src="/logo.png"
+                alt="AIoli"
+                width={120}
+                height={120}
+                className="mb-6"
+                priority
+              />
+            </AnimatedElement>
+
+            <AnimatedElement delay={0.2}>
+              <h1 className="section-title text-5xl md:text-6xl lg:text-7xl mb-8 leading-tight">
+                Hur synlig är din sajt för AI-assistenter?
+              </h1>
+            </AnimatedElement>
+
+            <AnimatedElement delay={0.3}>
+              <p className="max-w-2xl mb-12 text-xl md:text-2xl" style={{ color: "var(--text-secondary)" }}>
+                Analysera din webbplats för både traditionell SEO och AI-synlighet.
+              </p>
+              <p className="max-w-xl mb-12 text-base md:text-lg" style={{ color: "var(--text-muted)" }}>
+                Få insikter om hur Google, ChatGPT och Claude uppfattar ditt innehåll.
+              </p>
+            </AnimatedElement>
+
+            <AnimatedElement delay={0.4}>
+              <UrlInput onSubmit={handleAnalyze} isLoading={isLoading} />
+            </AnimatedElement>
+
+            {successMessage && (
+              <AnimatedElement animation="fadeIn">
+                <p className="mt-4 font-medium" style={{ color: "var(--score-good)" }}>
+                  {successMessage}
+                </p>
+              </AnimatedElement>
+            )}
+
+            {error && (
+              <AnimatedElement animation="fadeIn">
+                <p className="mt-4 font-medium" style={{ color: "var(--score-poor)" }}>
+                  {error}
+                </p>
+              </AnimatedElement>
+            )}
           </div>
-          <p className="text-sm opacity-80">Gjord med kärlek för bättre synlighet</p>
-          <div className="flex justify-center gap-2 mt-3">
-            <span className="sparkle sparkle-small"></span>
-            <span className="sparkle sparkle-small" style={{ background: "var(--turquoise)" }}></span>
-            <span className="sparkle sparkle-small"></span>
+        </HeroParallax>
+
+        {/* Feature Cards */}
+        <div className="max-w-7xl mx-auto px-6 py-16">
+          <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            {/* Card 1: Traditional SEO */}
+            <StaggerItem>
+              <div className="feature-card h-full">
+                <div className="icon-container icon-container-cyan mb-4">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="11" cy="11" r="8"/>
+                    <path d="m21 21-4.35-4.35"/>
+                  </svg>
+                </div>
+                <h3 className="text-lg font-semibold mb-2" style={{ color: "var(--text-primary)" }}>
+                  Traditionell SEO
+                </h3>
+                <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
+                  Meta-taggar, rubriker, alt-texter och teknisk optimering som sökmotorer värderar.
+                </p>
+              </div>
+            </StaggerItem>
+
+            {/* Card 2: AI Visibility */}
+            <StaggerItem>
+              <div className="feature-card h-full">
+                <div className="icon-container icon-container-emerald mb-4">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 8V4H8"/>
+                    <rect width="16" height="12" x="4" y="8" rx="2"/>
+                    <path d="M2 14h2"/>
+                    <path d="M20 14h2"/>
+                    <path d="M15 13v2"/>
+                    <path d="M9 13v2"/>
+                  </svg>
+                </div>
+                <h3 className="text-lg font-semibold mb-2" style={{ color: "var(--text-primary)" }}>
+                  AI-synlighet
+                </h3>
+                <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
+                  Schema.org, citerbarhet och hur väl AI-assistenter tolkar ditt innehåll.
+                </p>
+              </div>
+            </StaggerItem>
+
+            {/* Card 3: AI Suggestions */}
+            <StaggerItem>
+              <div className="feature-card h-full">
+                <div className="icon-container icon-container-amber mb-4">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                  </svg>
+                </div>
+                <h3 className="text-lg font-semibold mb-2" style={{ color: "var(--text-primary)" }}>
+                  Konkreta förslag
+                </h3>
+                <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
+                  AI-genererade rekommendationer baserat på analys av din webbplats.
+                </p>
+              </div>
+            </StaggerItem>
+          </StaggerContainer>
+        </div>
+
+        {/* Pricing Section */}
+        <div id="priser" className="max-w-7xl mx-auto px-6 py-20">
+          <AnimatedElement>
+            <div className="text-center mb-12">
+              <h2 className="section-title text-3xl md:text-4xl mb-4">Välj din plan</h2>
+              <p style={{ color: "var(--text-secondary)" }}>
+                Börja gratis och uppgradera när du behöver mer
+              </p>
+            </div>
+          </AnimatedElement>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-2xl mx-auto">
+            <AnimatedElement delay={0.1}>
+              <PricingCard
+                plan="free"
+                currentPlan={userPlan}
+                email={userEmail}
+              />
+            </AnimatedElement>
+            <AnimatedElement delay={0.2}>
+              <PricingCard
+                plan="pro"
+                currentPlan={userPlan}
+                email={userEmail}
+              />
+            </AnimatedElement>
           </div>
         </div>
-      </footer>
+
+        {/* Footer */}
+        <footer className="footer py-8 mt-16">
+          <div className="max-w-7xl mx-auto px-6 text-center">
+            <div className="flex items-center justify-center mb-3">
+              <Image
+                src="/logo.png"
+                alt="AIoli"
+                width={160}
+                height={64}
+                style={{ height: '48px', width: 'auto' }}
+              />
+            </div>
+            <p className="text-sm" style={{ color: "var(--text-muted)" }}>
+              SEO & AI Visibility Analysis
+            </p>
+          </div>
+        </footer>
+      </div>
+
+      {/* Upgrade Modal */}
+      <UpgradeModal
+        isOpen={showUpgradeModal}
+        onClose={() => setShowUpgradeModal(false)}
+        email={userEmail}
+      />
     </div>
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={<div className="min-h-screen gradient-bg" />}>
+      <HomeContent />
+    </Suspense>
   );
 }

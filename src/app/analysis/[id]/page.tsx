@@ -24,21 +24,21 @@ export default async function AnalysisPage({ params }: PageProps) {
 
   if (analysis.status === "processing") {
     return (
-      <div className="min-h-screen circuit-bg flex items-center justify-center" style={{ background: "var(--coral-pink)" }}>
+      <div className="min-h-screen gradient-bg flex items-center justify-center">
         <div className="text-center">
           <Image
             src="/logo.png"
             alt="AIoli"
-            width={120}
-            height={120}
-            className="mx-auto mb-6 retro-pulse"
+            width={80}
+            height={80}
+            className="mx-auto mb-6 animate-pulse"
           />
-          <h1 className="retro-title text-2xl mb-2">Analyserar...</h1>
-          <p style={{ color: "var(--teal-dark)" }}>Vänta medan vi granskar din sajt</p>
-          <div className="flex justify-center gap-2 mt-4">
-            <span className="sparkle sparkle-small" style={{ animationDelay: "0s" }}></span>
-            <span className="sparkle sparkle-small" style={{ animationDelay: "0.2s" }}></span>
-            <span className="sparkle sparkle-small" style={{ animationDelay: "0.4s" }}></span>
+          <h1 className="section-title text-2xl mb-2">Analyserar...</h1>
+          <p style={{ color: "var(--text-muted)" }}>Vänta medan vi granskar din sajt</p>
+          <div className="flex justify-center gap-2 mt-6">
+            <span className="w-2 h-2 rounded-full animate-bounce" style={{ background: "var(--text-secondary)", animationDelay: "0s" }}></span>
+            <span className="w-2 h-2 rounded-full animate-bounce" style={{ background: "var(--text-secondary)", animationDelay: "0.2s" }}></span>
+            <span className="w-2 h-2 rounded-full animate-bounce" style={{ background: "var(--text-secondary)", animationDelay: "0.4s" }}></span>
           </div>
         </div>
       </div>
@@ -47,15 +47,20 @@ export default async function AnalysisPage({ params }: PageProps) {
 
   if (analysis.status === "failed") {
     return (
-      <div className="min-h-screen circuit-bg flex items-center justify-center" style={{ background: "var(--coral-pink)" }}>
-        <div className="text-center max-w-md retro-card p-8">
-          <div className="text-6xl mb-4">😵</div>
-          <h1 className="retro-title text-2xl mb-2">Hoppsan!</h1>
-          <p style={{ color: "var(--teal-dark)" }} className="mb-4">
+      <div className="min-h-screen gradient-bg flex items-center justify-center">
+        <div className="text-center max-w-md card p-8">
+          <div className="icon-container icon-container-amber mx-auto mb-4" style={{ width: "56px", height: "56px" }}>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M12 8v4M12 16h.01"/>
+            </svg>
+          </div>
+          <h1 className="section-title text-2xl mb-2">Analysen misslyckades</h1>
+          <p style={{ color: "var(--text-muted)" }} className="mb-6">
             Vi kunde inte analysera den här sajten. Kontrollera adressen och försök igen.
           </p>
-          <Link href="/" className="retro-button px-6 py-3 rounded-lg inline-block">
-            ← Testa igen
+          <Link href="/" className="btn-primary px-6 py-3 inline-block">
+            Försök igen
           </Link>
         </div>
       </div>
@@ -65,69 +70,64 @@ export default async function AnalysisPage({ params }: PageProps) {
   const results: AnalysisResults = JSON.parse(analysis.results || "{}");
   const suggestionsData: AnalysisSuggestions = JSON.parse(analysis.suggestions || '{"suggestions":[]}');
 
-  const getScoreEmoji = (score: number) => {
-    if (score >= 80) return "🚀";
-    if (score >= 60) return "👍";
-    if (score >= 40) return "🤔";
-    return "😬";
-  };
-
   return (
-    <div className="min-h-screen circuit-bg" style={{ background: "var(--coral-pink)" }}>
+    <div className="min-h-screen gradient-bg">
       {/* Header */}
-      <div className="border-b-4" style={{ borderColor: "var(--teal-dark)", background: "var(--turquoise)" }}>
-        <div className="container mx-auto px-4 py-4">
+      <header className="header sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center gap-3 retro-link">
-              <Image src="/logo.png" alt="AIoli" width={50} height={50} />
-              <span className="font-bold text-lg">← Ny analys</span>
+            <Link href="/" className="flex items-center gap-4 link hover:opacity-80 transition-opacity">
+              <Image
+                src="/logo.png"
+                alt="AIoli"
+                width={160}
+                height={64}
+                style={{ height: '48px', width: 'auto' }}
+              />
+              <span className="font-medium text-sm" style={{ color: "var(--text-secondary)" }}>← Ny analys</span>
             </Link>
-            <div className="flex items-center gap-2">
-              <span className="sparkle sparkle-small"></span>
-              <span className="text-sm font-bold" style={{ color: "var(--teal-dark)" }}>
-                SEO & AI-SEARCHABLE
-              </span>
-            </div>
+            <span className="text-sm hidden sm:block" style={{ color: "var(--text-muted)" }}>
+              SEO & AI Visibility Analysis
+            </span>
           </div>
         </div>
-      </div>
+      </header>
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto px-6 py-12">
         {/* Page Title */}
-        <div className="mb-8 text-center">
-          <h1 className="retro-title text-3xl md:text-4xl mb-2">Analysresultat</h1>
-          <p className="font-mono text-sm break-all px-4 py-2 rounded-lg inline-block"
-             style={{ background: "var(--cream)", color: "var(--teal-dark)", border: "2px solid var(--teal-dark)" }}>
+        <div className="mb-14 text-center">
+          <h1 className="section-title text-3xl md:text-4xl mb-4">Analysresultat</h1>
+          <p className="url-badge font-mono text-sm break-all px-4 py-2 inline-block">
             {analysis.url}
           </p>
-          <p className="text-sm mt-2" style={{ color: "var(--teal-medium)" }}>
+          <p className="text-sm mt-3" style={{ color: "var(--text-muted)" }}>
             Analyserad: {new Date(analysis.createdAt).toLocaleString("sv-SE")}
           </p>
         </div>
 
         {/* Score Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          <div className="retro-card p-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-14">
+          <div className="score-card p-8">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-xl font-bold" style={{ color: "var(--teal-dark)" }}>
-                  {getScoreEmoji(analysis.seoScore || 0)} Klassisk SEO
+                <h2 className="text-xl font-semibold mb-1" style={{ color: "var(--text-primary)" }}>
+                  Traditionell SEO
                 </h2>
-                <p className="text-sm" style={{ color: "var(--teal-medium)" }}>
-                  Så ser Google på din sajt
+                <p className="text-sm" style={{ color: "var(--text-muted)" }}>
+                  Så ser sökmotorer på din sajt
                 </p>
               </div>
               <ScoreGauge score={analysis.seoScore || 0} label="" />
             </div>
           </div>
 
-          <div className="retro-card p-6">
+          <div className="score-card p-8">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-xl font-bold" style={{ color: "var(--teal-dark)" }}>
-                  {getScoreEmoji(analysis.llmScore || 0)} AI-synlighet
+                <h2 className="text-xl font-semibold mb-1" style={{ color: "var(--text-primary)" }}>
+                  AI-synlighet
                 </h2>
-                <p className="text-sm" style={{ color: "var(--teal-medium)" }}>
+                <p className="text-sm" style={{ color: "var(--text-muted)" }}>
                   Så ser ChatGPT & Claude på din sajt
                 </p>
               </div>
@@ -137,10 +137,10 @@ export default async function AnalysisPage({ params }: PageProps) {
         </div>
 
         {/* Detailed Results */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-14">
           {/* SEO Details */}
           <AnalysisCard
-            title="🔍 SEO-detaljer"
+            title="SEO-detaljer"
             description="Vad sökmotorer tittar på"
           >
             <div className="space-y-4">
@@ -206,7 +206,7 @@ export default async function AnalysisPage({ params }: PageProps) {
 
           {/* LLM Readiness Details */}
           <AnalysisCard
-            title="🤖 AI-synlighet"
+            title="AI-synlighet"
             description="Så uppfattar AI:n din sajt"
           >
             {results.llmReadiness && <LlmReadinessScore result={results.llmReadiness} />}
@@ -216,42 +216,44 @@ export default async function AnalysisPage({ params }: PageProps) {
         {/* Suggestions */}
         {suggestionsData.suggestions.length > 0 && (
           <AnalysisCard
-            title="💡 Förbättringsförslag"
-            description="Så kan du bli ännu bättre"
+            title="Förbättringsförslag"
+            description="Rekommendationer baserat på analysen"
           >
             <SuggestionList suggestions={suggestionsData.suggestions} />
           </AnalysisCard>
         )}
 
         {/* CTA Section */}
-        <div className="mt-12 text-center">
-          <div className="retro-card p-8 inline-block">
-            <h2 className="text-2xl font-bold mb-2" style={{ color: "var(--teal-dark)" }}>
+        <div className="mt-20 text-center">
+          <div className="card p-8 inline-block">
+            <h2 className="text-xl font-semibold mb-2" style={{ color: "var(--text-primary)" }}>
               Vill du analysera en annan sajt?
             </h2>
-            <p className="mb-4" style={{ color: "var(--teal-medium)" }}>
-              AIoli är redo för nästa utmaning!
+            <p className="mb-5" style={{ color: "var(--text-muted)" }}>
+              Testa hur din eller dina konkurrenters sajter presterar.
             </p>
-            <Link href="/" className="retro-button px-8 py-3 rounded-lg inline-block text-lg">
-              Kör ny analys →
+            <Link href="/" className="btn-primary px-8 py-3 inline-block text-lg">
+              Ny analys
             </Link>
           </div>
         </div>
       </div>
 
       {/* Footer */}
-      <footer className="retro-footer py-6 mt-12">
-        <div className="container mx-auto px-4 text-center">
-          <div className="flex items-center justify-center gap-2 mb-2">
-            <Image src="/logo.png" alt="AIoli" width={30} height={30} />
-            <span className="font-bold">AIoli</span>
+      <footer className="footer py-8 mt-16">
+        <div className="max-w-7xl mx-auto px-6 text-center">
+          <div className="flex items-center justify-center mb-3">
+            <Image
+              src="/logo.png"
+              alt="AIoli"
+              width={160}
+              height={64}
+              style={{ height: '48px', width: 'auto' }}
+            />
           </div>
-          <p className="text-sm opacity-80">SEO & AI-SEARCHABLE analys</p>
-          <div className="flex justify-center gap-2 mt-3">
-            <span className="sparkle sparkle-small"></span>
-            <span className="sparkle sparkle-small" style={{ background: "var(--turquoise)" }}></span>
-            <span className="sparkle sparkle-small"></span>
-          </div>
+          <p className="text-sm" style={{ color: "var(--text-muted)" }}>
+            SEO & AI Visibility Analysis
+          </p>
         </div>
       </footer>
     </div>

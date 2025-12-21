@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createAnalysis, updateAnalysis, initDb } from "@/lib/db";
+import { createAnalysis, updateAnalysis, initDb, getUserByEmail, createUser, canUserAnalyze, incrementAnalysisCount } from "@/lib/db";
 import { scrapePage } from "@/lib/scraper";
 import { analyzeSeo, calculateOverallSeoScore } from "@/lib/analyzers/seo";
 import {
@@ -21,7 +21,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
   }
 
-  const { url } = requestBody;
+  const { url, email } = requestBody;
 
   if (!url) {
     return NextResponse.json({ error: "URL is required" }, { status: 400 });
@@ -32,6 +32,30 @@ export async function POST(request: Request) {
     if (!dbInitialized) {
       await initDb();
       dbInitialized = true;
+    }
+
+    // Check user limits if email is provided
+    if (email) {
+      let user = await getUserByEmail(email);
+      if (!user) {
+        user = await createUser(email);
+      }
+
+      const { allowed } = await canUserAnalyze(user.id);
+      if (!allowed) {
+        return NextResponse.json(
+          {
+            error: "Analysgräns nådd",
+            limitReached: true,
+            remaining: 0,
+            message: "Du har använt alla dina gratis analyser denna månad. Uppgradera till Pro för obegränsade analyser."
+          },
+          { status: 403 }
+        );
+      }
+
+      // Increment usage before starting analysis
+      await incrementAnalysisCount(user.id);
     }
 
     // Create initial analysis record

@@ -17,6 +17,7 @@ async function initDatabase() {
     CREATE TABLE IF NOT EXISTS analyses (
       id TEXT PRIMARY KEY,
       url TEXT NOT NULL,
+      user_id TEXT,
       seo_score INTEGER,
       llm_score INTEGER,
       results TEXT,
@@ -24,6 +25,21 @@ async function initDatabase() {
       status TEXT DEFAULT 'pending',
       created_at TEXT DEFAULT CURRENT_TIMESTAMP,
       updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
+  console.log("Creating users table...");
+
+  await client.execute(`
+    CREATE TABLE IF NOT EXISTS users (
+      id TEXT PRIMARY KEY,
+      email TEXT UNIQUE NOT NULL,
+      stripe_customer_id TEXT,
+      subscription_status TEXT DEFAULT 'free',
+      subscription_id TEXT,
+      analyses_this_month INTEGER DEFAULT 0,
+      analyses_reset_date TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
     )
   `);
 

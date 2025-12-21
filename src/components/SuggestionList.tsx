@@ -10,22 +10,43 @@ export function SuggestionList({ suggestions }: SuggestionListProps) {
   const getPriorityClass = (priority: Suggestion["priority"]) => {
     switch (priority) {
       case "high":
-        return "retro-suggestion-high";
+        return "suggestion-high";
       case "medium":
-        return "retro-suggestion-medium";
+        return "suggestion-medium";
       case "low":
-        return "retro-suggestion-low";
+        return "suggestion-low";
     }
   };
 
-  const getCategoryEmoji = (category: Suggestion["category"]) => {
+  const getCategoryIcon = (category: Suggestion["category"]) => {
     switch (category) {
       case "seo":
-        return "🔍";
+        return (
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22D3EE" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="11" cy="11" r="8"/>
+            <path d="m21 21-4.35-4.35"/>
+          </svg>
+        );
       case "llm":
-        return "🤖";
+        return (
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--score-great)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 8V4H8"/>
+            <rect width="16" height="12" x="4" y="8" rx="2"/>
+            <path d="M2 14h2"/>
+            <path d="M20 14h2"/>
+            <path d="M15 13v2"/>
+            <path d="M9 13v2"/>
+          </svg>
+        );
       case "content":
-        return "📝";
+        return (
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--score-good)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/>
+          </svg>
+        );
     }
   };
 
@@ -37,6 +58,12 @@ export function SuggestionList({ suggestions }: SuggestionListProps) {
     { high: [], medium: [], low: [] } as Record<Suggestion["priority"], Suggestion[]>
   );
 
+  const priorityLabels = {
+    high: "Hög prioritet",
+    medium: "Medium prioritet",
+    low: "Förbättringstips"
+  };
+
   return (
     <div className="space-y-6">
       {(["high", "medium", "low"] as const).map((priority) => {
@@ -45,34 +72,32 @@ export function SuggestionList({ suggestions }: SuggestionListProps) {
 
         return (
           <div key={priority}>
-            <h4 className="text-sm font-bold uppercase mb-3" style={{ color: "var(--teal-medium)" }}>
-              {priority === "high" && "🔥 Hög prioritet"}
-              {priority === "medium" && "⚡ Medium prioritet"}
-              {priority === "low" && "💡 Tips"}
+            <h4 className="text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: "var(--text-muted)" }}>
+              {priorityLabels[priority]}
             </h4>
             <div className="space-y-3">
               {items.map((suggestion, index) => (
                 <div
                   key={index}
-                  className={`p-4 rounded-lg ${getPriorityClass(suggestion.priority)}`}
+                  className={`p-4 ${getPriorityClass(suggestion.priority)}`}
                 >
                   <div className="flex items-start gap-3">
-                    <div className="text-2xl mt-0.5">{getCategoryEmoji(suggestion.category)}</div>
-                    <div className="flex-1">
-                      <h5 className="font-bold" style={{ color: "var(--teal-dark)" }}>{suggestion.title}</h5>
-                      <p className="text-sm mt-1" style={{ color: "var(--teal-medium)" }}>{suggestion.description}</p>
+                    <div className="flex-shrink-0 mt-0.5">{getCategoryIcon(suggestion.category)}</div>
+                    <div className="flex-1 min-w-0">
+                      <h5 className="font-medium text-sm" style={{ color: "var(--text-primary)" }}>{suggestion.title}</h5>
+                      <p className="text-xs mt-1" style={{ color: "var(--text-secondary)" }}>{suggestion.description}</p>
                       {suggestion.currentValue && (
-                        <div className="mt-3 text-sm">
-                          <span style={{ color: "var(--teal-medium)" }}>Nuvarande:</span>{" "}
-                          <code className="px-2 py-1 rounded font-mono text-xs" style={{ background: "var(--coral-light)", color: "var(--score-poor)" }}>
+                        <div className="mt-3 text-xs">
+                          <span style={{ color: "var(--text-muted)" }}>Nuvarande:</span>{" "}
+                          <code className="px-2 py-1 rounded font-mono text-xs" style={{ background: "rgba(239, 68, 68, 0.1)", color: "var(--score-poor)" }}>
                             {suggestion.currentValue}
                           </code>
                         </div>
                       )}
                       {suggestion.suggestedValue && (
-                        <div className="mt-2 text-sm">
-                          <span style={{ color: "var(--teal-medium)" }}>Förslag:</span>{" "}
-                          <code className="px-2 py-1 rounded font-mono text-xs" style={{ background: "#D1FAE5", color: "var(--score-great)" }}>
+                        <div className="mt-2 text-xs">
+                          <span style={{ color: "var(--text-muted)" }}>Förslag:</span>{" "}
+                          <code className="px-2 py-1 rounded font-mono text-xs" style={{ background: "rgba(16, 185, 129, 0.1)", color: "var(--score-great)" }}>
                             {suggestion.suggestedValue}
                           </code>
                         </div>

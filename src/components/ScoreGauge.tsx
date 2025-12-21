@@ -21,24 +21,15 @@ export function ScoreGauge({ score, label, maxScore = 100 }: ScoreGaugeProps) {
 
   return (
     <div className="flex flex-col items-center p-2">
-      <div className="relative w-28 h-28 retro-gauge">
+      <div className="relative w-24 h-24 gauge">
         <svg className="w-full h-full transform -rotate-90" viewBox="0 0 128 128">
           {/* Background circle */}
           <circle
             cx="64"
             cy="64"
             r="45"
-            stroke="var(--cream-dark)"
-            strokeWidth="12"
-            fill="none"
-          />
-          {/* Border circle */}
-          <circle
-            cx="64"
-            cy="64"
-            r="51"
-            stroke="var(--teal-dark)"
-            strokeWidth="3"
+            stroke="var(--dark-surface)"
+            strokeWidth="8"
             fill="none"
           />
           {/* Progress circle */}
@@ -47,7 +38,7 @@ export function ScoreGauge({ score, label, maxScore = 100 }: ScoreGaugeProps) {
             cy="64"
             r="45"
             stroke={getStrokeColor()}
-            strokeWidth="12"
+            strokeWidth="8"
             fill="none"
             strokeLinecap="round"
             style={{
@@ -59,15 +50,15 @@ export function ScoreGauge({ score, label, maxScore = 100 }: ScoreGaugeProps) {
         </svg>
         <div className="absolute inset-0 flex items-center justify-center">
           <span
-            className="text-3xl font-black"
-            style={{ color: "var(--teal-dark)" }}
+            className="text-2xl font-bold"
+            style={{ color: "var(--text-primary)" }}
           >
             {percentage}
           </span>
         </div>
       </div>
       {label && (
-        <span className="mt-1 text-sm font-bold" style={{ color: "var(--teal-dark)" }}>{label}</span>
+        <span className="mt-1 text-sm font-medium" style={{ color: "var(--text-secondary)" }}>{label}</span>
       )}
     </div>
   );
