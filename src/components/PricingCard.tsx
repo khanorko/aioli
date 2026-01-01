@@ -20,7 +20,7 @@ const CREDIT_PACKAGES: CreditPackage[] = [
 
 export function CreditPackageCards() {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto pt-4">
       {CREDIT_PACKAGES.map((pkg) => (
         <CreditPackageCard key={pkg.id} package={pkg} />
       ))}
@@ -70,9 +70,9 @@ function CreditPackageCard({ package: pkg }: { package: CreditPackage }) {
   };
 
   return (
-    <div className={`card p-6 relative overflow-visible ${pkg.popular ? "ring-2 ring-[var(--plasma-blue)] mt-4" : ""}`}>
+    <div className={`card p-6 relative overflow-visible ${pkg.popular ? "ring-2 ring-[var(--plasma-blue)]" : ""}`}>
       {pkg.popular && (
-        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[var(--plasma-blue)] text-white text-xs font-semibold px-3 py-1 rounded-full whitespace-nowrap z-10">
+        <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-[var(--plasma-blue)] text-white text-xs font-semibold px-4 py-1.5 rounded-full whitespace-nowrap z-10 shadow-lg">
           Populärast
         </div>
       )}
