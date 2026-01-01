@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
-import { createAnalysis, updateAnalysis, initDb, getUserByEmail, createUser, canUserAnalyze, incrementAnalysisCount } from "@/lib/db";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { createAnalysis, updateAnalysis, initDb, getUserById, canUserAnalyze, incrementAnalysisCount } from "@/lib/db";
 import { scrapePage } from "@/lib/scraper";
 import { analyzeSeo, calculateOverallSeoScore } from "@/lib/analyzers/seo";
 import {
@@ -13,6 +15,18 @@ import { AnalysisResults } from "@/types/analysis";
 let dbInitialized = false;
 
 export async function POST(request: Request) {
+  // Get session - require authentication
+  const session = await getServerSession(authOptions);
+
+  if (!session?.user?.id) {
+    return NextResponse.json(
+      { error: "Du måste vara inloggad för att analysera" },
+      { status: 401 }
+    );
+  }
+
+  const userId = session.user.id;
+
   // Parse request body
   let requestBody;
   try {
@@ -21,7 +35,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
   }
 
-  const { url, email } = requestBody;
+  const { url } = requestBody;
 
   if (!url) {
     return NextResponse.json({ error: "URL is required" }, { status: 400 });
@@ -34,32 +48,30 @@ export async function POST(request: Request) {
       dbInitialized = true;
     }
 
-    // Check user limits if email is provided
-    if (email) {
-      let user = await getUserByEmail(email);
-      if (!user) {
-        user = await createUser(email);
-      }
-
-      const { allowed } = await canUserAnalyze(user.id);
-      if (!allowed) {
-        return NextResponse.json(
-          {
-            error: "Analysgräns nådd",
-            limitReached: true,
-            remaining: 0,
-            message: "Du har använt alla dina gratis analyser denna månad. Uppgradera till Pro för obegränsade analyser."
-          },
-          { status: 403 }
-        );
-      }
-
-      // Increment usage before starting analysis
-      await incrementAnalysisCount(user.id);
+    // Check user limits
+    const user = await getUserById(userId);
+    if (!user) {
+      return NextResponse.json(
+        { error: "Användare hittades inte" },
+        { status: 404 }
+      );
     }
 
-    // Create initial analysis record
-    const analysis = await createAnalysis(url);
+    const { allowed, remaining } = await canUserAnalyze(userId);
+    if (!allowed) {
+      return NextResponse.json(
+        {
+          error: "Analysgräns nådd",
+          limitReached: true,
+          remaining: 0,
+          message: "Du har använt alla dina gratis analyser denna månad. Uppgradera till Pro för obegränsade analyser."
+        },
+        { status: 403 }
+      );
+    }
+
+    // Create initial analysis record with userId
+    const analysis = await createAnalysis(url, userId);
 
     // Run analysis
     try {
@@ -96,11 +108,15 @@ export async function POST(request: Request) {
         status: "completed",
       });
 
+      // Increment usage AFTER successful analysis
+      await incrementAnalysisCount(userId);
+
       return NextResponse.json({
         id: analysis.id,
         status: "completed",
         seoScore,
         llmScore,
+        remaining: remaining > 0 ? remaining - 1 : -1,
       });
     } catch (analysisError) {
       console.error("Analysis error:", analysisError);

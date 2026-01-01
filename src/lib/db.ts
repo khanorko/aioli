@@ -28,6 +28,7 @@ export async function initDb() {
     CREATE TABLE IF NOT EXISTS analyses (
       id TEXT PRIMARY KEY,
       url TEXT NOT NULL,
+      user_id TEXT,
       seo_score INTEGER,
       llm_score INTEGER,
       results TEXT,
@@ -37,6 +38,13 @@ export async function initDb() {
       updated_at TEXT DEFAULT CURRENT_TIMESTAMP
     )
   `);
+
+  // Add user_id column if it doesn't exist (migration for existing tables)
+  try {
+    await db.execute(`ALTER TABLE analyses ADD COLUMN user_id TEXT`);
+  } catch {
+    // Column already exists
+  }
 }
 
 // Generate a simple unique ID
@@ -45,16 +53,16 @@ export function generateId(): string {
 }
 
 // Analysis CRUD operations
-export async function createAnalysis(url: string) {
+export async function createAnalysis(url: string, userId?: string) {
   const db = getDb();
   const id = generateId();
 
   await db.execute({
-    sql: `INSERT INTO analyses (id, url, status) VALUES (?, ?, 'processing')`,
-    args: [id, url],
+    sql: `INSERT INTO analyses (id, url, user_id, status) VALUES (?, ?, ?, 'processing')`,
+    args: [id, url, userId || null],
   });
 
-  return { id, url, status: "processing" };
+  return { id, url, userId, status: "processing" };
 }
 
 export async function updateAnalysis(
@@ -116,6 +124,7 @@ export async function getAnalysis(id: string) {
   return {
     id: row.id as string,
     url: row.url as string,
+    userId: row.user_id as string | null,
     seoScore: row.seo_score as number | null,
     llmScore: row.llm_score as number | null,
     results: row.results as string | null,
@@ -124,6 +133,28 @@ export async function getAnalysis(id: string) {
     createdAt: new Date(row.created_at as string),
     updatedAt: new Date(row.updated_at as string),
   };
+}
+
+export async function getUserAnalyses(userId: string, limit = 50) {
+  const db = getDb();
+
+  const result = await db.execute({
+    sql: `SELECT id, url, seo_score, llm_score, status, created_at
+          FROM analyses
+          WHERE user_id = ? AND status = 'completed'
+          ORDER BY created_at DESC
+          LIMIT ?`,
+    args: [userId, limit],
+  });
+
+  return result.rows.map((row) => ({
+    id: row.id as string,
+    url: row.url as string,
+    seoScore: row.seo_score as number | null,
+    llmScore: row.llm_score as number | null,
+    status: row.status as string,
+    createdAt: new Date(row.created_at as string),
+  }));
 }
 
 // User types

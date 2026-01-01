@@ -31,9 +31,15 @@ export function Navigation() {
 
           {/* Navigation Links */}
           <nav className="hidden md:flex items-center gap-6">
-            <Link href="#priser" className="nav-link text-sm">
+            <Link href="/#priser" className="nav-link text-sm">
               Priser
             </Link>
+
+            {session?.user?.subscriptionStatus === "pro" && (
+              <Link href="/history" className="nav-link text-sm">
+                Historik
+              </Link>
+            )}
 
             {status === "loading" ? (
               <div className="w-8 h-8 rounded-full bg-[var(--bg-secondary)] animate-pulse" />

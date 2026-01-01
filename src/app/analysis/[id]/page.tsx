@@ -6,6 +6,7 @@ import { AnalysisCard } from "@/components/AnalysisCard";
 import { SeoChecklist } from "@/components/SeoChecklist";
 import { LlmReadinessScore } from "@/components/LlmReadinessScore";
 import { SuggestionList } from "@/components/SuggestionList";
+import { PdfExportButton } from "@/components/PdfExportButton";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -103,6 +104,17 @@ export default async function AnalysisPage({ params }: PageProps) {
           <p className="text-sm mt-3" style={{ color: "var(--text-muted)" }}>
             Analyserad: {new Date(analysis.createdAt).toLocaleString("sv-SE")}
           </p>
+          <div className="mt-4">
+            <PdfExportButton
+              analysisData={{
+                url: analysis.url,
+                seoScore: analysis.seoScore,
+                llmScore: analysis.llmScore,
+                createdAt: analysis.createdAt.toISOString(),
+                results: analysis.results,
+              }}
+            />
+          </div>
         </div>
 
         {/* Score Overview */}

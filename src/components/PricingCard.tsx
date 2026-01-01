@@ -42,7 +42,7 @@ export function PricingCard({ plan, currentPlan, email }: PricingCardProps) {
       className={`card p-6 relative ${!isFree ? "ring-2 ring-[var(--plasma-blue)]" : ""}`}
     >
       {!isFree && (
-        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[var(--plasma-blue)] text-white text-xs font-semibold px-3 py-1 rounded-full">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[var(--plasma-blue)] text-white text-xs font-semibold px-3 py-1 rounded-full whitespace-nowrap">
           Populärast
         </div>
       )}

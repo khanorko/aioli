@@ -1,34 +1,15 @@
 "use client";
 
-import { useState, useSyncExternalStore } from "react";
+import { useState } from "react";
 
 interface UrlInputProps {
-  onSubmit: (url: string, email: string) => void;
+  onSubmit: (url: string) => void;
   isLoading?: boolean;
-  savedEmail?: string;
 }
 
-// Use useSyncExternalStore to safely read localStorage
-function useStoredEmail() {
-  return useSyncExternalStore(
-    (callback) => {
-      window.addEventListener("storage", callback);
-      return () => window.removeEventListener("storage", callback);
-    },
-    () => {
-      if (typeof window === "undefined") return "";
-      return localStorage.getItem("aioli_email") || "";
-    },
-    () => ""
-  );
-}
-
-export function UrlInput({ onSubmit, isLoading = false, savedEmail = "" }: UrlInputProps) {
-  const storedEmail = useStoredEmail();
+export function UrlInput({ onSubmit, isLoading = false }: UrlInputProps) {
   const [url, setUrl] = useState("");
-  const [email, setEmail] = useState(savedEmail || storedEmail);
   const [error, setError] = useState("");
-  const [showEmailField, setShowEmailField] = useState(!storedEmail);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,27 +22,13 @@ export function UrlInput({ onSubmit, isLoading = false, savedEmail = "" }: UrlIn
       return;
     }
 
-    if (!email.trim()) {
-      setError("Ange din e-postadress för att fortsätta");
-      setShowEmailField(true);
-      return;
-    }
-
-    // Basic email validation
-    if (!email.includes("@") || !email.includes(".")) {
-      setError("Ogiltig e-postadress");
-      return;
-    }
-
     if (!processedUrl.startsWith("http://") && !processedUrl.startsWith("https://")) {
       processedUrl = "https://" + processedUrl;
     }
 
     try {
       new URL(processedUrl);
-      // Save email to localStorage
-      localStorage.setItem("aioli_email", email);
-      onSubmit(processedUrl, email);
+      onSubmit(processedUrl);
     } catch {
       setError("Ogiltig webbadress");
     }
@@ -70,16 +37,6 @@ export function UrlInput({ onSubmit, isLoading = false, savedEmail = "" }: UrlIn
   return (
     <form onSubmit={handleSubmit} className="w-full max-w-2xl">
       <div className="flex flex-col gap-3">
-        {showEmailField && (
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="din@email.se"
-            disabled={isLoading}
-            className="input px-5 py-4 text-lg font-medium"
-          />
-        )}
         <div className="flex gap-3">
           <input
             type="text"
@@ -107,16 +64,6 @@ export function UrlInput({ onSubmit, isLoading = false, savedEmail = "" }: UrlIn
             )}
           </button>
         </div>
-        {!showEmailField && email && (
-          <button
-            type="button"
-            onClick={() => setShowEmailField(true)}
-            className="text-xs text-left link"
-            style={{ color: "var(--text-muted)" }}
-          >
-            Inloggad som {email}. Byt konto?
-          </button>
-        )}
         {error && (
           <p className="font-medium" style={{ color: "var(--score-poor)" }}>
             {error}
