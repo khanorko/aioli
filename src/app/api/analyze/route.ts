@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { createAnalysis, updateAnalysis, initDb, getUserById, canUserAnalyze, incrementAnalysisCount } from "@/lib/db";
+import { createAnalysis, updateAnalysis, initDb, getUserById } from "@/lib/db";
 import { scrapePage } from "@/lib/scraper";
 import { analyzeSeo, calculateOverallSeoScore } from "@/lib/analyzers/seo";
 import {
@@ -48,25 +48,12 @@ export async function POST(request: Request) {
       dbInitialized = true;
     }
 
-    // Check user limits
+    // Get user (no limits - everyone can analyze, but Pro gets full results)
     const user = await getUserById(userId);
     if (!user) {
       return NextResponse.json(
         { error: "Användare hittades inte" },
         { status: 404 }
-      );
-    }
-
-    const { allowed, remaining } = await canUserAnalyze(userId);
-    if (!allowed) {
-      return NextResponse.json(
-        {
-          error: "Analysgräns nådd",
-          limitReached: true,
-          remaining: 0,
-          message: "Du har använt alla dina gratis analyser denna månad. Uppgradera till Pro för obegränsade analyser."
-        },
-        { status: 403 }
       );
     }
 
@@ -108,15 +95,11 @@ export async function POST(request: Request) {
         status: "completed",
       });
 
-      // Increment usage AFTER successful analysis
-      await incrementAnalysisCount(userId);
-
       return NextResponse.json({
         id: analysis.id,
         status: "completed",
         seoScore,
         llmScore,
-        remaining: remaining > 0 ? remaining - 1 : -1,
       });
     } catch (analysisError) {
       console.error("Analysis error:", analysisError);

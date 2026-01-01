@@ -1,6 +1,6 @@
 import { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-import { getUserByEmail, createUser, updateUser } from "./db";
+import { getUserByEmail, createUser } from "./db";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -24,12 +24,12 @@ export const authOptions: NextAuthOptions = {
 
       return true;
     },
-    async jwt({ token, user, account }) {
+    async jwt({ token, user }) {
       if (user && user.email) {
         const dbUser = await getUserByEmail(user.email);
         if (dbUser) {
           token.userId = dbUser.id;
-          token.subscriptionStatus = dbUser.subscriptionStatus;
+          token.credits = dbUser.credits;
         }
       }
       return token;
@@ -37,7 +37,7 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.userId as string;
-        session.user.subscriptionStatus = token.subscriptionStatus as string;
+        session.user.credits = token.credits as number;
       }
       return session;
     },

@@ -58,11 +58,6 @@ export default function HistoryPage() {
       return;
     }
 
-    if (session.user?.subscriptionStatus !== "pro") {
-      router.push("/#priser");
-      return;
-    }
-
     fetchAnalyses();
   }, [session, status, router]);
 

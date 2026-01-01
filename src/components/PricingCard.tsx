@@ -1,28 +1,53 @@
 "use client";
 
 import { useState } from "react";
+import { useSession, signIn } from "next-auth/react";
 
-interface PricingCardProps {
-  plan: "free" | "pro";
-  currentPlan?: "free" | "pro";
-  email?: string;
+interface CreditPackage {
+  id: string;
+  name: string;
+  credits: number;
+  price: number;
+  pricePerCredit: number;
+  popular?: boolean;
 }
 
-export function PricingCard({ plan, currentPlan, email }: PricingCardProps) {
+const CREDIT_PACKAGES: CreditPackage[] = [
+  { id: "starter", name: "Prova", credits: 1, price: 49, pricePerCredit: 49 },
+  { id: "standard", name: "Standard", credits: 5, price: 149, pricePerCredit: 30, popular: true },
+  { id: "pro", name: "Pro", credits: 15, price: 299, pricePerCredit: 20 },
+];
+
+export function CreditPackageCards() {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+      {CREDIT_PACKAGES.map((pkg) => (
+        <CreditPackageCard key={pkg.id} package={pkg} />
+      ))}
+    </div>
+  );
+}
+
+function CreditPackageCard({ package: pkg }: { package: CreditPackage }) {
+  const { data: session } = useSession();
   const [isLoading, setIsLoading] = useState(false);
 
-  const isFree = plan === "free";
-  const isCurrentPlan = plan === currentPlan;
-
-  const handleUpgrade = async () => {
-    if (!email || isFree) return;
+  const handlePurchase = async () => {
+    if (!session?.user?.email) {
+      signIn("google");
+      return;
+    }
 
     setIsLoading(true);
     try {
       const response = await fetch("/api/stripe/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({
+          packageId: pkg.id,
+          credits: pkg.credits,
+          price: pkg.price,
+        }),
       });
 
       const data = await response.json();
@@ -31,78 +56,83 @@ export function PricingCard({ plan, currentPlan, email }: PricingCardProps) {
         window.location.href = data.url;
       }
     } catch (error) {
-      console.error("Upgrade error:", error);
+      console.error("Purchase error:", error);
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div
-      className={`card p-6 relative ${!isFree ? "ring-2 ring-[var(--plasma-blue)]" : ""}`}
-    >
-      {!isFree && (
+    <div className={`card p-6 relative ${pkg.popular ? "ring-2 ring-[var(--plasma-blue)]" : ""}`}>
+      {pkg.popular && (
         <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[var(--plasma-blue)] text-white text-xs font-semibold px-3 py-1 rounded-full whitespace-nowrap">
           Populärast
         </div>
       )}
 
-      <h3 className="text-xl font-bold mb-2" style={{ color: "var(--text-primary)" }}>
-        {isFree ? "Free" : "Pro"}
+      <h3 className="text-xl font-bold mb-1" style={{ color: "var(--text-primary)" }}>
+        {pkg.name}
       </h3>
+
+      <p className="text-sm mb-4" style={{ color: "var(--text-muted)" }}>
+        {pkg.credits} {pkg.credits === 1 ? "credit" : "credits"}
+      </p>
 
       <div className="mb-4">
         <span className="text-3xl font-bold" style={{ color: "var(--text-primary)" }}>
-          {isFree ? "0" : "299"}
+          {pkg.price}
         </span>
-        <span className="text-sm" style={{ color: "var(--text-muted)" }}>
-          {isFree ? " kr" : " kr/mån"}
-        </span>
+        <span className="text-sm" style={{ color: "var(--text-muted)" }}> kr</span>
       </div>
 
-      <ul className="space-y-3 mb-6">
-        <li className="flex items-center gap-2 text-sm" style={{ color: "var(--text-secondary)" }}>
-          <CheckIcon />
-          {isFree ? "3 analyser per månad" : "Obegränsade analyser"}
-        </li>
-        <li className="flex items-center gap-2 text-sm" style={{ color: "var(--text-secondary)" }}>
-          <CheckIcon />
-          SEO-analys
-        </li>
-        <li className="flex items-center gap-2 text-sm" style={{ color: "var(--text-secondary)" }}>
-          <CheckIcon />
-          AI-synlighetsanalys
-        </li>
-        {!isFree && (
-          <>
-            <li className="flex items-center gap-2 text-sm" style={{ color: "var(--text-secondary)" }}>
-              <CheckIcon />
-              PDF-export
-            </li>
-            <li className="flex items-center gap-2 text-sm" style={{ color: "var(--text-secondary)" }}>
-              <CheckIcon />
-              Analyshistorik
-            </li>
-          </>
-        )}
-      </ul>
+      <p className="text-xs mb-6" style={{ color: "var(--text-muted)" }}>
+        {pkg.pricePerCredit} kr per credit
+      </p>
 
-      {isFree ? (
-        <div
-          className="w-full py-3 rounded-xl text-center text-sm font-medium"
-          style={{ background: "var(--bg-secondary)", color: "var(--text-muted)" }}
-        >
-          {isCurrentPlan ? "Nuvarande plan" : "Gratis"}
-        </div>
-      ) : (
-        <button
-          onClick={handleUpgrade}
-          disabled={isLoading || isCurrentPlan}
-          className="btn-primary w-full py-3 disabled:opacity-50"
-        >
-          {isLoading ? "Laddar..." : isCurrentPlan ? "Nuvarande plan" : "Uppgradera"}
-        </button>
-      )}
+      <button
+        onClick={handlePurchase}
+        disabled={isLoading}
+        className={`w-full py-3 rounded-xl text-sm font-medium transition-colors ${
+          pkg.popular
+            ? "btn-primary"
+            : "bg-[var(--bg-secondary)] hover:bg-[var(--bg-tertiary)]"
+        }`}
+        style={!pkg.popular ? { color: "var(--text-primary)" } : undefined}
+      >
+        {isLoading ? "Laddar..." : "Köp"}
+      </button>
+    </div>
+  );
+}
+
+// What you get with credits
+export function CreditsExplainer() {
+  return (
+    <div className="card p-6 max-w-2xl mx-auto mt-8">
+      <h3 className="font-semibold text-lg mb-4" style={{ color: "var(--text-primary)" }}>
+        Vad får jag för 1 credit?
+      </h3>
+      <ul className="space-y-3">
+        <li className="flex items-start gap-3 text-sm" style={{ color: "var(--text-secondary)" }}>
+          <CheckIcon />
+          <span>Full AI-synlighetsanalys med detaljer</span>
+        </li>
+        <li className="flex items-start gap-3 text-sm" style={{ color: "var(--text-secondary)" }}>
+          <CheckIcon />
+          <span>AI-genererade förbättringsförslag</span>
+        </li>
+        <li className="flex items-start gap-3 text-sm" style={{ color: "var(--text-secondary)" }}>
+          <CheckIcon />
+          <span>PDF-export av rapporten</span>
+        </li>
+        <li className="flex items-start gap-3 text-sm" style={{ color: "var(--text-secondary)" }}>
+          <CheckIcon />
+          <span>Sparad i din analyshistorik</span>
+        </li>
+      </ul>
+      <p className="text-xs mt-4" style={{ color: "var(--text-muted)" }}>
+        Gratisanalys inkluderar: SEO-poäng, AI-synlighetspoäng (utan detaljer)
+      </p>
     </div>
   );
 }
@@ -110,7 +140,7 @@ export function PricingCard({ plan, currentPlan, email }: PricingCardProps) {
 function CheckIcon() {
   return (
     <svg
-      className="w-4 h-4 text-[var(--score-good)]"
+      className="w-4 h-4 mt-0.5 text-[var(--score-good)] flex-shrink-0"
       fill="none"
       stroke="currentColor"
       viewBox="0 0 24 24"

@@ -7,6 +7,7 @@ import { SeoChecklist } from "@/components/SeoChecklist";
 import { LlmReadinessScore } from "@/components/LlmReadinessScore";
 import { SuggestionList } from "@/components/SuggestionList";
 import { PdfExportButton } from "@/components/PdfExportButton";
+import { LockedContent } from "@/components/LockedContent";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -113,6 +114,7 @@ export default async function AnalysisPage({ params }: PageProps) {
                 createdAt: analysis.createdAt.toISOString(),
                 results: analysis.results,
               }}
+              isUnlocked={analysis.unlocked}
             />
           </div>
         </div>
@@ -221,7 +223,14 @@ export default async function AnalysisPage({ params }: PageProps) {
             title="AI-synlighet"
             description="Så uppfattar AI:n din sajt"
           >
-            {results.llmReadiness && <LlmReadinessScore result={results.llmReadiness} />}
+            <LockedContent
+              analysisId={analysis.id}
+              isUnlocked={analysis.unlocked}
+              title="AI-synlighetsdetaljer"
+              featureCount={4}
+            >
+              {results.llmReadiness && <LlmReadinessScore result={results.llmReadiness} />}
+            </LockedContent>
           </AnalysisCard>
         </div>
 
@@ -231,7 +240,14 @@ export default async function AnalysisPage({ params }: PageProps) {
             title="Förbättringsförslag"
             description="Rekommendationer baserat på analysen"
           >
-            <SuggestionList suggestions={suggestionsData.suggestions} />
+            <LockedContent
+              analysisId={analysis.id}
+              isUnlocked={analysis.unlocked}
+              title="AI-genererade förslag"
+              featureCount={suggestionsData.suggestions.length}
+            >
+              <SuggestionList suggestions={suggestionsData.suggestions} />
+            </LockedContent>
           </AnalysisCard>
         )}
 

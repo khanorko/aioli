@@ -10,8 +10,7 @@ import { Navigation } from "@/components/Navigation";
 import { AnimatedElement, StaggerContainer, StaggerItem } from "@/components/motion/AnimatedElement";
 import { HeroParallax } from "@/components/motion/ParallaxSection";
 import { SparkleEffect } from "@/components/decorative/SparkleEffect";
-import { PricingCard } from "@/components/PricingCard";
-import { UpgradeModal } from "@/components/UpgradeModal";
+import { CreditPackageCards, CreditsExplainer } from "@/components/PricingCard";
 
 // Lazy load 3D components (no SSR)
 const Scene3D = dynamic(
@@ -29,7 +28,6 @@ function HomeContent() {
   const { data: session, status } = useSession();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
 
   // Check for success/canceled query params from Stripe
@@ -65,12 +63,6 @@ function HomeContent() {
 
       const data = await response.json();
 
-      if (data.limitReached) {
-        setShowUpgradeModal(true);
-        setIsLoading(false);
-        return;
-      }
-
       if (!response.ok) {
         throw new Error(data.error || "Något gick fel");
       }
@@ -81,9 +73,6 @@ function HomeContent() {
       setIsLoading(false);
     }
   };
-
-  const userPlan = session?.user?.subscriptionStatus === "pro" ? "pro" : "free";
-  const userEmail = session?.user?.email || "";
 
   return (
     <div className="relative min-h-screen overflow-hidden">
@@ -259,29 +248,20 @@ function HomeContent() {
         <div id="priser" className="max-w-7xl mx-auto px-6 py-20">
           <AnimatedElement>
             <div className="text-center mb-12">
-              <h2 className="section-title text-3xl md:text-4xl mb-4">Välj din plan</h2>
+              <h2 className="section-title text-3xl md:text-4xl mb-4">Köp credits</h2>
               <p style={{ color: "var(--text-secondary)" }}>
-                Börja gratis och uppgradera när du behöver mer
+                Analysera gratis – lås upp detaljerna med credits
               </p>
             </div>
           </AnimatedElement>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-2xl mx-auto">
-            <AnimatedElement delay={0.1}>
-              <PricingCard
-                plan="free"
-                currentPlan={userPlan}
-                email={userEmail}
-              />
-            </AnimatedElement>
-            <AnimatedElement delay={0.2}>
-              <PricingCard
-                plan="pro"
-                currentPlan={userPlan}
-                email={userEmail}
-              />
-            </AnimatedElement>
-          </div>
+          <AnimatedElement delay={0.1}>
+            <CreditPackageCards />
+          </AnimatedElement>
+
+          <AnimatedElement delay={0.2}>
+            <CreditsExplainer />
+          </AnimatedElement>
         </div>
 
         {/* Footer */}
@@ -302,13 +282,6 @@ function HomeContent() {
           </div>
         </footer>
       </div>
-
-      {/* Upgrade Modal */}
-      <UpgradeModal
-        isOpen={showUpgradeModal}
-        onClose={() => setShowUpgradeModal(false)}
-        email={userEmail}
-      />
     </div>
   );
 }

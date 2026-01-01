@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useSession } from "next-auth/react";
 import jsPDF from "jspdf";
 
 interface PdfExportButtonProps {
@@ -12,26 +11,24 @@ interface PdfExportButtonProps {
     createdAt: string;
     results: string | null;
   };
+  isUnlocked?: boolean;
 }
 
-export function PdfExportButton({ analysisData }: PdfExportButtonProps) {
-  const { data: session } = useSession();
+export function PdfExportButton({ analysisData, isUnlocked = false }: PdfExportButtonProps) {
   const [isExporting, setIsExporting] = useState(false);
 
-  const isPro = session?.user?.subscriptionStatus === "pro";
-
-  if (!isPro) {
+  if (!isUnlocked) {
     return (
       <button
         disabled
         className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm opacity-50 cursor-not-allowed"
         style={{ background: "var(--bg-secondary)", color: "var(--text-muted)" }}
-        title="PDF-export är endast tillgängligt för Pro-användare"
+        title="Lås upp analysen för att kunna exportera PDF"
       >
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
         </svg>
-        Exportera PDF (Pro)
+        Exportera PDF
       </button>
     );
   }

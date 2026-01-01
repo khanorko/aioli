@@ -32,10 +32,10 @@ export function Navigation() {
           {/* Navigation Links */}
           <nav className="hidden md:flex items-center gap-6">
             <Link href="/#priser" className="nav-link text-sm">
-              Priser
+              Köp credits
             </Link>
 
-            {session?.user?.subscriptionStatus === "pro" && (
+            {session && (
               <Link href="/history" className="nav-link text-sm">
                 Historik
               </Link>
@@ -45,11 +45,9 @@ export function Navigation() {
               <div className="w-8 h-8 rounded-full bg-[var(--bg-secondary)] animate-pulse" />
             ) : session ? (
               <div className="flex items-center gap-3">
-                {session.user?.subscriptionStatus === "pro" && (
-                  <span className="text-xs font-medium px-2 py-1 rounded-full bg-[var(--plasma-blue)]/20 text-[var(--plasma-blue)]">
-                    Pro
-                  </span>
-                )}
+                <span className="text-xs font-medium px-2 py-1 rounded-full bg-[var(--plasma-blue)]/20 text-[var(--plasma-blue)]">
+                  {session.user?.credits ?? 0} credits
+                </span>
                 {session.user?.image && (
                   <Image
                     src={session.user.image}

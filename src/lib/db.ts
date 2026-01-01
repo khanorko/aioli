@@ -29,6 +29,7 @@ export async function initDb() {
       id TEXT PRIMARY KEY,
       url TEXT NOT NULL,
       user_id TEXT,
+      unlocked INTEGER DEFAULT 0,
       seo_score INTEGER,
       llm_score INTEGER,
       results TEXT,
@@ -39,9 +40,29 @@ export async function initDb() {
     )
   `);
 
-  // Add user_id column if it doesn't exist (migration for existing tables)
+  await db.execute(`
+    CREATE TABLE IF NOT EXISTS users (
+      id TEXT PRIMARY KEY,
+      email TEXT UNIQUE NOT NULL,
+      stripe_customer_id TEXT,
+      credits INTEGER DEFAULT 0,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
+  // Migrations for existing tables
   try {
     await db.execute(`ALTER TABLE analyses ADD COLUMN user_id TEXT`);
+  } catch {
+    // Column already exists
+  }
+  try {
+    await db.execute(`ALTER TABLE analyses ADD COLUMN unlocked INTEGER DEFAULT 0`);
+  } catch {
+    // Column already exists
+  }
+  try {
+    await db.execute(`ALTER TABLE users ADD COLUMN credits INTEGER DEFAULT 0`);
   } catch {
     // Column already exists
   }
@@ -125,6 +146,7 @@ export async function getAnalysis(id: string) {
     id: row.id as string,
     url: row.url as string,
     userId: row.user_id as string | null,
+    unlocked: (row.unlocked as number) === 1,
     seoScore: row.seo_score as number | null,
     llmScore: row.llm_score as number | null,
     results: row.results as string | null,
@@ -133,6 +155,14 @@ export async function getAnalysis(id: string) {
     createdAt: new Date(row.created_at as string),
     updatedAt: new Date(row.updated_at as string),
   };
+}
+
+export async function unlockAnalysis(analysisId: string): Promise<void> {
+  const db = getDb();
+  await db.execute({
+    sql: `UPDATE analyses SET unlocked = 1 WHERE id = ?`,
+    args: [analysisId],
+  });
 }
 
 export async function getUserAnalyses(userId: string, limit = 50) {
@@ -162,10 +192,7 @@ export interface User {
   id: string;
   email: string;
   stripeCustomerId: string | null;
-  subscriptionStatus: "free" | "pro" | "canceled";
-  subscriptionId: string | null;
-  analysesThisMonth: number;
-  analysesResetDate: string | null;
+  credits: number;
   createdAt: Date;
 }
 
@@ -174,21 +201,18 @@ export async function createUser(email: string): Promise<User> {
   const db = getDb();
   const id = generateId();
   const now = new Date();
-  const resetDate = getNextMonthReset();
 
+  // New users get 1 free credit
   await db.execute({
-    sql: `INSERT INTO users (id, email, analyses_reset_date) VALUES (?, ?, ?)`,
-    args: [id, email, resetDate],
+    sql: `INSERT INTO users (id, email, credits) VALUES (?, ?, 1)`,
+    args: [id, email],
   });
 
   return {
     id,
     email,
     stripeCustomerId: null,
-    subscriptionStatus: "free",
-    subscriptionId: null,
-    analysesThisMonth: 0,
-    analysesResetDate: resetDate,
+    credits: 1,
     createdAt: now,
   };
 }
@@ -236,10 +260,7 @@ export async function updateUser(
   id: string,
   data: {
     stripeCustomerId?: string;
-    subscriptionStatus?: "free" | "pro" | "canceled";
-    subscriptionId?: string | null;
-    analysesThisMonth?: number;
-    analysesResetDate?: string;
+    credits?: number;
   }
 ) {
   const db = getDb();
@@ -251,21 +272,9 @@ export async function updateUser(
     updates.push("stripe_customer_id = ?");
     args.push(data.stripeCustomerId);
   }
-  if (data.subscriptionStatus !== undefined) {
-    updates.push("subscription_status = ?");
-    args.push(data.subscriptionStatus);
-  }
-  if (data.subscriptionId !== undefined) {
-    updates.push("subscription_id = ?");
-    args.push(data.subscriptionId);
-  }
-  if (data.analysesThisMonth !== undefined) {
-    updates.push("analyses_this_month = ?");
-    args.push(data.analysesThisMonth);
-  }
-  if (data.analysesResetDate !== undefined) {
-    updates.push("analyses_reset_date = ?");
-    args.push(data.analysesResetDate);
+  if (data.credits !== undefined) {
+    updates.push("credits = ?");
+    args.push(data.credits);
   }
 
   if (updates.length === 0) return;
@@ -278,46 +287,28 @@ export async function updateUser(
   });
 }
 
-export async function incrementAnalysisCount(userId: string): Promise<void> {
+export async function addCredits(userId: string, amount: number): Promise<void> {
+  const db = getDb();
+  await db.execute({
+    sql: `UPDATE users SET credits = credits + ? WHERE id = ?`,
+    args: [amount, userId],
+  });
+}
+
+export async function consumeCredit(userId: string): Promise<boolean> {
   const db = getDb();
   const user = await getUserById(userId);
 
-  if (!user) return;
-
-  // Check if we need to reset the monthly count
-  if (user.analysesResetDate && new Date(user.analysesResetDate) <= new Date()) {
-    await updateUser(userId, {
-      analysesThisMonth: 1,
-      analysesResetDate: getNextMonthReset(),
-    });
-  } else {
-    await db.execute({
-      sql: `UPDATE users SET analyses_this_month = analyses_this_month + 1 WHERE id = ?`,
-      args: [userId],
-    });
-  }
-}
-
-export async function canUserAnalyze(userId: string): Promise<{ allowed: boolean; remaining: number }> {
-  const user = await getUserById(userId);
-
-  if (!user) {
-    return { allowed: false, remaining: 0 };
+  if (!user || user.credits < 1) {
+    return false;
   }
 
-  // Pro users have unlimited analyses
-  if (user.subscriptionStatus === "pro") {
-    return { allowed: true, remaining: -1 };
-  }
+  await db.execute({
+    sql: `UPDATE users SET credits = credits - 1 WHERE id = ?`,
+    args: [userId],
+  });
 
-  // Check if we need to reset the monthly count
-  let analysesThisMonth = user.analysesThisMonth;
-  if (user.analysesResetDate && new Date(user.analysesResetDate) <= new Date()) {
-    analysesThisMonth = 0;
-  }
-
-  const remaining = Math.max(0, 3 - analysesThisMonth);
-  return { allowed: remaining > 0, remaining };
+  return true;
 }
 
 // Helper functions
@@ -326,16 +317,7 @@ function mapRowToUser(row: Record<string, unknown>): User {
     id: row.id as string,
     email: row.email as string,
     stripeCustomerId: row.stripe_customer_id as string | null,
-    subscriptionStatus: (row.subscription_status as "free" | "pro" | "canceled") || "free",
-    subscriptionId: row.subscription_id as string | null,
-    analysesThisMonth: (row.analyses_this_month as number) || 0,
-    analysesResetDate: row.analyses_reset_date as string | null,
+    credits: (row.credits as number) || 0,
     createdAt: new Date(row.created_at as string),
   };
-}
-
-function getNextMonthReset(): string {
-  const now = new Date();
-  const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
-  return nextMonth.toISOString();
 }

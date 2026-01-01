@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
-import { getUserByStripeCustomerId, updateUser } from "@/lib/db";
+import { getUserById, addCredits } from "@/lib/db";
 import Stripe from "stripe";
 
 export async function POST(request: NextRequest) {
@@ -35,42 +35,38 @@ export async function POST(request: NextRequest) {
       case "checkout.session.completed": {
         const session = event.data.object as Stripe.Checkout.Session;
 
-        if (session.customer && session.subscription) {
-          const user = await getUserByStripeCustomerId(session.customer as string);
-          if (user) {
-            await updateUser(user.id, {
-              subscriptionStatus: "pro",
-              subscriptionId: session.subscription as string,
-            });
+        // Handle one-time credit purchase
+        if (session.mode === "payment" && session.payment_status === "paid") {
+          const userId = session.metadata?.userId;
+          const credits = parseInt(session.metadata?.credits || "0", 10);
+
+          if (userId && credits > 0) {
+            // Verify user exists
+            const user = await getUserById(userId);
+            if (user) {
+              await addCredits(userId, credits);
+              console.log(`Added ${credits} credits to user ${userId}`);
+            } else {
+              console.error(`User not found: ${userId}`);
+            }
+          } else {
+            console.error("Missing userId or credits in session metadata");
           }
         }
         break;
       }
 
-      case "customer.subscription.updated": {
-        const subscription = event.data.object as Stripe.Subscription;
-        const user = await getUserByStripeCustomerId(subscription.customer as string);
-
-        if (user) {
-          const status = subscription.status === "active" ? "pro" : "canceled";
-          await updateUser(user.id, {
-            subscriptionStatus: status,
-            subscriptionId: subscription.id,
-          });
-        }
+      case "payment_intent.succeeded": {
+        // Optional: Log successful payment
+        const paymentIntent = event.data.object as Stripe.PaymentIntent;
+        console.log(`Payment succeeded: ${paymentIntent.id}`);
         break;
       }
 
-      case "customer.subscription.deleted": {
-        const subscription = event.data.object as Stripe.Subscription;
-        const user = await getUserByStripeCustomerId(subscription.customer as string);
-
-        if (user) {
-          await updateUser(user.id, {
-            subscriptionStatus: "free",
-            subscriptionId: null,
-          });
-        }
+      case "payment_intent.payment_failed": {
+        // Log failed payment
+        const paymentIntent = event.data.object as Stripe.PaymentIntent;
+        console.error(`Payment failed: ${paymentIntent.id}`);
         break;
       }
 
