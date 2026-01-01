@@ -31,6 +31,7 @@ export function CreditPackageCards() {
 function CreditPackageCard({ package: pkg }: { package: CreditPackage }) {
   const { data: session } = useSession();
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handlePurchase = async () => {
     if (!session?.user?.email) {
@@ -39,33 +40,39 @@ function CreditPackageCard({ package: pkg }: { package: CreditPackage }) {
     }
 
     setIsLoading(true);
+    setError("");
     try {
       const response = await fetch("/api/stripe/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           packageId: pkg.id,
-          credits: pkg.credits,
-          price: pkg.price,
         }),
       });
 
       const data = await response.json();
 
+      if (!response.ok) {
+        throw new Error(data.error || "Något gick fel");
+      }
+
       if (data.url) {
         window.location.href = data.url;
+      } else {
+        throw new Error("Ingen checkout-URL mottagen");
       }
-    } catch (error) {
-      console.error("Purchase error:", error);
+    } catch (err) {
+      console.error("Purchase error:", err);
+      setError(err instanceof Error ? err.message : "Kunde inte starta köp");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className={`card p-6 relative ${pkg.popular ? "ring-2 ring-[var(--plasma-blue)]" : ""}`}>
+    <div className={`card p-6 relative overflow-visible ${pkg.popular ? "ring-2 ring-[var(--plasma-blue)] mt-4" : ""}`}>
       {pkg.popular && (
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[var(--plasma-blue)] text-white text-xs font-semibold px-3 py-1 rounded-full whitespace-nowrap">
+        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[var(--plasma-blue)] text-white text-xs font-semibold px-3 py-1 rounded-full whitespace-nowrap z-10">
           Populärast
         </div>
       )}
@@ -88,6 +95,12 @@ function CreditPackageCard({ package: pkg }: { package: CreditPackage }) {
       <p className="text-xs mb-6" style={{ color: "var(--text-muted)" }}>
         {pkg.pricePerCredit} kr per credit
       </p>
+
+      {error && (
+        <p className="text-xs mb-3 text-center" style={{ color: "var(--score-poor)" }}>
+          {error}
+        </p>
+      )}
 
       <button
         onClick={handlePurchase}
