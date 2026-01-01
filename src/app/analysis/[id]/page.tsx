@@ -120,6 +120,7 @@ export default async function AnalysisPage({ params }: PageProps) {
                 llmScore: analysis.llmScore,
                 createdAt: analysis.createdAt.toISOString(),
                 results: analysis.results,
+                suggestions: analysis.suggestions,
               }}
               isUnlocked={analysis.unlocked || isAdmin}
             />
