@@ -39,12 +39,12 @@ function normalizeUrl(url: string, baseUrl: string): string {
 }
 
 /**
- * Check if URL belongs to the same domain
+ * Check if URL belongs to the same domain (handles www/non-www)
  */
 function isSameDomain(url: string, baseUrl: string): boolean {
   try {
-    const urlHost = new URL(url).host;
-    const baseHost = new URL(baseUrl).host;
+    const urlHost = new URL(url).host.replace(/^www\./, "");
+    const baseHost = new URL(baseUrl).host.replace(/^www\./, "");
     return urlHost === baseHost;
   } catch {
     return false;
@@ -55,8 +55,6 @@ function isSameDomain(url: string, baseUrl: string): boolean {
  * Filter and prioritize pages
  */
 function filterAndPrioritizePages(pages: string[], baseUrl: string): string[] {
-  const dominated = extractDomain(baseUrl);
-
   // Filter: same domain, no fragments, no query params (usually), html-like
   const filtered = pages.filter((url) => {
     if (!isSameDomain(url, baseUrl)) return false;
@@ -69,6 +67,7 @@ function filterAndPrioritizePages(pages: string[], baseUrl: string): string[] {
     if (lower.includes("/feed")) return false;
     if (lower.includes("/tag/")) return false;
     if (lower.includes("/author/")) return false;
+    if (lower.includes("/sitemaps/")) return false; // Skip sitemap URLs
     if (lower.match(/\.(pdf|jpg|jpeg|png|gif|svg|css|js|xml|json)$/)) return false;
 
     return true;
@@ -95,45 +94,80 @@ function filterAndPrioritizePages(pages: string[], baseUrl: string): string[] {
 }
 
 /**
- * Parse sitemap XML content
+ * Check if XML is a sitemap index
  */
-function parseSitemapXml(xml: string, baseUrl: string): string[] {
-  const urls: string[] = [];
+function isSitemapIndex(xml: string): boolean {
+  return xml.includes("<sitemapindex") || xml.includes("<sitemap>");
+}
 
-  // Match <loc> tags in sitemap
-  const locRegex = /<loc>([^<]+)<\/loc>/gi;
+/**
+ * Parse sitemap index to get nested sitemap URLs
+ */
+function parseNestedSitemapUrls(xml: string): string[] {
+  const sitemaps: string[] = [];
+  const sitemapRegex = /<sitemap>[\s\S]*?<loc>([^<]+)<\/loc>[\s\S]*?<\/sitemap>/gi;
   let match;
 
-  while ((match = locRegex.exec(xml)) !== null) {
+  while ((match = sitemapRegex.exec(xml)) !== null) {
+    sitemaps.push(match[1].trim());
+  }
+
+  return sitemaps;
+}
+
+/**
+ * Parse sitemap XML content for page URLs
+ */
+function parseSitemapXml(xml: string): string[] {
+  const urls: string[] = [];
+
+  // Match <url><loc> tags (not <sitemap><loc>)
+  const urlRegex = /<url>[\s\S]*?<loc>([^<]+)<\/loc>[\s\S]*?<\/url>/gi;
+  let match;
+
+  while ((match = urlRegex.exec(xml)) !== null) {
     const url = match[1].trim();
-    if (url) {
+    if (url && !url.endsWith(".xml")) {
       urls.push(url);
     }
   }
 
-  // Also check for sitemap index (nested sitemaps)
-  const sitemapRegex = /<sitemap>[\s\S]*?<loc>([^<]+)<\/loc>[\s\S]*?<\/sitemap>/gi;
-  const nestedSitemaps: string[] = [];
-
-  while ((match = sitemapRegex.exec(xml)) !== null) {
-    nestedSitemaps.push(match[1].trim());
+  // If no <url> tags found, try simple <loc> tags (but filter out .xml files)
+  if (urls.length === 0) {
+    const locRegex = /<loc>([^<]+)<\/loc>/gi;
+    while ((match = locRegex.exec(xml)) !== null) {
+      const url = match[1].trim();
+      if (url && !url.endsWith(".xml")) {
+        urls.push(url);
+      }
+    }
   }
 
   return urls;
 }
 
 /**
- * Fetch and parse sitemap.xml
+ * Fetch and parse sitemap.xml (handles sitemap indexes)
  */
 async function fetchSitemap(baseUrl: string): Promise<string[]> {
   const domain = extractDomain(baseUrl);
+
+  // Try both with and without www
+  const domainNoWww = domain.replace("://www.", "://");
+  const domainWithWww = domain.includes("://www.") ? domain : domain.replace("://", "://www.");
+
   const sitemapUrls = [
     `${domain}/sitemap.xml`,
+    `${domainWithWww}/sitemap.xml`,
+    `${domainNoWww}/sitemap.xml`,
     `${domain}/sitemap_index.xml`,
     `${domain}/sitemap-index.xml`,
   ];
 
-  for (const sitemapUrl of sitemapUrls) {
+  // Remove duplicates
+  const uniqueSitemapUrls = [...new Set(sitemapUrls)];
+
+  for (const sitemapUrl of uniqueSitemapUrls) {
     try {
       const response = await fetch(sitemapUrl, {
         headers: {
@@ -144,7 +178,51 @@ async function fetchSitemap(baseUrl: string): Promise<string[]> {
 
       if (response.ok) {
         const xml = await response.text();
-        const urls = parseSitemapXml(xml, baseUrl);
+
+        // Check if this is a sitemap index
+        if (isSitemapIndex(xml)) {
+          const nestedSitemaps = parseNestedSitemapUrls(xml);
+
+          if (nestedSitemaps.length > 0) {
+            // For news sites, try to get the most recent sitemap (usually at the end)
+            // Also try a few others to get diverse pages
+            const sitemapsToFetch = [
+              nestedSitemaps[nestedSitemaps.length - 1], // Most recent
+              nestedSitemaps[0], // First (might be sections/categories)
+            ].filter((v, i, a) => v && a.indexOf(v) === i); // Unique, non-null
+
+            const allUrls: string[] = [];
+
+            for (const nestedUrl of sitemapsToFetch) {
+              try {
+                const nestedResponse = await fetch(nestedUrl, {
+                  headers: {
+                    "User-Agent": "AIoli-Bot/1.0 (SEO Analysis Tool)",
+                  },
+                  signal: AbortSignal.timeout(10000),
+                });
+
+                if (nestedResponse.ok) {
+                  const nestedXml = await nestedResponse.text();
+                  const urls = parseSitemapXml(nestedXml);
+                  allUrls.push(...urls);
+
+                  // If we have enough URLs, stop fetching more sitemaps
+                  if (allUrls.length >= 50) break;
+                }
+              } catch {
+                continue;
+              }
+            }
+
+            if (allUrls.length > 0) {
+              return allUrls;
+            }
+          }
+        }
+
+        // Regular sitemap - parse directly
+        const urls = parseSitemapXml(xml);
         if (urls.length > 0) {
           return urls;
         }
@@ -168,12 +246,15 @@ async function crawlHomepage(baseUrl: string): Promise<string[]> {
         "User-Agent": "AIoli-Bot/1.0 (SEO Analysis Tool)",
       },
       signal: AbortSignal.timeout(10000),
+      redirect: "follow",
     });
 
     if (!response.ok) return [];
 
+    // Use the final URL after redirects
+    const finalUrl = response.url || baseUrl;
     const html = await response.text();
-    const urls: string[] = [baseUrl];
+    const urls: string[] = [finalUrl];
 
     // Extract href links
     const hrefRegex = /href=["']([^"']+)["']/gi;
@@ -181,9 +262,9 @@ async function crawlHomepage(baseUrl: string): Promise<string[]> {
 
     while ((match = hrefRegex.exec(html)) !== null) {
       const href = match[1];
-      if (href && !href.startsWith("#") && !href.startsWith("mailto:") && !href.startsWith("tel:")) {
-        const normalizedUrl = normalizeUrl(href, baseUrl);
-        if (isSameDomain(normalizedUrl, baseUrl)) {
+      if (href && !href.startsWith("#") && !href.startsWith("mailto:") && !href.startsWith("tel:") && !href.startsWith("javascript:")) {
+        const normalizedUrl = normalizeUrl(href, finalUrl);
+        if (isSameDomain(normalizedUrl, finalUrl)) {
           urls.push(normalizedUrl);
         }
       }
@@ -206,10 +287,13 @@ export async function discoverPages(url: string, maxPages: number = 10): Promise
     let pages = await fetchSitemap(baseUrl);
     let source: "sitemap" | "crawl" | "single" = "sitemap";
 
-    // Fallback to crawling if no sitemap
-    if (pages.length === 0) {
-      pages = await crawlHomepage(baseUrl);
-      source = pages.length > 1 ? "crawl" : "single";
+    // Fallback to crawling if no sitemap or only got a few pages
+    if (pages.length < 3) {
+      const crawledPages = await crawlHomepage(baseUrl);
+      if (crawledPages.length > pages.length) {
+        pages = crawledPages;
+        source = pages.length > 1 ? "crawl" : "single";
+      }
     }
 
     // Filter and prioritize
@@ -217,7 +301,17 @@ export async function discoverPages(url: string, maxPages: number = 10): Promise
 
     // Ensure homepage is included
     const domain = extractDomain(baseUrl);
-    if (!filteredPages.some(p => new URL(p).pathname === "/" || new URL(p).pathname === "")) {
+    const hasHomepage = filteredPages.some(p => {
+      try {
+        const pathname = new URL(p).pathname;
+        return pathname === "/" || pathname === "";
+      } catch {
+        return false;
+      }
+    });
+
+    if (!hasHomepage) {
+      // Try to add the actual homepage (might be with www)
       filteredPages.unshift(domain);
     }
 
@@ -226,7 +320,7 @@ export async function discoverPages(url: string, maxPages: number = 10): Promise
 
     return {
       pages: limitedPages,
-      source,
+      source: limitedPages.length > 1 ? source : "single",
     };
   } catch (error) {
     return {
