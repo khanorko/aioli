@@ -29,6 +29,7 @@ export async function initDb() {
       id TEXT PRIMARY KEY,
       url TEXT NOT NULL,
       user_id TEXT,
+      site_scan_id TEXT,
       unlocked INTEGER DEFAULT 0,
       seo_score INTEGER,
       llm_score INTEGER,
@@ -50,6 +51,22 @@ export async function initDb() {
     )
   `);
 
+  await db.execute(`
+    CREATE TABLE IF NOT EXISTS site_scans (
+      id TEXT PRIMARY KEY,
+      domain TEXT NOT NULL,
+      user_id TEXT,
+      unlocked INTEGER DEFAULT 0,
+      total_pages INTEGER DEFAULT 0,
+      completed_pages INTEGER DEFAULT 0,
+      avg_seo_score INTEGER,
+      avg_llm_score INTEGER,
+      status TEXT DEFAULT 'processing',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
   // Migrations for existing tables
   try {
     await db.execute(`ALTER TABLE analyses ADD COLUMN user_id TEXT`);
@@ -58,6 +75,11 @@ export async function initDb() {
   }
   try {
     await db.execute(`ALTER TABLE analyses ADD COLUMN unlocked INTEGER DEFAULT 0`);
+  } catch {
+    // Column already exists
+  }
+  try {
+    await db.execute(`ALTER TABLE analyses ADD COLUMN site_scan_id TEXT`);
   } catch {
     // Column already exists
   }
@@ -74,16 +96,16 @@ export function generateId(): string {
 }
 
 // Analysis CRUD operations
-export async function createAnalysis(url: string, userId?: string) {
+export async function createAnalysis(url: string, userId?: string, siteScanId?: string) {
   const db = getDb();
   const id = generateId();
 
   await db.execute({
-    sql: `INSERT INTO analyses (id, url, user_id, status) VALUES (?, ?, ?, 'processing')`,
-    args: [id, url, userId || null],
+    sql: `INSERT INTO analyses (id, url, user_id, site_scan_id, status) VALUES (?, ?, ?, ?, 'processing')`,
+    args: [id, url, userId || null, siteScanId || null],
   });
 
-  return { id, url, userId, status: "processing" };
+  return { id, url, userId, siteScanId, status: "processing" };
 }
 
 export async function updateAnalysis(
@@ -309,6 +331,158 @@ export async function consumeCredit(userId: string): Promise<boolean> {
   });
 
   return true;
+}
+
+// Site Scan types
+export interface SiteScan {
+  id: string;
+  domain: string;
+  userId: string | null;
+  unlocked: boolean;
+  totalPages: number;
+  completedPages: number;
+  avgSeoScore: number | null;
+  avgLlmScore: number | null;
+  status: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+// Site Scan CRUD operations
+export async function createSiteScan(domain: string, userId: string, totalPages: number): Promise<SiteScan> {
+  const db = getDb();
+  const id = generateId();
+  const now = new Date();
+
+  await db.execute({
+    sql: `INSERT INTO site_scans (id, domain, user_id, total_pages, status) VALUES (?, ?, ?, ?, 'processing')`,
+    args: [id, domain, userId, totalPages],
+  });
+
+  return {
+    id,
+    domain,
+    userId,
+    unlocked: false,
+    totalPages,
+    completedPages: 0,
+    avgSeoScore: null,
+    avgLlmScore: null,
+    status: "processing",
+    createdAt: now,
+    updatedAt: now,
+  };
+}
+
+export async function getSiteScan(id: string): Promise<SiteScan | null> {
+  const db = getDb();
+
+  const result = await db.execute({
+    sql: `SELECT * FROM site_scans WHERE id = ?`,
+    args: [id],
+  });
+
+  if (result.rows.length === 0) return null;
+
+  return mapRowToSiteScan(result.rows[0]);
+}
+
+export async function updateSiteScan(
+  id: string,
+  data: {
+    completedPages?: number;
+    avgSeoScore?: number;
+    avgLlmScore?: number;
+    status?: string;
+    unlocked?: boolean;
+  }
+): Promise<void> {
+  const db = getDb();
+
+  const updates: string[] = [];
+  const args: (string | number)[] = [];
+
+  if (data.completedPages !== undefined) {
+    updates.push("completed_pages = ?");
+    args.push(data.completedPages);
+  }
+  if (data.avgSeoScore !== undefined) {
+    updates.push("avg_seo_score = ?");
+    args.push(data.avgSeoScore);
+  }
+  if (data.avgLlmScore !== undefined) {
+    updates.push("avg_llm_score = ?");
+    args.push(data.avgLlmScore);
+  }
+  if (data.status !== undefined) {
+    updates.push("status = ?");
+    args.push(data.status);
+  }
+  if (data.unlocked !== undefined) {
+    updates.push("unlocked = ?");
+    args.push(data.unlocked ? 1 : 0);
+  }
+
+  if (updates.length === 0) return;
+
+  updates.push("updated_at = CURRENT_TIMESTAMP");
+  args.push(id);
+
+  await db.execute({
+    sql: `UPDATE site_scans SET ${updates.join(", ")} WHERE id = ?`,
+    args,
+  });
+}
+
+export async function getSiteScanAnalyses(siteScanId: string) {
+  const db = getDb();
+
+  const result = await db.execute({
+    sql: `SELECT id, url, seo_score, llm_score, status, created_at
+          FROM analyses
+          WHERE site_scan_id = ?
+          ORDER BY created_at ASC`,
+    args: [siteScanId],
+  });
+
+  return result.rows.map((row) => ({
+    id: row.id as string,
+    url: row.url as string,
+    seoScore: row.seo_score as number | null,
+    llmScore: row.llm_score as number | null,
+    status: row.status as string,
+    createdAt: new Date(row.created_at as string),
+  }));
+}
+
+export async function getUserSiteScans(userId: string, limit = 20) {
+  const db = getDb();
+
+  const result = await db.execute({
+    sql: `SELECT * FROM site_scans
+          WHERE user_id = ? AND status = 'completed'
+          ORDER BY created_at DESC
+          LIMIT ?`,
+    args: [userId, limit],
+  });
+
+  return result.rows.map((row) => mapRowToSiteScan(row));
+}
+
+function mapRowToSiteScan(row: Record<string, unknown>): SiteScan {
+  return {
+    id: row.id as string,
+    domain: row.domain as string,
+    userId: row.user_id as string | null,
+    unlocked: (row.unlocked as number) === 1,
+    totalPages: (row.total_pages as number) || 0,
+    completedPages: (row.completed_pages as number) || 0,
+    avgSeoScore: row.avg_seo_score as number | null,
+    avgLlmScore: row.avg_llm_score as number | null,
+    status: row.status as string,
+    createdAt: new Date(row.created_at as string),
+    updatedAt: new Date(row.updated_at as string),
+  };
 }
 
 // Admin emails that bypass credit checks

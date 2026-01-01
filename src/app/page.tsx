@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useSession, signIn } from "next-auth/react";
 import Image from "next/image";
 import dynamic from "next/dynamic";
-import { UrlInput } from "@/components/UrlInput";
+import { ScanSelector } from "@/components/ScanSelector";
 import { Navigation } from "@/components/Navigation";
 import { AnimatedElement, StaggerContainer, StaggerItem } from "@/components/motion/AnimatedElement";
 import { HeroParallax } from "@/components/motion/ParallaxSection";
@@ -47,7 +47,7 @@ function HomeContent() {
     }
   }, [searchParams, t.success.upgraded]);
 
-  const handleAnalyze = async (url: string) => {
+  const handleAnalyze = async (urls: string[], scanType: "single" | "site") => {
     if (!session?.user?.email) {
       signIn("google");
       return;
@@ -60,16 +60,26 @@ function HomeContent() {
       const response = await fetch("/api/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url }),
+        body: JSON.stringify({ urls, scanType }),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
+        if (data.needsCredits) {
+          router.push("/#priser");
+          setIsLoading(false);
+          return;
+        }
         throw new Error(data.error || t.errors.generic);
       }
 
-      router.push(`/analysis/${data.id}`);
+      // Redirect based on scan type
+      if (data.type === "site") {
+        router.push(`/scan/${data.id}`);
+      } else {
+        router.push(`/analysis/${data.id}`);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : t.errors.generic);
       setIsLoading(false);
@@ -137,7 +147,11 @@ function HomeContent() {
               {status === "loading" ? (
                 <div className="w-full max-w-2xl h-16 rounded-xl bg-[var(--bg-secondary)] animate-pulse" />
               ) : session ? (
-                <UrlInput onSubmit={handleAnalyze} isLoading={isLoading} />
+                <ScanSelector
+                  onAnalyze={handleAnalyze}
+                  isLoading={isLoading}
+                  userCredits={session.user.credits || 0}
+                />
               ) : (
                 <button
                   onClick={() => signIn("google")}
