@@ -60,6 +60,7 @@ export function AnimatedElement({
         ease: [0.4, 0, 0.2, 1],
       }}
       className={className}
+      style={{ willChange: "transform, opacity" }}
     >
       {children}
     </motion.div>
@@ -116,6 +117,7 @@ export function StaggerItem({ children, className }: StaggerItemProps) {
       }}
       transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
       className={className}
+      style={{ willChange: "transform, opacity" }}
     >
       {children}
     </motion.div>

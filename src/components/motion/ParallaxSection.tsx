@@ -42,30 +42,17 @@ export function ParallaxSection({
   );
 }
 
-// Hero parallax with subtle effect (no opacity fade to keep inputs visible)
+// Hero parallax - simplified for smooth scrolling
 interface HeroParallaxProps {
   children: ReactNode;
   className?: string;
 }
 
 export function HeroParallax({ children, className }: HeroParallaxProps) {
-  const ref = useRef(null);
-
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start start", "end start"],
-  });
-
-  // Subtle parallax only - no opacity or scale changes
-  const y = useTransform(scrollYProgress, [0, 1], [0, 50]);
-
+  // Disabled parallax for smoother scrolling - just render children
   return (
-    <motion.div
-      ref={ref}
-      style={{ y }}
-      className={className}
-    >
+    <div className={className}>
       {children}
-    </motion.div>
+    </div>
   );
 }

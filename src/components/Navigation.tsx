@@ -2,11 +2,23 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter, usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { signIn, signOut, useSession } from "next-auth/react";
 
 export function Navigation() {
   const { data: session, status } = useSession();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const handlePricingClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (pathname !== "/") {
+      router.push("/#priser");
+    } else {
+      document.getElementById("priser")?.scrollIntoView({ behavior: "smooth" });
+    }
+  };
 
   return (
     <motion.header
@@ -31,9 +43,9 @@ export function Navigation() {
 
           {/* Navigation Links */}
           <nav className="hidden md:flex items-center gap-6">
-            <Link href="/#priser" className="nav-link text-sm">
+            <a href="/#priser" onClick={handlePricingClick} className="nav-link text-sm cursor-pointer">
               Köp credits
-            </Link>
+            </a>
 
             {session && (
               <Link href="/history" className="nav-link text-sm">
