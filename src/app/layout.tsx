@@ -20,8 +20,8 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "AIoli - AI-stödd SEO-analys",
-  description: "Analysera din webbplats för traditionell SEO och LLM-readiness. Se hur väl rustad din sajt är för både sökmotorer och AI-assistenter.",
+  title: "AIoli - AI-powered SEO Analysis",
+  description: "Analyze your website for traditional SEO and AI visibility. See how well your site is prepared for both search engines and AI assistants.",
 };
 
 export default function RootLayout({
@@ -30,7 +30,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="sv">
+    <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${spaceGrotesk.variable} antialiased`}
       >

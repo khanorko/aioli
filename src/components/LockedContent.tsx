@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { useLanguage } from "@/lib/LanguageContext";
 
 interface LockedContentProps {
   children: React.ReactNode;
@@ -16,12 +18,16 @@ export function LockedContent({
   children,
   analysisId,
   isUnlocked,
-  title = "Pro-innehåll",
+  title,
   featureCount
 }: LockedContentProps) {
   const router = useRouter();
+  const { update: updateSession } = useSession();
+  const { t } = useLanguage();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const displayTitle = title || t.locked.proContent;
 
   if (isUnlocked) {
     return <>{children}</>;
@@ -47,13 +53,16 @@ export function LockedContent({
       }
 
       if (!response.ok) {
-        throw new Error(data.error || "Något gick fel");
+        throw new Error(data.error || t.locked.error);
       }
+
+      // Update session to refresh credits in navbar
+      await updateSession();
 
       // Refresh the page to show unlocked content
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Något gick fel");
+      setError(err instanceof Error ? err.message : t.locked.error);
     } finally {
       setIsLoading(false);
     }
@@ -75,12 +84,12 @@ export function LockedContent({
             </svg>
           </div>
           <h3 className="font-semibold text-lg mb-2" style={{ color: "var(--text-primary)" }}>
-            {title}
+            {displayTitle}
           </h3>
           <p className="text-sm mb-4" style={{ color: "var(--text-muted)" }}>
             {featureCount
-              ? `${featureCount} insikter tillgängliga`
-              : "Lås upp för att se detaljerna"
+              ? `${featureCount} ${t.locked.insightsAvailable}`
+              : t.locked.unlockToSee
             }
           </p>
 
@@ -95,7 +104,7 @@ export function LockedContent({
             disabled={isLoading}
             className="btn-primary px-6 py-2 text-sm mb-2 w-full"
           >
-            {isLoading ? "Låser upp..." : "Lås upp (1 credit)"}
+            {isLoading ? t.locked.unlocking : t.locked.unlockButton}
           </button>
 
           <Link
@@ -103,7 +112,7 @@ export function LockedContent({
             className="text-xs block"
             style={{ color: "var(--text-muted)" }}
           >
-            Inga credits? Köp här →
+            {t.locked.noCredits} →
           </Link>
         </div>
       </div>

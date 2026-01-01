@@ -1,0 +1,156 @@
+{
+  "nav": {
+    "buyCredits": "Buy credits",
+    "history": "History",
+    "credits": "credits",
+    "logOut": "Log out",
+    "logIn": "Log in"
+  },
+  "hero": {
+    "title": "How visible is your site to AI assistants?",
+    "subtitle": "Analyze your website for both traditional SEO and AI visibility.",
+    "description": "Get insights into how Google, ChatGPT and Claude perceive your content.",
+    "loginButton": "Log in with Google to try free"
+  },
+  "features": {
+    "seo": {
+      "title": "Traditional SEO",
+      "description": "Meta tags, headings, alt texts and technical optimization that search engines value."
+    },
+    "ai": {
+      "title": "AI Visibility",
+      "description": "Schema.org, citability and how well AI assistants interpret your content."
+    },
+    "suggestions": {
+      "title": "Actionable Suggestions",
+      "description": "AI-generated recommendations based on analysis of your website."
+    }
+  },
+  "urlInput": {
+    "placeholder": "Enter a web address",
+    "invalid": "Invalid web address",
+    "analyze": "Analyze",
+    "analyzing": "Analyzing..."
+  },
+  "pricing": {
+    "title": "Buy credits",
+    "subtitle": "Analyze free - unlock details with credits",
+    "popular": "Most popular",
+    "packages": {
+      "starter": "Try",
+      "standard": "Standard",
+      "pro": "Pro"
+    },
+    "credit": "credit",
+    "credits": "credits",
+    "perCredit": "per credit",
+    "loading": "Loading...",
+    "buy": "Buy",
+    "whatYouGet": "What do I get for 1 credit?",
+    "benefits": {
+      "analysis": "Full AI visibility analysis with details",
+      "suggestions": "AI-generated improvement suggestions",
+      "pdf": "PDF export of the report",
+      "history": "Saved in your analysis history"
+    },
+    "freeIncludes": "Free analysis includes: SEO score, AI visibility score (without details)"
+  },
+  "analysis": {
+    "analyzing": "Analyzing...",
+    "pleaseWait": "Please wait while we review your site",
+    "failed": "Analysis failed",
+    "failedDescription": "We couldn't analyze this site. Check the address and try again.",
+    "tryAgain": "Try again",
+    "backToNew": "New analysis",
+    "results": "Analysis Results",
+    "analyzed": "Analyzed:",
+    "seo": {
+      "title": "Traditional SEO",
+      "subtitle": "How search engines see your site"
+    },
+    "aiVisibility": {
+      "title": "AI Visibility",
+      "subtitle": "How ChatGPT & Claude see your site"
+    },
+    "seoDetails": {
+      "title": "SEO Details",
+      "subtitle": "What search engines look at",
+      "metaTags": "Meta tags",
+      "headings": "Headings",
+      "altText": "Alt text",
+      "technical": "Technical",
+      "viewport": "Viewport (mobile)",
+      "robots": "robots.txt",
+      "sitemap": "sitemap.xml"
+    },
+    "aiDetails": {
+      "title": "AI Visibility Details"
+    },
+    "suggestions": {
+      "title": "Improvement Suggestions",
+      "subtitle": "Recommendations based on the analysis",
+      "aiGenerated": "AI-generated suggestions"
+    },
+    "cta": {
+      "title": "Want to analyze another site?",
+      "description": "Test how your or your competitors' sites perform.",
+      "button": "New analysis"
+    }
+  },
+  "history": {
+    "title": "Analysis History",
+    "subtitle": "Your previous analyses",
+    "empty": "You have no analyses yet",
+    "startFirst": "Make your first analysis",
+    "fetchError": "Could not fetch analyses",
+    "error": "Something went wrong"
+  },
+  "locked": {
+    "proContent": "Pro content",
+    "insightsAvailable": "insights available",
+    "unlockToSee": "Unlock to see the details",
+    "unlocking": "Unlocking...",
+    "unlockButton": "Unlock (1 credit)",
+    "noCredits": "No credits? Buy here",
+    "error": "Something went wrong"
+  },
+  "llmReadiness": {
+    "structuredData": "Structured Data",
+    "contentClarity": "Content Clarity",
+    "authorInfo": "Author Info (E-E-A-T)",
+    "aiCrawlerAccess": "AI Crawler Access",
+    "citability": "Citability",
+    "noSchema": "No Schema.org markup found",
+    "faq": "FAQ:",
+    "yes": "Yes",
+    "no": "No",
+    "definitions": "Definitions:",
+    "author": "Author:",
+    "date": "Date:",
+    "gptBot": "GPTBot:",
+    "claude": "Claude:",
+    "allowed": "Allowed",
+    "blocked": "Blocked",
+    "statistics": "Statistics:",
+    "sources": "Sources:"
+  },
+  "suggestions": {
+    "highPriority": "High priority",
+    "mediumPriority": "Medium priority",
+    "improvementTips": "Improvement tips",
+    "current": "Current:",
+    "suggestion": "Suggestion:"
+  },
+  "pdf": {
+    "export": "Export PDF",
+    "unlockFirst": "Unlock the analysis to export PDF"
+  },
+  "errors": {
+    "generic": "Something went wrong",
+    "couldNotStartPurchase": "Could not start purchase",
+    "noCheckoutUrl": "No checkout URL received"
+  },
+  "success": {
+    "upgraded": "Thanks for your upgrade! You now have unlimited analyses."
+  }
+}

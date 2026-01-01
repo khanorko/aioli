@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useSession, signIn } from "next-auth/react";
+import { useLanguage } from "@/lib/LanguageContext";
 
 interface CreditPackage {
   id: string;
@@ -13,9 +14,9 @@ interface CreditPackage {
 }
 
 const CREDIT_PACKAGES: CreditPackage[] = [
-  { id: "starter", name: "Prova", credits: 1, price: 49, pricePerCredit: 49 },
-  { id: "standard", name: "Standard", credits: 5, price: 149, pricePerCredit: 30, popular: true },
-  { id: "pro", name: "Pro", credits: 15, price: 299, pricePerCredit: 20 },
+  { id: "starter", name: "starter", credits: 1, price: 49, pricePerCredit: 49 },
+  { id: "standard", name: "standard", credits: 5, price: 149, pricePerCredit: 30, popular: true },
+  { id: "pro", name: "pro", credits: 15, price: 299, pricePerCredit: 20 },
 ];
 
 export function CreditPackageCards() {
@@ -30,8 +31,15 @@ export function CreditPackageCards() {
 
 function CreditPackageCard({ package: pkg }: { package: CreditPackage }) {
   const { data: session } = useSession();
+  const { t } = useLanguage();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const packageNames: Record<string, string> = {
+    starter: t.pricing.packages.starter,
+    standard: t.pricing.packages.standard,
+    pro: t.pricing.packages.pro,
+  };
 
   const handlePurchase = async () => {
     if (!session?.user?.email) {
@@ -59,11 +67,11 @@ function CreditPackageCard({ package: pkg }: { package: CreditPackage }) {
       if (data.url) {
         window.location.href = data.url;
       } else {
-        throw new Error("Ingen checkout-URL mottagen");
+        throw new Error(t.errors.noCheckoutUrl);
       }
     } catch (err) {
       console.error("Purchase error:", err);
-      setError(err instanceof Error ? err.message : "Kunde inte starta köp");
+      setError(err instanceof Error ? err.message : t.errors.couldNotStartPurchase);
     } finally {
       setIsLoading(false);
     }
@@ -73,16 +81,16 @@ function CreditPackageCard({ package: pkg }: { package: CreditPackage }) {
     <div className={`card p-6 relative overflow-visible ${pkg.popular ? "ring-2 ring-[var(--plasma-blue)]" : ""}`}>
       {pkg.popular && (
         <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-[var(--plasma-blue)] text-white text-xs font-semibold px-4 py-1.5 rounded-full whitespace-nowrap z-10 shadow-lg">
-          Populärast
+          {t.pricing.popular}
         </div>
       )}
 
       <h3 className="text-xl font-bold mb-1" style={{ color: "var(--text-primary)" }}>
-        {pkg.name}
+        {packageNames[pkg.name] || pkg.name}
       </h3>
 
       <p className="text-sm mb-4" style={{ color: "var(--text-muted)" }}>
-        {pkg.credits} {pkg.credits === 1 ? "credit" : "credits"}
+        {pkg.credits} {pkg.credits === 1 ? t.pricing.credit : t.pricing.credits}
       </p>
 
       <div className="mb-4">
@@ -93,7 +101,7 @@ function CreditPackageCard({ package: pkg }: { package: CreditPackage }) {
       </div>
 
       <p className="text-xs mb-6" style={{ color: "var(--text-muted)" }}>
-        {pkg.pricePerCredit} kr per credit
+        {pkg.pricePerCredit} kr {t.pricing.perCredit}
       </p>
 
       {error && (
@@ -112,7 +120,7 @@ function CreditPackageCard({ package: pkg }: { package: CreditPackage }) {
         }`}
         style={!pkg.popular ? { color: "var(--text-primary)" } : undefined}
       >
-        {isLoading ? "Laddar..." : "Köp"}
+        {isLoading ? t.pricing.loading : t.pricing.buy}
       </button>
     </div>
   );
@@ -120,31 +128,33 @@ function CreditPackageCard({ package: pkg }: { package: CreditPackage }) {
 
 // What you get with credits
 export function CreditsExplainer() {
+  const { t } = useLanguage();
+
   return (
     <div className="card p-6 max-w-2xl mx-auto mt-8">
       <h3 className="font-semibold text-lg mb-4" style={{ color: "var(--text-primary)" }}>
-        Vad får jag för 1 credit?
+        {t.pricing.whatYouGet}
       </h3>
       <ul className="space-y-3">
         <li className="flex items-start gap-3 text-sm" style={{ color: "var(--text-secondary)" }}>
           <CheckIcon />
-          <span>Full AI-synlighetsanalys med detaljer</span>
+          <span>{t.pricing.benefits.analysis}</span>
         </li>
         <li className="flex items-start gap-3 text-sm" style={{ color: "var(--text-secondary)" }}>
           <CheckIcon />
-          <span>AI-genererade förbättringsförslag</span>
+          <span>{t.pricing.benefits.suggestions}</span>
         </li>
         <li className="flex items-start gap-3 text-sm" style={{ color: "var(--text-secondary)" }}>
           <CheckIcon />
-          <span>PDF-export av rapporten</span>
+          <span>{t.pricing.benefits.pdf}</span>
         </li>
         <li className="flex items-start gap-3 text-sm" style={{ color: "var(--text-secondary)" }}>
           <CheckIcon />
-          <span>Sparad i din analyshistorik</span>
+          <span>{t.pricing.benefits.history}</span>
         </li>
       </ul>
       <p className="text-xs mt-4" style={{ color: "var(--text-muted)" }}>
-        Gratisanalys inkluderar: SEO-poäng, AI-synlighetspoäng (utan detaljer)
+        {t.pricing.freeIncludes}
       </p>
     </div>
   );

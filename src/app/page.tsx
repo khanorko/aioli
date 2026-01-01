@@ -11,6 +11,7 @@ import { AnimatedElement, StaggerContainer, StaggerItem } from "@/components/mot
 import { HeroParallax } from "@/components/motion/ParallaxSection";
 import { SparkleEffect } from "@/components/decorative/SparkleEffect";
 import { CreditPackageCards, CreditsExplainer } from "@/components/PricingCard";
+import { useLanguage } from "@/lib/LanguageContext";
 
 // Lazy load 3D components (no SSR)
 const Scene3D = dynamic(
@@ -26,6 +27,7 @@ function HomeContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { data: session, status } = useSession();
+  const { t } = useLanguage();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
@@ -33,7 +35,7 @@ function HomeContent() {
   // Check for success/canceled query params from Stripe
   useEffect(() => {
     if (searchParams.get("success") === "true") {
-      setSuccessMessage("Tack för din uppgradering! Du har nu obegränsade analyser.");
+      setSuccessMessage(t.success.upgraded);
       // Clean URL
       window.history.replaceState({}, "", "/");
       // Auto-dismiss after 5 seconds
@@ -43,7 +45,7 @@ function HomeContent() {
       // Clean URL
       window.history.replaceState({}, "", "/");
     }
-  }, [searchParams]);
+  }, [searchParams, t.success.upgraded]);
 
   const handleAnalyze = async (url: string) => {
     if (!session?.user?.email) {
@@ -64,12 +66,12 @@ function HomeContent() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Något gick fel");
+        throw new Error(data.error || t.errors.generic);
       }
 
       router.push(`/analysis/${data.id}`);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Något gick fel");
+      setError(err instanceof Error ? err.message : t.errors.generic);
       setIsLoading(false);
     }
   };
@@ -118,16 +120,16 @@ function HomeContent() {
 
             <AnimatedElement delay={0.2}>
               <h1 className="section-title text-5xl md:text-6xl lg:text-7xl mb-8 leading-tight">
-                Hur synlig är din sajt för AI-assistenter?
+                {t.hero.title}
               </h1>
             </AnimatedElement>
 
             <AnimatedElement delay={0.3}>
               <p className="max-w-2xl mb-12 text-xl md:text-2xl" style={{ color: "var(--text-secondary)" }}>
-                Analysera din webbplats för både traditionell SEO och AI-synlighet.
+                {t.hero.subtitle}
               </p>
               <p className="max-w-xl mb-12 text-base md:text-lg" style={{ color: "var(--text-muted)" }}>
-                Få insikter om hur Google, ChatGPT och Claude uppfattar ditt innehåll.
+                {t.hero.description}
               </p>
             </AnimatedElement>
 
@@ -159,7 +161,7 @@ function HomeContent() {
                       d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                     />
                   </svg>
-                  Logga in med Google för att prova gratis
+                  {t.hero.loginButton}
                 </button>
               )}
             </AnimatedElement>
@@ -195,10 +197,10 @@ function HomeContent() {
                   </svg>
                 </div>
                 <h3 className="text-lg font-semibold mb-2" style={{ color: "var(--text-primary)" }}>
-                  Traditionell SEO
+                  {t.features.seo.title}
                 </h3>
                 <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
-                  Meta-taggar, rubriker, alt-texter och teknisk optimering som sökmotorer värderar.
+                  {t.features.seo.description}
                 </p>
               </div>
             </StaggerItem>
@@ -217,10 +219,10 @@ function HomeContent() {
                   </svg>
                 </div>
                 <h3 className="text-lg font-semibold mb-2" style={{ color: "var(--text-primary)" }}>
-                  AI-synlighet
+                  {t.features.ai.title}
                 </h3>
                 <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
-                  Schema.org, citerbarhet och hur väl AI-assistenter tolkar ditt innehåll.
+                  {t.features.ai.description}
                 </p>
               </div>
             </StaggerItem>
@@ -234,10 +236,10 @@ function HomeContent() {
                   </svg>
                 </div>
                 <h3 className="text-lg font-semibold mb-2" style={{ color: "var(--text-primary)" }}>
-                  Konkreta förslag
+                  {t.features.suggestions.title}
                 </h3>
                 <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
-                  AI-genererade rekommendationer baserat på analys av din webbplats.
+                  {t.features.suggestions.description}
                 </p>
               </div>
             </StaggerItem>
@@ -248,9 +250,9 @@ function HomeContent() {
         <div id="priser" className="max-w-7xl mx-auto px-6 py-20">
           <AnimatedElement>
             <div className="text-center mb-12">
-              <h2 className="section-title text-3xl md:text-4xl mb-4">Köp credits</h2>
+              <h2 className="section-title text-3xl md:text-4xl mb-4">{t.pricing.title}</h2>
               <p style={{ color: "var(--text-secondary)" }}>
-                Analysera gratis – lås upp detaljerna med credits
+                {t.pricing.subtitle}
               </p>
             </div>
           </AnimatedElement>

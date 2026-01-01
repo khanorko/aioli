@@ -3,13 +3,14 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
-import { motion } from "framer-motion";
 import { signIn, signOut, useSession } from "next-auth/react";
+import { useLanguage } from "@/lib/LanguageContext";
 
 export function Navigation() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const pathname = usePathname();
+  const { language, setLanguage, t } = useLanguage();
 
   const handlePricingClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -21,12 +22,7 @@ export function Navigation() {
   };
 
   return (
-    <motion.header
-      initial={{ y: -100, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
-      className="header sticky top-0 z-50"
-    >
+    <header className="header sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           {/* Logo only - image already contains text */}
@@ -43,13 +39,37 @@ export function Navigation() {
 
           {/* Navigation Links */}
           <nav className="hidden md:flex items-center gap-6">
+            {/* Language Switcher */}
+            <div className="flex items-center gap-1 text-sm">
+              <button
+                onClick={() => setLanguage("en")}
+                className={`px-2 py-1 rounded transition-colors ${
+                  language === "en"
+                    ? "bg-[var(--plasma-blue)] text-white"
+                    : "nav-link"
+                }`}
+              >
+                EN
+              </button>
+              <button
+                onClick={() => setLanguage("sv")}
+                className={`px-2 py-1 rounded transition-colors ${
+                  language === "sv"
+                    ? "bg-[var(--plasma-blue)] text-white"
+                    : "nav-link"
+                }`}
+              >
+                SV
+              </button>
+            </div>
+
             <a href="/#priser" onClick={handlePricingClick} className="nav-link text-sm cursor-pointer">
-              Köp credits
+              {t.nav.buyCredits}
             </a>
 
             {session && (
               <Link href="/history" className="nav-link text-sm">
-                Historik
+                {t.nav.history}
               </Link>
             )}
 
@@ -58,7 +78,7 @@ export function Navigation() {
             ) : session ? (
               <div className="flex items-center gap-3">
                 <span className="text-xs font-medium px-2 py-1 rounded-full bg-[var(--plasma-blue)]/20 text-[var(--plasma-blue)]">
-                  {session.user?.credits ?? 0} credits
+                  {session.user?.credits ?? 0} {t.nav.credits}
                 </span>
                 {session.user?.image && (
                   <Image
@@ -73,7 +93,7 @@ export function Navigation() {
                   onClick={() => signOut()}
                   className="text-sm nav-link"
                 >
-                  Logga ut
+                  {t.nav.logOut}
                 </button>
               </div>
             ) : (
@@ -99,7 +119,7 @@ export function Navigation() {
                     d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                   />
                 </svg>
-                Logga in
+                {t.nav.logIn}
               </button>
             )}
           </nav>
@@ -123,6 +143,6 @@ export function Navigation() {
           </button>
         </div>
       </div>
-    </motion.header>
+    </header>
   );
 }

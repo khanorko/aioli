@@ -1,73 +1,25 @@
 "use client";
 
-import { motion, useInView, Variants } from "framer-motion";
-import { useRef, ReactNode } from "react";
-
-type AnimationType = "fadeUp" | "fadeIn" | "scaleIn" | "slideLeft" | "slideRight";
+import { ReactNode } from "react";
 
 interface AnimatedElementProps {
   children: ReactNode;
   delay?: number;
   duration?: number;
-  animation?: AnimationType;
+  animation?: string;
   className?: string;
   once?: boolean;
 }
 
-const variants: Record<AnimationType, Variants> = {
-  fadeUp: {
-    hidden: { opacity: 0, y: 30 },
-    visible: { opacity: 1, y: 0 },
-  },
-  fadeIn: {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1 },
-  },
-  scaleIn: {
-    hidden: { opacity: 0, scale: 0.9 },
-    visible: { opacity: 1, scale: 1 },
-  },
-  slideLeft: {
-    hidden: { opacity: 0, x: 50 },
-    visible: { opacity: 1, x: 0 },
-  },
-  slideRight: {
-    hidden: { opacity: 0, x: -50 },
-    visible: { opacity: 1, x: 0 },
-  },
-};
-
+// Animations disabled to prevent flicker
 export function AnimatedElement({
   children,
-  delay = 0,
-  duration = 0.6,
-  animation = "fadeUp",
   className,
-  once = true,
 }: AnimatedElementProps) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once, margin: "-50px" });
-
-  return (
-    <motion.div
-      ref={ref}
-      initial="hidden"
-      animate={isInView ? "visible" : "hidden"}
-      variants={variants[animation]}
-      transition={{
-        duration,
-        delay,
-        ease: [0.4, 0, 0.2, 1],
-      }}
-      className={className}
-      style={{ willChange: "transform, opacity" }}
-    >
-      {children}
-    </motion.div>
-  );
+  return <div className={className}>{children}</div>;
 }
 
-// Staggered children wrapper
+// Staggered children wrapper - animations disabled
 interface StaggerContainerProps {
   children: ReactNode;
   className?: string;
@@ -77,49 +29,16 @@ interface StaggerContainerProps {
 export function StaggerContainer({
   children,
   className,
-  staggerDelay = 0.1,
 }: StaggerContainerProps) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-50px" });
-
-  return (
-    <motion.div
-      ref={ref}
-      initial="hidden"
-      animate={isInView ? "visible" : "hidden"}
-      variants={{
-        hidden: {},
-        visible: {
-          transition: {
-            staggerChildren: staggerDelay,
-          },
-        },
-      }}
-      className={className}
-    >
-      {children}
-    </motion.div>
-  );
+  return <div className={className}>{children}</div>;
 }
 
-// Child item for stagger container
+// Child item for stagger container - animations disabled
 interface StaggerItemProps {
   children: ReactNode;
   className?: string;
 }
 
 export function StaggerItem({ children, className }: StaggerItemProps) {
-  return (
-    <motion.div
-      variants={{
-        hidden: { opacity: 0, y: 20 },
-        visible: { opacity: 1, y: 0 },
-      }}
-      transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
-      className={className}
-      style={{ willChange: "transform, opacity" }}
-    >
-      {children}
-    </motion.div>
-  );
+  return <div className={className}>{children}</div>;
 }

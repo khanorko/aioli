@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useLanguage } from "@/lib/LanguageContext";
 
 interface UrlInputProps {
   onSubmit: (url: string) => void;
@@ -8,6 +9,7 @@ interface UrlInputProps {
 }
 
 export function UrlInput({ onSubmit, isLoading = false }: UrlInputProps) {
+  const { t } = useLanguage();
   const [url, setUrl] = useState("");
   const [error, setError] = useState("");
 
@@ -18,7 +20,7 @@ export function UrlInput({ onSubmit, isLoading = false }: UrlInputProps) {
     let processedUrl = url.trim();
 
     if (!processedUrl) {
-      setError("Ange en webbadress");
+      setError(t.urlInput.placeholder);
       return;
     }
 
@@ -30,9 +32,10 @@ export function UrlInput({ onSubmit, isLoading = false }: UrlInputProps) {
       new URL(processedUrl);
       onSubmit(processedUrl);
     } catch {
-      setError("Ogiltig webbadress");
+      setError(t.urlInput.invalid);
     }
   };
+
 
   return (
     <form onSubmit={handleSubmit} className="w-full max-w-2xl">
@@ -57,10 +60,10 @@ export function UrlInput({ onSubmit, isLoading = false }: UrlInputProps) {
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                 </svg>
-                Analyserar...
+                {t.urlInput.analyzing}
               </span>
             ) : (
-              "Analysera"
+              t.urlInput.analyze
             )}
           </button>
         </div>

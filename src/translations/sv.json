@@ -1,0 +1,156 @@
+{
+  "nav": {
+    "buyCredits": "Köp credits",
+    "history": "Historik",
+    "credits": "credits",
+    "logOut": "Logga ut",
+    "logIn": "Logga in"
+  },
+  "hero": {
+    "title": "Hur synlig är din sajt för AI-assistenter?",
+    "subtitle": "Analysera din webbplats för både traditionell SEO och AI-synlighet.",
+    "description": "Få insikter om hur Google, ChatGPT och Claude uppfattar ditt innehåll.",
+    "loginButton": "Logga in med Google för att prova gratis"
+  },
+  "features": {
+    "seo": {
+      "title": "Traditionell SEO",
+      "description": "Meta-taggar, rubriker, alt-texter och teknisk optimering som sökmotorer värderar."
+    },
+    "ai": {
+      "title": "AI-synlighet",
+      "description": "Schema.org, citerbarhet och hur väl AI-assistenter tolkar ditt innehåll."
+    },
+    "suggestions": {
+      "title": "Konkreta förslag",
+      "description": "AI-genererade rekommendationer baserat på analys av din webbplats."
+    }
+  },
+  "urlInput": {
+    "placeholder": "Ange en webbadress",
+    "invalid": "Ogiltig webbadress",
+    "analyze": "Analysera",
+    "analyzing": "Analyserar..."
+  },
+  "pricing": {
+    "title": "Köp credits",
+    "subtitle": "Analysera gratis – lås upp detaljerna med credits",
+    "popular": "Populärast",
+    "packages": {
+      "starter": "Prova",
+      "standard": "Standard",
+      "pro": "Pro"
+    },
+    "credit": "credit",
+    "credits": "credits",
+    "perCredit": "per credit",
+    "loading": "Laddar...",
+    "buy": "Köp",
+    "whatYouGet": "Vad får jag för 1 credit?",
+    "benefits": {
+      "analysis": "Full AI-synlighetsanalys med detaljer",
+      "suggestions": "AI-genererade förbättringsförslag",
+      "pdf": "PDF-export av rapporten",
+      "history": "Sparad i din analyshistorik"
+    },
+    "freeIncludes": "Gratisanalys inkluderar: SEO-poäng, AI-synlighetspoäng (utan detaljer)"
+  },
+  "analysis": {
+    "analyzing": "Analyserar...",
+    "pleaseWait": "Vänta medan vi granskar din sajt",
+    "failed": "Analysen misslyckades",
+    "failedDescription": "Vi kunde inte analysera den här sajten. Kontrollera adressen och försök igen.",
+    "tryAgain": "Försök igen",
+    "backToNew": "Ny analys",
+    "results": "Analysresultat",
+    "analyzed": "Analyserad:",
+    "seo": {
+      "title": "Traditionell SEO",
+      "subtitle": "Så ser sökmotorer på din sajt"
+    },
+    "aiVisibility": {
+      "title": "AI-synlighet",
+      "subtitle": "Så ser ChatGPT & Claude på din sajt"
+    },
+    "seoDetails": {
+      "title": "SEO-detaljer",
+      "subtitle": "Vad sökmotorer tittar på",
+      "metaTags": "Meta-taggar",
+      "headings": "Rubriker",
+      "altText": "Alt-text",
+      "technical": "Tekniskt",
+      "viewport": "Viewport (mobil)",
+      "robots": "robots.txt",
+      "sitemap": "sitemap.xml"
+    },
+    "aiDetails": {
+      "title": "AI-synlighetsdetaljer"
+    },
+    "suggestions": {
+      "title": "Förbättringsförslag",
+      "subtitle": "Rekommendationer baserat på analysen",
+      "aiGenerated": "AI-genererade förslag"
+    },
+    "cta": {
+      "title": "Vill du analysera en annan sajt?",
+      "description": "Testa hur din eller dina konkurrenters sajter presterar.",
+      "button": "Ny analys"
+    }
+  },
+  "history": {
+    "title": "Analyshistorik",
+    "subtitle": "Dina tidigare analyser",
+    "empty": "Du har inga analyser ännu",
+    "startFirst": "Gör din första analys",
+    "fetchError": "Kunde inte hämta analyser",
+    "error": "Något gick fel"
+  },
+  "locked": {
+    "proContent": "Pro-innehåll",
+    "insightsAvailable": "insikter tillgängliga",
+    "unlockToSee": "Lås upp för att se detaljerna",
+    "unlocking": "Låser upp...",
+    "unlockButton": "Lås upp (1 credit)",
+    "noCredits": "Inga credits? Köp här",
+    "error": "Något gick fel"
+  },
+  "llmReadiness": {
+    "structuredData": "Strukturerad data",
+    "contentClarity": "Innehållets klarhet",
+    "authorInfo": "Författarinfo (E-E-A-T)",
+    "aiCrawlerAccess": "AI-crawler åtkomst",
+    "citability": "Citerbarhet",
+    "noSchema": "Ingen Schema.org markup hittad",
+    "faq": "FAQ:",
+    "yes": "Ja",
+    "no": "Nej",
+    "definitions": "Definitioner:",
+    "author": "Författare:",
+    "date": "Datum:",
+    "gptBot": "GPTBot:",
+    "claude": "Claude:",
+    "allowed": "Tillåten",
+    "blocked": "Blockerad",
+    "statistics": "Statistik:",
+    "sources": "Källor:"
+  },
+  "suggestions": {
+    "highPriority": "Hög prioritet",
+    "mediumPriority": "Medium prioritet",
+    "improvementTips": "Förbättringstips",
+    "current": "Nuvarande:",
+    "suggestion": "Förslag:"
+  },
+  "pdf": {
+    "export": "Exportera PDF",
+    "unlockFirst": "Lås upp analysen för att kunna exportera PDF"
+  },
+  "errors": {
+    "generic": "Något gick fel",
+    "couldNotStartPurchase": "Kunde inte starta köp",
+    "noCheckoutUrl": "Ingen checkout-URL mottagen"
+  },
+  "success": {
+    "upgraded": "Tack för din uppgradering! Du har nu obegränsade analyser."
+  }
+}
