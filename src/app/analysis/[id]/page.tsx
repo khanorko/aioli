@@ -1,5 +1,7 @@
 import { notFound } from "next/navigation";
-import { getAnalysis } from "@/lib/db";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { getAnalysis, isAdminEmail } from "@/lib/db";
 import { AnalysisResults, AnalysisSuggestions } from "@/types/analysis";
 import { ScoreGauge } from "@/components/ScoreGauge";
 import { AnalysisCard } from "@/components/AnalysisCard";
@@ -18,7 +20,12 @@ interface PageProps {
 export default async function AnalysisPage({ params }: PageProps) {
   const { id } = await params;
 
-  const analysis = await getAnalysis(id);
+  const [analysis, session] = await Promise.all([
+    getAnalysis(id),
+    getServerSession(authOptions),
+  ]);
+
+  const isAdmin = isAdminEmail(session?.user?.email);
 
   if (!analysis) {
     notFound();
@@ -114,7 +121,7 @@ export default async function AnalysisPage({ params }: PageProps) {
                 createdAt: analysis.createdAt.toISOString(),
                 results: analysis.results,
               }}
-              isUnlocked={analysis.unlocked}
+              isUnlocked={analysis.unlocked || isAdmin}
             />
           </div>
         </div>
@@ -225,7 +232,7 @@ export default async function AnalysisPage({ params }: PageProps) {
           >
             <LockedContent
               analysisId={analysis.id}
-              isUnlocked={analysis.unlocked}
+              isUnlocked={analysis.unlocked || isAdmin}
               title="AI-synlighetsdetaljer"
               featureCount={4}
             >
@@ -242,7 +249,7 @@ export default async function AnalysisPage({ params }: PageProps) {
           >
             <LockedContent
               analysisId={analysis.id}
-              isUnlocked={analysis.unlocked}
+              isUnlocked={analysis.unlocked || isAdmin}
               title="AI-genererade förslag"
               featureCount={suggestionsData.suggestions.length}
             >

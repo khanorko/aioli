@@ -311,6 +311,14 @@ export async function consumeCredit(userId: string): Promise<boolean> {
   return true;
 }
 
+// Admin emails that bypass credit checks
+const ADMIN_EMAILS = ["johan.salo@gmail.com"];
+
+export function isAdminEmail(email: string | null | undefined): boolean {
+  if (!email) return false;
+  return ADMIN_EMAILS.includes(email.toLowerCase());
+}
+
 // Helper functions
 function mapRowToUser(row: Record<string, unknown>): User {
   return {
