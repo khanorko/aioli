@@ -78,9 +78,9 @@ function CreditPackageCard({ package: pkg }: { package: CreditPackage }) {
   };
 
   return (
-    <div className={`card p-6 relative overflow-visible ${pkg.popular ? "ring-2 ring-[var(--plasma-blue)]" : ""}`}>
+    <div className={`card p-6 relative ${pkg.popular ? "ring-2 ring-[var(--plasma-blue)] mt-4" : ""}`}>
       {pkg.popular && (
-        <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-[var(--plasma-blue)] text-white text-xs font-semibold px-4 py-1.5 rounded-full whitespace-nowrap z-10 shadow-lg">
+        <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-[var(--plasma-blue)] text-white text-xs font-semibold px-4 py-1.5 rounded-full whitespace-nowrap z-10">
           {t.pricing.popular}
         </div>
       )}
@@ -113,12 +113,7 @@ function CreditPackageCard({ package: pkg }: { package: CreditPackage }) {
       <button
         onClick={handlePurchase}
         disabled={isLoading}
-        className={`w-full py-3 rounded-xl text-sm font-medium transition-colors ${
-          pkg.popular
-            ? "btn-primary"
-            : "bg-[var(--bg-secondary)] hover:bg-[var(--bg-tertiary)]"
-        }`}
-        style={!pkg.popular ? { color: "var(--text-primary)" } : undefined}
+        className="btn-primary w-full py-3 rounded-xl text-sm font-medium"
       >
         {isLoading ? t.pricing.loading : t.pricing.buy}
       </button>

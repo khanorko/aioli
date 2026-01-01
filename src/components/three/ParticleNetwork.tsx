@@ -192,7 +192,7 @@ export function ParticleNetwork({
     <group>
       {/* Glow layer (behind particles) - softer, more diffuse */}
       <instancedMesh ref={glowMeshRef} args={[undefined, undefined, actualCount]}>
-        <circleGeometry args={[1, 16]} />
+        <planeGeometry args={[1, 1]} />
         <meshBasicMaterial
           color={color}
           transparent
@@ -202,9 +202,9 @@ export function ParticleNetwork({
         />
       </instancedMesh>
 
-      {/* Main particle nodes - reduced opacity for readability */}
+      {/* Main particle nodes - pixels/squares */}
       <instancedMesh ref={meshRef} args={[undefined, undefined, actualCount]}>
-        <circleGeometry args={[1, 16]} />
+        <planeGeometry args={[1, 1]} />
         <meshBasicMaterial
           color={color}
           transparent
