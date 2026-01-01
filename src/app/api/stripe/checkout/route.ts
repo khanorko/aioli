@@ -88,8 +88,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ url: checkoutSession.url });
   } catch (error) {
     console.error("Stripe checkout error:", error);
+    const errorMessage = error instanceof Error ? error.message : "Okänt fel";
     return NextResponse.json(
-      { error: "Kunde inte skapa betalningssession" },
+      { error: `Kunde inte skapa betalningssession: ${errorMessage}` },
       { status: 500 }
     );
   }

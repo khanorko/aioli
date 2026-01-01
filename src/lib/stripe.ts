@@ -1,26 +1,18 @@
 import Stripe from "stripe";
 
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+if (!process.env.STRIPE_SECRET_KEY) {
+  console.warn("STRIPE_SECRET_KEY is not set");
+}
+
+export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
   apiVersion: "2025-12-15.clover",
   typescript: true,
 });
 
-export const PLANS = {
-  FREE: {
-    name: "Free",
-    price: 0,
-    analysesPerMonth: 3,
-  },
-  PRO: {
-    name: "Pro",
-    price: 299,
-    analysesPerMonth: -1, // Unlimited
-  },
-} as const;
-
 export function getBaseUrl() {
-  if (process.env.VERCEL_URL) {
-    return `https://${process.env.VERCEL_URL}`;
+  // Use custom domain in production
+  if (process.env.NODE_ENV === "production") {
+    return "https://aioli-one.vercel.app";
   }
   return process.env.NEXTAUTH_URL || "http://localhost:3000";
 }
