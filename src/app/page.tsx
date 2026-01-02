@@ -128,13 +128,21 @@ function HomeContent() {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="relative pt-32 pb-20 px-6">
-        {/* Aurora glow effect */}
+      <section className="relative pt-32 pb-20 px-6 overflow-hidden">
+        {/* Aurora glow effect - enhanced */}
         <div
-          className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-[500px] pointer-events-none"
+          className="absolute top-0 left-1/2 -translate-x-1/2 w-[150%] max-w-[1200px] h-[600px] pointer-events-none"
           style={{
             background:
-              "radial-gradient(ellipse 60% 40% at 50% 0%, rgba(245, 245, 240, 0.08), transparent 70%)",
+              "radial-gradient(ellipse 50% 35% at 50% 0%, rgba(245, 245, 240, 0.12), transparent 60%)",
+          }}
+        />
+        {/* Secondary aurora blob */}
+        <div
+          className="absolute top-20 left-1/2 -translate-x-1/2 w-[800px] h-[400px] pointer-events-none blur-3xl opacity-15"
+          style={{
+            background:
+              "radial-gradient(ellipse at center, rgba(100, 120, 180, 0.4), transparent 70%)",
           }}
         />
 
@@ -145,28 +153,51 @@ function HomeContent() {
             variants={stagger}
             className="text-center"
           >
-            {/* Badge */}
-            <motion.div variants={fadeUp} className="mb-6">
-              <span className="badge badge-neutral inline-flex items-center gap-2">
-                <Sparkles className="w-3 h-3" strokeWidth={1.5} />
+            {/* Badge - enhanced with border and blur */}
+            <motion.div variants={fadeUp} className="mb-8">
+              <span
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-medium backdrop-blur-md"
+                style={{
+                  background: "rgba(255, 255, 255, 0.05)",
+                  border: "1px solid rgba(255, 255, 255, 0.15)",
+                  color: "var(--text-secondary)",
+                }}
+              >
+                <Sparkles className="w-3.5 h-3.5 text-amber-400" strokeWidth={1.5} />
                 AI-Powered SEO Analysis
               </span>
             </motion.div>
 
-            {/* Headline */}
+            {/* Headline - with gradient text */}
             <motion.h1
               variants={fadeUp}
               className="text-4xl md:text-6xl lg:text-7xl font-light tracking-tight mb-6"
+              style={{ letterSpacing: "-0.03em" }}
             >
-              How visible is your site
+              <span
+                className="bg-clip-text text-transparent"
+                style={{
+                  backgroundImage: "linear-gradient(180deg, #FFFFFF 0%, rgba(255, 255, 255, 0.7) 100%)",
+                }}
+              >
+                How visible is your site
+              </span>
               <br />
-              <span className="text-[var(--text-secondary)]">to AI assistants?</span>
+              <span
+                className="bg-clip-text text-transparent"
+                style={{
+                  backgroundImage: "linear-gradient(180deg, rgba(161, 161, 170, 0.9) 0%, rgba(113, 113, 122, 0.8) 100%)",
+                }}
+              >
+                to AI assistants?
+              </span>
             </motion.h1>
 
             {/* Subheadline */}
             <motion.p
               variants={fadeUp}
-              className="text-lg md:text-xl text-[var(--text-secondary)] max-w-2xl mx-auto mb-12"
+              className="text-lg md:text-xl max-w-2xl mx-auto mb-14"
+              style={{ color: "var(--text-muted)" }}
             >
               Analyze your website for both traditional SEO and AI visibility.
               Get insights into how Google, ChatGPT, and Claude perceive your content.
@@ -241,10 +272,10 @@ function HomeContent() {
         </div>
       </section>
 
-      {/* Metrics Bar */}
-      <section className="py-8 px-6 border-y border-white/5">
-        <div className="max-w-5xl mx-auto">
-          <div className="flex flex-wrap justify-center gap-12 md:gap-24">
+      {/* Metrics Bar - Bento Cards */}
+      <section className="py-12 px-6">
+        <div className="max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {metrics.map((metric, i) => (
               <motion.div
                 key={metric.label}
@@ -252,10 +283,28 @@ function HomeContent() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.1 }}
                 viewport={{ once: true }}
-                className="text-center"
+                className="relative group"
               >
-                <div className="stat-value">{metric.value}</div>
-                <div className="stat-label">{metric.label}</div>
+                {/* Glass card */}
+                <div
+                  className="p-6 rounded-2xl text-center backdrop-blur-sm transition-all duration-300 group-hover:scale-[1.02]"
+                  style={{
+                    background: "rgba(255, 255, 255, 0.02)",
+                    border: "1px solid rgba(255, 255, 255, 0.06)",
+                  }}
+                >
+                  <div
+                    className="font-mono text-3xl font-light mb-1 bg-clip-text text-transparent"
+                    style={{
+                      backgroundImage: "linear-gradient(180deg, #EDEDED 0%, #A1A1AA 100%)",
+                    }}
+                  >
+                    {metric.value}
+                  </div>
+                  <div className="text-xs uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>
+                    {metric.label}
+                  </div>
+                </div>
               </motion.div>
             ))}
           </div>

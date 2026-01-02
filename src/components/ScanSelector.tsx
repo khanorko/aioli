@@ -106,44 +106,73 @@ export function ScanSelector({ onAnalyze, isLoading = false, userCredits }: Scan
   const creditsNeeded = getCreditsNeeded();
   const hasEnoughCredits = userCredits >= creditsNeeded;
 
-  // Step 1: Enter URL
+  // Step 1: Enter URL - The Power Bar
   if (step === "input") {
     return (
       <form onSubmit={handleDiscover} className="w-full max-w-2xl">
-        <div className="flex flex-col gap-3">
-          <div className="flex gap-3">
+        {/* The Power Bar */}
+        <div className="relative group">
+          {/* Glow effect behind */}
+          <div
+            className="absolute -inset-1 rounded-full blur-md opacity-30 group-hover:opacity-50 transition-all duration-500"
+            style={{
+              background: "linear-gradient(90deg, rgba(245, 245, 240, 0.15), rgba(245, 245, 240, 0.08))",
+            }}
+          />
+
+          {/* The capsule */}
+          <div
+            className="relative flex items-center rounded-full p-2 shadow-2xl border"
+            style={{
+              background: "rgba(10, 10, 10, 0.9)",
+              borderColor: "rgba(255, 255, 255, 0.1)",
+              boxShadow: "0 0 40px -10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05)",
+            }}
+          >
+            {/* Input */}
             <input
               type="text"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               placeholder="example.com"
               disabled={isDiscovering}
-              className="input flex-1 px-5 py-4 text-lg font-medium"
+              className="flex-1 bg-transparent px-6 py-3 focus:outline-none font-mono text-sm"
+              style={{
+                color: "var(--text-primary)",
+              }}
             />
+
+            {/* Button inside capsule */}
             <button
               type="submit"
               disabled={isDiscovering}
-              className="btn-primary px-8 py-4 text-lg"
+              className="flex items-center gap-2 font-medium px-8 py-3 rounded-full transition-all"
+              style={{
+                background: isDiscovering ? "rgba(255, 255, 255, 0.8)" : "var(--accent-cream)",
+                color: "var(--bg-obsidian)",
+                boxShadow: "0 0 20px -5px rgba(245, 245, 240, 0.4), inset 0 -2px 4px rgba(0, 0, 0, 0.1)",
+              }}
             >
               {isDiscovering ? (
-                <span className="flex items-center gap-2">
-                  <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                <>
+                  <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                   </svg>
-                  {language === "sv" ? "Söker..." : "Searching..."}
-                </span>
+                  <span>Searching...</span>
+                </>
               ) : (
-                language === "sv" ? "Hitta sidor" : "Find pages"
+                <>Analyze</>
               )}
             </button>
           </div>
-          {error && (
-            <p className="font-medium" style={{ color: "var(--score-poor)" }}>
-              {error}
-            </p>
-          )}
         </div>
+
+        {error && (
+          <p className="text-center font-medium mt-4" style={{ color: "var(--score-poor)" }}>
+            {error}
+          </p>
+        )}
       </form>
     );
   }
