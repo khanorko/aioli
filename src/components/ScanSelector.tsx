@@ -134,7 +134,7 @@ export function ScanSelector({ onAnalyze, isLoading = false, userCredits }: Scan
               onChange={(e) => setUrl(e.target.value)}
               placeholder="example.com"
               disabled={isDiscovering}
-              className="flex-1 bg-transparent px-6 py-3 focus:outline-none font-mono text-sm"
+              className="flex-1 bg-transparent px-6 h-12 focus:outline-none font-mono text-sm leading-none"
               style={{
                 color: "var(--text-primary)",
               }}
@@ -144,7 +144,7 @@ export function ScanSelector({ onAnalyze, isLoading = false, userCredits }: Scan
             <button
               type="submit"
               disabled={isDiscovering}
-              className="flex items-center gap-2 font-medium px-8 py-3 rounded-full transition-all"
+              className="flex items-center justify-center gap-2 font-medium px-8 h-12 rounded-full transition-all"
               style={{
                 background: isDiscovering ? "rgba(255, 255, 255, 0.8)" : "var(--accent-cream)",
                 color: "var(--bg-obsidian)",

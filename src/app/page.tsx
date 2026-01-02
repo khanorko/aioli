@@ -132,15 +132,23 @@ function HomeContent() {
           className="absolute top-0 left-1/2 -translate-x-1/2 w-[150%] max-w-[1200px] h-[600px] pointer-events-none"
           style={{
             background:
-              "radial-gradient(ellipse 50% 35% at 50% 0%, rgba(245, 245, 240, 0.12), transparent 60%)",
+              "radial-gradient(ellipse 50% 35% at 50% 0%, rgba(245, 245, 240, 0.15), transparent 60%)",
           }}
         />
-        {/* Secondary aurora blob */}
+        {/* Primary light halo behind headline */}
         <div
-          className="absolute top-20 left-1/2 -translate-x-1/2 w-[800px] h-[400px] pointer-events-none blur-3xl opacity-15"
+          className="absolute top-[15%] left-1/2 -translate-x-1/2 w-[700px] h-[500px] pointer-events-none"
           style={{
-            background:
-              "radial-gradient(ellipse at center, rgba(100, 120, 180, 0.4), transparent 70%)",
+            background: "radial-gradient(ellipse 60% 40% at 50% 30%, rgba(255, 255, 255, 0.08), transparent 70%)",
+            filter: "blur(60px)",
+          }}
+        />
+        {/* Secondary aurora blob - blue tint */}
+        <div
+          className="absolute top-32 left-1/2 -translate-x-1/2 w-[600px] h-[400px] pointer-events-none"
+          style={{
+            background: "radial-gradient(ellipse at center, rgba(100, 130, 200, 0.12), transparent 70%)",
+            filter: "blur(80px)",
           }}
         />
 

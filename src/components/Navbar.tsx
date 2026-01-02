@@ -41,13 +41,15 @@ export function Navbar() {
       >
         <div className="flex items-center gap-1">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 pr-4">
+          <Link href="/" className="flex items-center gap-4 pr-4">
             <Image
               src="/logo.png"
               alt="AIoli"
               width={140}
               height={56}
-              className="h-10 w-auto"
+              className="h-8 w-auto object-contain brightness-110"
+              style={{ filter: "drop-shadow(0 0 8px rgba(255,255,255,0.15))" }}
+              priority
             />
           </Link>
 
