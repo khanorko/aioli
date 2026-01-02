@@ -42,23 +42,23 @@ function generateSeoSuggestions(seo: SeoResult): Suggestion[] {
     suggestions.push({
       category: "seo",
       priority: "high",
-      title: "Lägg till en title-tagg",
-      description: "Din sida saknar en title-tagg. Detta är kritiskt för SEO.",
+      title: "Add a title tag",
+      description: "Your page is missing a title tag. This is critical for SEO.",
     });
   } else if (seo.title.length < 30) {
     suggestions.push({
       category: "seo",
       priority: "medium",
-      title: "Förläng din title-tagg",
-      description: "Din title är för kort. En optimal title är 50-60 tecken.",
+      title: "Extend your title tag",
+      description: "Your title is too short. An optimal title is 50-60 characters.",
       currentValue: seo.title.value,
     });
   } else if (seo.title.length > 60) {
     suggestions.push({
       category: "seo",
       priority: "low",
-      title: "Korta ner din title-tagg",
-      description: "Din title är för lång och kan klippas i sökresultat.",
+      title: "Shorten your title tag",
+      description: "Your title is too long and may be truncated in search results.",
       currentValue: `${seo.title.value.substring(0, 57)}...`,
     });
   }
@@ -68,15 +68,15 @@ function generateSeoSuggestions(seo: SeoResult): Suggestion[] {
     suggestions.push({
       category: "seo",
       priority: "high",
-      title: "Lägg till en meta description",
-      description: "Din sida saknar meta description. Detta påverkar klickfrekvensen i sökresultat.",
+      title: "Add a meta description",
+      description: "Your page is missing a meta description. This affects click-through rates in search results.",
     });
   } else if (seo.description.length < 70) {
     suggestions.push({
       category: "seo",
       priority: "medium",
-      title: "Förläng din meta description",
-      description: "Din meta description är för kort. Optimal längd är 120-160 tecken.",
+      title: "Extend your meta description",
+      description: "Your meta description is too short. Optimal length is 120-160 characters.",
       currentValue: seo.description.value,
     });
   }
@@ -86,15 +86,15 @@ function generateSeoSuggestions(seo: SeoResult): Suggestion[] {
     suggestions.push({
       category: "seo",
       priority: "high",
-      title: "Lägg till en H1-rubrik",
-      description: "Din sida saknar en H1-rubrik. Varje sida bör ha exakt en H1.",
+      title: "Add an H1 heading",
+      description: "Your page is missing an H1 heading. Every page should have exactly one H1.",
     });
   } else if (seo.headings.h1.length > 1) {
     suggestions.push({
       category: "seo",
       priority: "medium",
-      title: "Reducera till en H1-rubrik",
-      description: `Din sida har ${seo.headings.h1.length} H1-rubriker. Best practice är att ha endast en.`,
+      title: "Reduce to one H1 heading",
+      description: `Your page has ${seo.headings.h1.length} H1 headings. Best practice is to have only one.`,
     });
   }
 
@@ -103,8 +103,8 @@ function generateSeoSuggestions(seo: SeoResult): Suggestion[] {
     suggestions.push({
       category: "seo",
       priority: seo.images.withoutAlt > 5 ? "high" : "medium",
-      title: "Lägg till alt-text på bilder",
-      description: `${seo.images.withoutAlt} av ${seo.images.total} bilder saknar alt-text.`,
+      title: "Add alt text to images",
+      description: `${seo.images.withoutAlt} of ${seo.images.total} images are missing alt text.`,
     });
   }
 
@@ -113,8 +113,8 @@ function generateSeoSuggestions(seo: SeoResult): Suggestion[] {
     suggestions.push({
       category: "seo",
       priority: "high",
-      title: "Aktivera HTTPS",
-      description: "Din sida använder inte HTTPS. Detta är kritiskt för säkerhet och SEO.",
+      title: "Enable HTTPS",
+      description: "Your page is not using HTTPS. This is critical for security and SEO.",
     });
   }
 
@@ -122,8 +122,8 @@ function generateSeoSuggestions(seo: SeoResult): Suggestion[] {
     suggestions.push({
       category: "seo",
       priority: "medium",
-      title: "Lägg till canonical URL",
-      description: "Ange en canonical URL för att undvika duplicerat innehåll.",
+      title: "Add canonical URL",
+      description: "Specify a canonical URL to avoid duplicate content issues.",
     });
   }
 
@@ -131,8 +131,8 @@ function generateSeoSuggestions(seo: SeoResult): Suggestion[] {
     suggestions.push({
       category: "seo",
       priority: "high",
-      title: "Lägg till viewport meta-tagg",
-      description: "Din sida saknar viewport-konfiguration för mobila enheter.",
+      title: "Add viewport meta tag",
+      description: "Your page is missing viewport configuration for mobile devices.",
       suggestedValue: '<meta name="viewport" content="width=device-width, initial-scale=1">',
     });
   }
@@ -148,9 +148,9 @@ function generateLlmSuggestions(llm: LlmReadinessResult): Suggestion[] {
     suggestions.push({
       category: "llm",
       priority: "high",
-      title: "Lägg till Schema.org markup",
+      title: "Add Schema.org markup",
       description:
-        "Strukturerad data hjälper AI att förstå ditt innehåll bättre. Överväg JSON-LD format.",
+        "Structured data helps AI understand your content better. Consider using JSON-LD format.",
     });
   }
 
@@ -159,9 +159,9 @@ function generateLlmSuggestions(llm: LlmReadinessResult): Suggestion[] {
     suggestions.push({
       category: "llm",
       priority: "medium",
-      title: "Lägg till en FAQ-sektion",
+      title: "Add an FAQ section",
       description:
-        "FAQ-sektioner är utmärkta för AI-assistenter att citera. Använd gärna FAQPage schema.",
+        "FAQ sections are excellent for AI assistants to cite. Consider using FAQPage schema.",
     });
   }
 
@@ -170,8 +170,8 @@ function generateLlmSuggestions(llm: LlmReadinessResult): Suggestion[] {
     suggestions.push({
       category: "llm",
       priority: "medium",
-      title: "Lägg till författarinformation",
-      description: "E-E-A-T signaler är viktiga. Visa vem som skrivit innehållet.",
+      title: "Add author information",
+      description: "E-E-A-T signals are important. Show who wrote the content.",
     });
   }
 
@@ -179,9 +179,9 @@ function generateLlmSuggestions(llm: LlmReadinessResult): Suggestion[] {
     suggestions.push({
       category: "llm",
       priority: "medium",
-      title: "Lägg till publiceringsdatum",
-      description: "Datumstämplar visar att innehållet är aktuellt.",
-      suggestedValue: '<time datetime="2024-01-15" itemprop="datePublished">15 januari 2024</time>',
+      title: "Add publication date",
+      description: "Timestamps show that the content is current.",
+      suggestedValue: '<time datetime="2024-01-15" itemprop="datePublished">January 15, 2024</time>',
     });
   }
 
@@ -190,9 +190,9 @@ function generateLlmSuggestions(llm: LlmReadinessResult): Suggestion[] {
     suggestions.push({
       category: "llm",
       priority: "low",
-      title: "Granska AI-crawler regler",
+      title: "Review AI crawler rules",
       description:
-        "Vissa AI-crawlers är blockerade. Om du vill synas i AI-assistenter, överväg att tillåta dem.",
+        "Some AI crawlers are blocked. If you want to appear in AI assistants, consider allowing them.",
     });
   }
 
@@ -201,9 +201,9 @@ function generateLlmSuggestions(llm: LlmReadinessResult): Suggestion[] {
     suggestions.push({
       category: "content",
       priority: "low",
-      title: "Lägg till statistik och data",
+      title: "Add statistics and data",
       description:
-        "Siffror och statistik gör innehållet mer citerbart för AI-assistenter.",
+        "Numbers and statistics make content more quotable for AI assistants.",
     });
   }
 
@@ -211,8 +211,8 @@ function generateLlmSuggestions(llm: LlmReadinessResult): Suggestion[] {
     suggestions.push({
       category: "content",
       priority: "medium",
-      title: "Lägg till källor och referenser",
-      description: "Länka till primärkällor för att öka trovärdigheten.",
+      title: "Add sources and references",
+      description: "Link to primary sources to increase credibility.",
     });
   }
 
@@ -220,25 +220,25 @@ function generateLlmSuggestions(llm: LlmReadinessResult): Suggestion[] {
 }
 
 async function generateAiSuggestions(results: AnalysisResults): Promise<Suggestion[]> {
-  const prompt = `Du är en SEO-expert. Analysera följande SEO-data och ge 2-3 konkreta förbättringsförslag på svenska.
+  const prompt = `You are an SEO expert. Analyze the following SEO data and provide 2-3 concrete improvement suggestions in English.
 
 URL: ${results.url}
-SEO-poäng: ${results.overallSeoScore}/100
-LLM-readiness: ${results.overallLlmScore}/100
+SEO Score: ${results.overallSeoScore}/100
+LLM Readiness: ${results.overallLlmScore}/100
 
-Title: ${results.seo.title.value || "Saknas"}
-Description: ${results.seo.description.value || "Saknas"}
-H1: ${results.seo.headings.h1.join(", ") || "Saknas"}
+Title: ${results.seo.title.value || "Missing"}
+Description: ${results.seo.description.value || "Missing"}
+H1: ${results.seo.headings.h1.join(", ") || "Missing"}
 
-Problem att fokusera på:
+Issues to focus on:
 ${results.seo.title.issues.join(", ")}
 ${results.seo.description.issues.join(", ")}
 ${results.llmReadiness.structuredData.issues.join(", ")}
 
-Ge konkreta förslag i JSON-format:
-[{"title": "Förbättring", "description": "Detaljer", "suggestedValue": "Exempel om tillämpligt"}]
+Provide concrete suggestions in JSON format:
+[{"title": "Improvement", "description": "Details", "suggestedValue": "Example if applicable"}]
 
-Svara ENDAST med JSON-arrayen.`;
+Respond ONLY with the JSON array.`;
 
   let response: string;
 

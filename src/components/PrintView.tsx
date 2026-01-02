@@ -15,10 +15,10 @@ interface PrintViewProps {
 }
 
 function getScoreLabel(score: number): string {
-  if (score >= 80) return "Utmärkt";
-  if (score >= 60) return "Bra";
-  if (score >= 40) return "Godkänt";
-  return "Behöver åtgärdas";
+  if (score >= 80) return "Excellent";
+  if (score >= 60) return "Good";
+  if (score >= 40) return "Acceptable";
+  return "Needs Improvement";
 }
 
 function getScoreColorClass(score: number): string {
@@ -89,7 +89,7 @@ export const PrintView = forwardRef<HTMLDivElement, PrintViewProps>(
             </div>
             <div className="text-right text-xs text-[#666666] font-mono">
               <div>Report ID: {reportId}</div>
-              <div>{analysisDate.toLocaleDateString("sv-SE")}</div>
+              <div>{analysisDate.toLocaleDateString("en-US")}</div>
             </div>
           </header>
 
@@ -188,19 +188,19 @@ export const PrintView = forwardRef<HTMLDivElement, PrintViewProps>(
                 </span>
               </li>
               <li className="flex items-start gap-2">
-                <span className={results.llmReadiness?.schemaOrg?.hasSchema ? "text-emerald-600" : "text-red-600"}>
-                  {results.llmReadiness?.schemaOrg?.hasSchema ? "✓" : "✗"}
+                <span className={results.llmReadiness?.structuredData?.hasSchemaOrg ? "text-emerald-600" : "text-red-600"}>
+                  {results.llmReadiness?.structuredData?.hasSchemaOrg ? "✓" : "✗"}
                 </span>
                 <span>
-                  Schema.org: {results.llmReadiness?.schemaOrg?.hasSchema ? "Implemented" : "Not found"}
+                  Schema.org: {results.llmReadiness?.structuredData?.hasSchemaOrg ? "Implemented" : "Not found"}
                 </span>
               </li>
               <li className="flex items-start gap-2">
-                <span className={(results.llmReadiness?.semanticHtml?.score || 0) >= 70 ? "text-emerald-600" : "text-amber-600"}>
-                  {(results.llmReadiness?.semanticHtml?.score || 0) >= 70 ? "✓" : "○"}
+                <span className={(results.llmReadiness?.contentClarity?.score || 0) >= 70 ? "text-emerald-600" : "text-amber-600"}>
+                  {(results.llmReadiness?.contentClarity?.score || 0) >= 70 ? "✓" : "○"}
                 </span>
                 <span>
-                  Semantic HTML: Score {results.llmReadiness?.semanticHtml?.score || 0}/100
+                  Content Clarity: Score {results.llmReadiness?.contentClarity?.score || 0}/100
                 </span>
               </li>
             </ul>
@@ -383,12 +383,12 @@ export const PrintView = forwardRef<HTMLDivElement, PrintViewProps>(
             </h3>
 
             <div className="flex items-start gap-4 mb-4">
-              <div className={`text-lg ${results.llmReadiness?.schemaOrg?.hasSchema ? "text-emerald-600" : "text-red-600"}`}>
-                {results.llmReadiness?.schemaOrg?.hasSchema ? "✓" : "✗"}
+              <div className={`text-lg ${results.llmReadiness?.structuredData?.hasSchemaOrg ? "text-emerald-600" : "text-red-600"}`}>
+                {results.llmReadiness?.structuredData?.hasSchemaOrg ? "✓" : "✗"}
               </div>
               <div>
                 <div className="font-medium mb-1">
-                  {results.llmReadiness?.schemaOrg?.hasSchema ? "Schema.org markup found" : "No Schema.org markup detected"}
+                  {results.llmReadiness?.structuredData?.hasSchemaOrg ? "Schema.org markup found" : "No Schema.org markup detected"}
                 </div>
                 <p className="text-xs text-[#888888]">
                   Schema.org helps AI systems understand your content structure, including business info,
@@ -397,23 +397,23 @@ export const PrintView = forwardRef<HTMLDivElement, PrintViewProps>(
               </div>
             </div>
 
-            {results.llmReadiness?.schemaOrg?.types?.length > 0 && (
+            {results.llmReadiness?.structuredData?.types?.length > 0 && (
               <div className="bg-[#F5F5F5] rounded p-3 text-xs font-mono">
-                Detected types: {results.llmReadiness.schemaOrg.types.join(", ")}
+                Detected types: {results.llmReadiness.structuredData.types.join(", ")}
               </div>
             )}
           </section>
 
-          {/* Semantic HTML */}
+          {/* Content Clarity */}
           <section className="mb-8">
             <h3 className="text-sm font-semibold uppercase tracking-wide text-[#666666] mb-4 pb-2 border-b border-[#E5E5E5]">
-              Semantic HTML Structure
+              Content Clarity
             </h3>
 
             <div className="flex items-center gap-6 mb-4">
               <div>
                 <div className="text-4xl font-mono font-light mb-1">
-                  {results.llmReadiness?.semanticHtml?.score || 0}
+                  {results.llmReadiness?.contentClarity?.score || 0}
                   <span className="text-lg text-[#AAAAAA]">/100</span>
                 </div>
               </div>
@@ -421,34 +421,34 @@ export const PrintView = forwardRef<HTMLDivElement, PrintViewProps>(
                 <div className="h-2 bg-[#E5E5E5] rounded-full overflow-hidden">
                   <div
                     className={`h-full rounded-full ${
-                      (results.llmReadiness?.semanticHtml?.score || 0) >= 70
+                      (results.llmReadiness?.contentClarity?.score || 0) >= 70
                         ? "bg-emerald-500"
-                        : (results.llmReadiness?.semanticHtml?.score || 0) >= 40
+                        : (results.llmReadiness?.contentClarity?.score || 0) >= 40
                           ? "bg-amber-500"
                           : "bg-red-500"
                     }`}
-                    style={{ width: `${results.llmReadiness?.semanticHtml?.score || 0}%` }}
+                    style={{ width: `${results.llmReadiness?.contentClarity?.score || 0}%` }}
                   />
                 </div>
               </div>
             </div>
 
             <p className="text-xs text-[#888888]">
-              Semantic HTML uses descriptive elements like &lt;article&gt;, &lt;nav&gt;, &lt;header&gt;,
-              &lt;footer&gt; instead of generic &lt;div&gt; tags, helping AI understand page structure.
+              Clear content with well-structured paragraphs, FAQ sections, and definitions
+              helps AI systems extract and summarize information effectively.
             </p>
           </section>
 
-          {/* Content Structure */}
+          {/* Author Info (E-E-A-T) */}
           <section className="mb-8">
             <h3 className="text-sm font-semibold uppercase tracking-wide text-[#666666] mb-4 pb-2 border-b border-[#E5E5E5]">
-              Content Structure
+              Author Info (E-E-A-T)
             </h3>
 
             <div className="flex items-center gap-6 mb-4">
               <div>
                 <div className="text-4xl font-mono font-light mb-1">
-                  {results.llmReadiness?.contentStructure?.score || 0}
+                  {results.llmReadiness?.authorInfo?.score || 0}
                   <span className="text-lg text-[#AAAAAA]">/100</span>
                 </div>
               </div>
@@ -456,34 +456,34 @@ export const PrintView = forwardRef<HTMLDivElement, PrintViewProps>(
                 <div className="h-2 bg-[#E5E5E5] rounded-full overflow-hidden">
                   <div
                     className={`h-full rounded-full ${
-                      (results.llmReadiness?.contentStructure?.score || 0) >= 70
+                      (results.llmReadiness?.authorInfo?.score || 0) >= 70
                         ? "bg-emerald-500"
-                        : (results.llmReadiness?.contentStructure?.score || 0) >= 40
+                        : (results.llmReadiness?.authorInfo?.score || 0) >= 40
                           ? "bg-amber-500"
                           : "bg-red-500"
                     }`}
-                    style={{ width: `${results.llmReadiness?.contentStructure?.score || 0}%` }}
+                    style={{ width: `${results.llmReadiness?.authorInfo?.score || 0}%` }}
                   />
                 </div>
               </div>
             </div>
 
             <p className="text-xs text-[#888888]">
-              Well-structured content with clear headings, short paragraphs, and bullet points
-              makes it easier for AI systems to extract and summarize information.
+              Author information, publication dates, and expertise signals help establish
+              credibility and trust with both AI systems and users.
             </p>
           </section>
 
-          {/* Quotable Content */}
+          {/* Citability */}
           <section>
             <h3 className="text-sm font-semibold uppercase tracking-wide text-[#666666] mb-4 pb-2 border-b border-[#E5E5E5]">
-              Quotable Content
+              Citability
             </h3>
 
             <div className="flex items-center gap-6 mb-4">
               <div>
                 <div className="text-4xl font-mono font-light mb-1">
-                  {results.llmReadiness?.quotableContent?.score || 0}
+                  {results.llmReadiness?.citability?.score || 0}
                   <span className="text-lg text-[#AAAAAA]">/100</span>
                 </div>
               </div>
@@ -491,21 +491,21 @@ export const PrintView = forwardRef<HTMLDivElement, PrintViewProps>(
                 <div className="h-2 bg-[#E5E5E5] rounded-full overflow-hidden">
                   <div
                     className={`h-full rounded-full ${
-                      (results.llmReadiness?.quotableContent?.score || 0) >= 70
+                      (results.llmReadiness?.citability?.score || 0) >= 70
                         ? "bg-emerald-500"
-                        : (results.llmReadiness?.quotableContent?.score || 0) >= 40
+                        : (results.llmReadiness?.citability?.score || 0) >= 40
                           ? "bg-amber-500"
                           : "bg-red-500"
                     }`}
-                    style={{ width: `${results.llmReadiness?.quotableContent?.score || 0}%` }}
+                    style={{ width: `${results.llmReadiness?.citability?.score || 0}%` }}
                   />
                 </div>
               </div>
             </div>
 
             <p className="text-xs text-[#888888]">
-              Quotable content includes specific facts, definitions, and statements that AI can
-              easily reference. Include specific numbers, dates, names, and clear explanations.
+              Citable content includes quotes, statistics, and sources that AI can
+              easily reference. Include specific numbers, data, and clear explanations.
             </p>
           </section>
 
@@ -598,7 +598,7 @@ export const PrintView = forwardRef<HTMLDivElement, PrintViewProps>(
                 </div>
                 <div className="text-right">
                   <div className="text-xs text-[#888888] font-mono">
-                    Generated on {analysisDate.toLocaleDateString("sv-SE")}
+                    Generated on {analysisDate.toLocaleDateString("en-US")}
                   </div>
                   <div className="text-xs text-[#AAAAAA] font-mono">
                     aioli-one.vercel.app
@@ -647,8 +647,8 @@ function generateDefaultRecommendations(
     });
   }
 
-  const hasSchema = (llmReadiness?.schemaOrg as { hasSchema?: boolean } | undefined)?.hasSchema;
-  if (!hasSchema) {
+  const hasSchemaOrg = (llmReadiness?.structuredData as { hasSchemaOrg?: boolean } | undefined)?.hasSchemaOrg;
+  if (!hasSchemaOrg) {
     recommendations.push({
       title: "Implement Schema.org Markup",
       description: "Add structured data to help search engines and AI systems better understand your content. Start with Organization, WebPage, or Article schemas.",
@@ -656,20 +656,20 @@ function generateDefaultRecommendations(
     });
   }
 
-  const quotableScore = (llmReadiness?.quotableContent as { score?: number } | undefined)?.score || 0;
-  if (quotableScore < 50) {
+  const citabilityScore = (llmReadiness?.citability as { score?: number } | undefined)?.score || 0;
+  if (citabilityScore < 50) {
     recommendations.push({
-      title: "Improve Content Quotability",
-      description: "Include specific facts, statistics, and clear definitions that AI systems can easily cite. Structure information in digestible, quotable segments.",
+      title: "Improve Content Citability",
+      description: "Include specific facts, statistics, and clear sources that AI systems can easily cite. Structure information in digestible, quotable segments.",
       priority: "medium",
     });
   }
 
-  const semanticScore = (llmReadiness?.semanticHtml as { score?: number } | undefined)?.score || 0;
-  if (semanticScore < 60) {
+  const contentClarityScore = (llmReadiness?.contentClarity as { score?: number } | undefined)?.score || 0;
+  if (contentClarityScore < 60) {
     recommendations.push({
-      title: "Enhance Semantic HTML",
-      description: "Replace generic div elements with semantic HTML5 tags like article, section, nav, header, and footer to improve content structure recognition.",
+      title: "Enhance Content Clarity",
+      description: "Add FAQ sections, use clear definitions, and structure content with appropriate paragraph lengths for better AI understanding.",
       priority: "low",
     });
   }

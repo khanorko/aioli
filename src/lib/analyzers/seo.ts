@@ -30,14 +30,14 @@ function analyzeTitle($: CheerioAPI): SeoResult["title"] {
   let score = 100;
 
   if (!value) {
-    issues.push("Ingen title-tagg hittad");
+    issues.push("No title tag found");
     score = 0;
   } else {
     if (length < 30) {
-      issues.push("Title är för kort (under 30 tecken)");
+      issues.push("Title is too short (under 30 characters)");
       score -= 30;
     } else if (length > 60) {
-      issues.push("Title är för lång (över 60 tecken)");
+      issues.push("Title is too long (over 60 characters)");
       score -= 20;
     }
   }
@@ -54,14 +54,14 @@ function analyzeDescription($: CheerioAPI): SeoResult["description"] {
   let score = 100;
 
   if (!value) {
-    issues.push("Ingen meta description hittad");
+    issues.push("No meta description found");
     score = 0;
   } else {
     if (length < 70) {
-      issues.push("Meta description är för kort (under 70 tecken)");
+      issues.push("Meta description is too short (under 70 characters)");
       score -= 30;
     } else if (length > 160) {
-      issues.push("Meta description är för lång (över 160 tecken)");
+      issues.push("Meta description is too long (over 160 characters)");
       score -= 20;
     }
   }
@@ -82,15 +82,15 @@ function analyzeHeadings($: CheerioAPI): SeoResult["headings"] {
   let score = 100;
 
   if (h1.length === 0) {
-    issues.push("Ingen H1-rubrik hittad");
+    issues.push("No H1 heading found");
     score -= 40;
   } else if (h1.length > 1) {
-    issues.push(`Flera H1-rubriker hittade (${h1.length} st)`);
+    issues.push(`Multiple H1 headings found (${h1.length})`);
     score -= 20;
   }
 
   if (h2.length === 0) {
-    issues.push("Inga H2-rubriker hittade");
+    issues.push("No H2 headings found");
     score -= 20;
   }
 
@@ -117,7 +117,7 @@ function analyzeImages($: CheerioAPI): SeoResult["images"] {
 
   if (total > 0 && withoutAlt > 0) {
     const percentage = Math.round((withoutAlt / total) * 100);
-    issues.push(`${withoutAlt} av ${total} bilder saknar alt-text (${percentage}%)`);
+    issues.push(`${withoutAlt} of ${total} images missing alt text (${percentage}%)`);
     score -= Math.min(50, withoutAlt * 10);
   }
 
@@ -161,7 +161,7 @@ async function analyzeTechnical(
   // HTTPS
   const https = page.url.startsWith("https://");
   if (!https) {
-    issues.push("Sidan använder inte HTTPS");
+    issues.push("Page is not using HTTPS");
     score -= 30;
   }
 
@@ -169,7 +169,7 @@ async function analyzeTechnical(
   const canonicalEl = $('link[rel="canonical"]');
   const canonical = canonicalEl.attr("href") || null;
   if (!canonical) {
-    issues.push("Ingen canonical URL angiven");
+    issues.push("No canonical URL specified");
     score -= 10;
   }
 
@@ -177,7 +177,7 @@ async function analyzeTechnical(
   const viewportEl = $('meta[name="viewport"]');
   const viewport = !!viewportEl.length;
   if (!viewport) {
-    issues.push("Ingen viewport meta-tagg (mobilanpassning)");
+    issues.push("No viewport meta tag (mobile optimization)");
     score -= 20;
   }
 
@@ -186,7 +186,7 @@ async function analyzeTechnical(
   const robotsTxt = await fetchRobotsTxt(baseUrl);
   const hasRobotsTxt = robotsTxt !== null;
   if (!hasRobotsTxt) {
-    issues.push("Ingen robots.txt hittad");
+    issues.push("No robots.txt found");
     score -= 10;
   }
 
@@ -194,7 +194,7 @@ async function analyzeTechnical(
   const sitemap = await fetchSitemap(baseUrl);
   const hasSitemap = sitemap !== null;
   if (!hasSitemap) {
-    issues.push("Ingen sitemap.xml hittad");
+    issues.push("No sitemap.xml found");
     score -= 10;
   }
 

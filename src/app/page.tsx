@@ -18,7 +18,6 @@ import {
 import { Navbar } from "@/components/Navbar";
 import { ScanSelector } from "@/components/ScanSelector";
 import { CreditPackageCards, CreditsExplainer } from "@/components/PricingCard";
-import { useLanguage } from "@/lib/LanguageContext";
 
 // Animation variants
 const fadeUp = {
@@ -38,21 +37,20 @@ function HomeContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { data: session, status } = useSession();
-  const { t } = useLanguage();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
 
   useEffect(() => {
     if (searchParams.get("success") === "true") {
-      setSuccessMessage(t.success.upgraded);
+      setSuccessMessage("Thanks for your upgrade! You now have unlimited analyses.");
       window.history.replaceState({}, "", "/");
       setTimeout(() => setSuccessMessage(""), 5000);
     }
     if (searchParams.get("canceled") === "true") {
       window.history.replaceState({}, "", "/");
     }
-  }, [searchParams, t.success.upgraded]);
+  }, [searchParams]);
 
   const handleAnalyze = async (urls: string[], scanType: "single" | "site") => {
     if (!session?.user?.email) {
@@ -74,11 +72,11 @@ function HomeContent() {
 
       if (!response.ok) {
         if (data.needsCredits) {
-          router.push("/#priser");
+          router.push("/#pricing");
           setIsLoading(false);
           return;
         }
-        throw new Error(data.error || t.errors.generic);
+        throw new Error(data.error || "Something went wrong");
       }
 
       if (data.type === "site") {
@@ -87,7 +85,7 @@ function HomeContent() {
         router.push(`/analysis/${data.id}`);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : t.errors.generic);
+      setError(err instanceof Error ? err.message : "Something went wrong");
       setIsLoading(false);
     }
   };
@@ -417,7 +415,7 @@ function HomeContent() {
       </section>
 
       {/* Pricing Section */}
-      <section id="priser" className="py-24 px-6 border-t border-white/5">
+      <section id="pricing" className="py-24 px-6 border-t border-white/5">
         <div className="max-w-5xl mx-auto">
           <motion.div
             initial={{ opacity: 0 }}
@@ -426,9 +424,9 @@ function HomeContent() {
             className="text-center mb-12"
           >
             <h2 className="text-3xl md:text-4xl font-light tracking-tight mb-4">
-              {t.pricing.title}
+              Buy credits
             </h2>
-            <p className="text-[var(--text-secondary)]">{t.pricing.subtitle}</p>
+            <p className="text-[var(--text-secondary)]">Analyze free - unlock details with credits</p>
           </motion.div>
 
           <motion.div

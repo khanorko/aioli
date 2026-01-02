@@ -2,45 +2,81 @@
 
 import { useState } from "react";
 import { useSession, signIn } from "next-auth/react";
-import { useLanguage } from "@/lib/LanguageContext";
 
 interface CreditPackage {
   id: string;
+  name: string;
+  tagline: string;
   credits: number;
   price: number;
   pricePerCredit: number;
   popular?: boolean;
+  features: string[];
+  perfectFor: string;
+  cta: string;
   variant: "basic" | "popular" | "premium";
 }
 
 const CREDIT_PACKAGES: CreditPackage[] = [
   {
     id: "starter",
+    name: "Try",
+    tagline: "Test on a single page",
     credits: 1,
     price: 49,
     pricePerCredit: 49,
+    features: [
+      "1 page analysis",
+      "Full SEO report",
+      "AI visibility analysis",
+      "Improvement suggestions",
+      "PDF export"
+    ],
+    perfectFor: "a quick test of your homepage",
+    cta: "Try one analysis",
     variant: "basic",
   },
   {
     id: "website",
+    name: "Website",
+    tagline: "Analyze your entire site",
     credits: 5,
     price: 149,
     pricePerCredit: 30,
     popular: true,
+    features: [
+      "5 page analyses",
+      "Site scan (multiple pages)",
+      "Aggregated site report",
+      "All improvement suggestions",
+      "PDF export"
+    ],
+    perfectFor: "small businesses and bloggers",
+    cta: "Analyze your site",
     variant: "popular",
   },
   {
     id: "agency",
+    name: "Agency",
+    tagline: "For multiple websites",
     credits: 15,
     price: 299,
     pricePerCredit: 20,
+    features: [
+      "15 page analyses",
+      "Analyze multiple sites",
+      "Competitor analysis",
+      "Premium features",
+      "PDF export"
+    ],
+    perfectFor: "agencies and consultants",
+    cta: "Get started",
     variant: "premium",
   },
 ];
 
 export function CreditPackageCards() {
   const { data: session } = useSession();
-  const { t } = useLanguage();
   const userCredits = session?.user?.credits || 0;
   const isLoggedIn = !!session?.user;
 
@@ -58,9 +94,9 @@ export function CreditPackageCards() {
           >
             <CreditIcon />
             <span style={{ color: "var(--text-secondary)" }}>
-              {t.pricing.youHave}{" "}
+              You have{" "}
               <span className="font-semibold" style={{ color: "var(--text-primary)" }}>
-                {userCredits} {userCredits === 1 ? t.pricing.credit : t.pricing.credits}
+                {userCredits} {userCredits === 1 ? "credit" : "credits"}
               </span>
             </span>
           </div>
@@ -78,11 +114,9 @@ export function CreditPackageCards() {
 
 function CreditPackageCard({ package: pkg, userCredits }: { package: CreditPackage; userCredits: number }) {
   const { data: session } = useSession();
-  const { t } = useLanguage();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const packageData = t.pricing.packages[pkg.id as keyof typeof t.pricing.packages];
   const hasCredits = userCredits > 0;
 
   const handlePurchase = async () => {
@@ -105,17 +139,17 @@ function CreditPackageCard({ package: pkg, userCredits }: { package: CreditPacka
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Något gick fel");
+        throw new Error(data.error || "Something went wrong");
       }
 
       if (data.url) {
         window.location.href = data.url;
       } else {
-        throw new Error(t.errors.noCheckoutUrl);
+        throw new Error("No checkout URL received");
       }
     } catch (err) {
       console.error("Purchase error:", err);
-      setError(err instanceof Error ? err.message : t.errors.couldNotStartPurchase);
+      setError(err instanceof Error ? err.message : "Could not start purchase");
     } finally {
       setIsLoading(false);
     }
@@ -144,9 +178,9 @@ function CreditPackageCard({ package: pkg, userCredits }: { package: CreditPacka
 
   // Get CTA text - use "Buy more" only if user has credits > 0
   const getCtaText = () => {
-    if (isLoading) return t.pricing.loading;
-    if (hasCredits) return t.pricing.buyMore;
-    return packageData.cta;
+    if (isLoading) return "Loading...";
+    if (hasCredits) return "Buy more";
+    return pkg.cta;
   };
 
   return (
@@ -155,7 +189,7 @@ function CreditPackageCard({ package: pkg, userCredits }: { package: CreditPacka
       {pkg.popular && (
         <div className="absolute -top-2 left-1/2 -translate-x-1/2 bg-gradient-to-r from-[var(--plasma-blue)] to-[#6366f1] text-white text-sm font-bold px-5 py-2 rounded-full whitespace-nowrap z-10 flex items-center gap-2 shadow-lg shadow-[var(--plasma-blue)]/30">
           <StarIcon />
-          {t.pricing.popular}
+          Most popular
         </div>
       )}
       <div className={`card p-6 flex flex-col h-full ${getCardStyles()}`}>
@@ -163,10 +197,10 @@ function CreditPackageCard({ package: pkg, userCredits }: { package: CreditPacka
       {/* Package Name & Tagline */}
       <div className="mb-4">
         <h3 className="text-xl font-bold mb-1" style={{ color: "var(--text-primary)" }}>
-          {packageData.name}
+          {pkg.name}
         </h3>
         <p className="text-sm" style={{ color: "var(--text-muted)" }}>
-          {packageData.tagline}
+          {pkg.tagline}
         </p>
       </div>
 
@@ -177,13 +211,13 @@ function CreditPackageCard({ package: pkg, userCredits }: { package: CreditPacka
         </span>
         <span className="text-lg" style={{ color: "var(--text-muted)" }}> kr</span>
         <p className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>
-          {pkg.pricePerCredit} kr {t.pricing.perAnalysis}
+          {pkg.pricePerCredit} kr per analysis
         </p>
       </div>
 
       {/* Features List */}
       <ul className="space-y-2.5 mb-6 flex-grow">
-        {packageData.features.map((feature: string, index: number) => (
+        {pkg.features.map((feature: string, index: number) => (
           <li key={index} className="flex items-start gap-2.5 text-sm" style={{ color: "var(--text-secondary)" }}>
             <CheckIcon />
             <span>{feature}</span>
@@ -197,9 +231,9 @@ function CreditPackageCard({ package: pkg, userCredits }: { package: CreditPacka
         color: "var(--text-muted)"
       }}>
         <span className="font-medium" style={{ color: "var(--text-secondary)" }}>
-          {t.pricing.perfectFor}
+          Perfect for:
         </span>{" "}
-        {packageData.perfectFor}
+        {pkg.perfectFor}
       </p>
 
       {/* Error Message */}
@@ -224,33 +258,31 @@ function CreditPackageCard({ package: pkg, userCredits }: { package: CreditPacka
 
 // What you get with credits
 export function CreditsExplainer() {
-  const { t } = useLanguage();
-
   return (
     <div className="card p-6 max-w-2xl mx-auto mt-10">
       <h3 className="font-semibold text-lg mb-4" style={{ color: "var(--text-primary)" }}>
-        {t.pricing.whatYouGet}
+        What do I get for 1 credit?
       </h3>
       <ul className="space-y-3">
         <li className="flex items-start gap-3 text-sm" style={{ color: "var(--text-secondary)" }}>
           <CheckIcon />
-          <span>{t.pricing.benefits.analysis}</span>
+          <span>Full AI visibility analysis with details</span>
         </li>
         <li className="flex items-start gap-3 text-sm" style={{ color: "var(--text-secondary)" }}>
           <CheckIcon />
-          <span>{t.pricing.benefits.suggestions}</span>
+          <span>AI-generated improvement suggestions</span>
         </li>
         <li className="flex items-start gap-3 text-sm" style={{ color: "var(--text-secondary)" }}>
           <CheckIcon />
-          <span>{t.pricing.benefits.pdf}</span>
+          <span>PDF export of the report</span>
         </li>
         <li className="flex items-start gap-3 text-sm" style={{ color: "var(--text-secondary)" }}>
           <CheckIcon />
-          <span>{t.pricing.benefits.history}</span>
+          <span>Saved in your analysis history</span>
         </li>
       </ul>
       <p className="text-xs mt-4" style={{ color: "var(--text-muted)" }}>
-        {t.pricing.freeIncludes}
+        Free analysis includes: SEO score, AI visibility score (without details)
       </p>
     </div>
   );

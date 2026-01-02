@@ -9,7 +9,7 @@ interface LlmReadinessScoreProps {
 export function LlmReadinessScore({ result }: LlmReadinessScoreProps) {
   const categories = [
     {
-      name: "Strukturerad data",
+      name: "Structured Data",
       icon: (
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <rect x="3" y="3" width="7" height="7"/>
@@ -20,12 +20,12 @@ export function LlmReadinessScore({ result }: LlmReadinessScoreProps) {
       ),
       score: result.structuredData.score,
       details: result.structuredData.hasSchemaOrg
-        ? `Schema.org: ${result.structuredData.types.join(", ") || "Ja"}`
-        : "Ingen Schema.org markup hittad",
+        ? `Schema.org: ${result.structuredData.types.join(", ") || "Yes"}`
+        : "No Schema.org markup found",
       issues: result.structuredData.issues,
     },
     {
-      name: "Innehållets klarhet",
+      name: "Content Clarity",
       icon: (
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
@@ -35,11 +35,11 @@ export function LlmReadinessScore({ result }: LlmReadinessScoreProps) {
         </svg>
       ),
       score: result.contentClarity.score,
-      details: `FAQ: ${result.contentClarity.hasFaq ? "Ja" : "Nej"}, Definitioner: ${result.contentClarity.hasDefinitions ? "Ja" : "Nej"}`,
+      details: `FAQ: ${result.contentClarity.hasFaq ? "Yes" : "No"}, Definitions: ${result.contentClarity.hasDefinitions ? "Yes" : "No"}`,
       issues: result.contentClarity.issues,
     },
     {
-      name: "Författarinfo (E-E-A-T)",
+      name: "Author Info (E-E-A-T)",
       icon: (
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
@@ -47,11 +47,11 @@ export function LlmReadinessScore({ result }: LlmReadinessScoreProps) {
         </svg>
       ),
       score: result.authorInfo.score,
-      details: `Författare: ${result.authorInfo.hasAuthor ? "Ja" : "Nej"}, Datum: ${result.authorInfo.hasDate ? "Ja" : "Nej"}`,
+      details: `Author: ${result.authorInfo.hasAuthor ? "Yes" : "No"}, Date: ${result.authorInfo.hasDate ? "Yes" : "No"}`,
       issues: result.authorInfo.issues,
     },
     {
-      name: "AI-crawler åtkomst",
+      name: "AI Crawler Access",
       icon: (
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M12 8V4H8"/>
@@ -63,11 +63,11 @@ export function LlmReadinessScore({ result }: LlmReadinessScoreProps) {
         </svg>
       ),
       score: result.aiCrawlerAccess.score,
-      details: `GPTBot: ${result.aiCrawlerAccess.allowsGptBot ? "Tillåten" : "Blockerad"}, Claude: ${result.aiCrawlerAccess.allowsAnthropicBot ? "Tillåten" : "Blockerad"}`,
+      details: `GPTBot: ${result.aiCrawlerAccess.allowsGptBot ? "Allowed" : "Blocked"}, Claude: ${result.aiCrawlerAccess.allowsAnthropicBot ? "Allowed" : "Blocked"}`,
       issues: result.aiCrawlerAccess.issues,
     },
     {
-      name: "Citerbarhet",
+      name: "Citability",
       icon: (
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V21c0 1 0 1 1 1z"/>
@@ -75,7 +75,7 @@ export function LlmReadinessScore({ result }: LlmReadinessScoreProps) {
         </svg>
       ),
       score: result.citability.score,
-      details: `Statistik: ${result.citability.hasStatistics ? "Ja" : "Nej"}, Källor: ${result.citability.hasSources ? "Ja" : "Nej"}`,
+      details: `Statistics: ${result.citability.hasStatistics ? "Yes" : "No"}, Sources: ${result.citability.hasSources ? "Yes" : "No"}`,
       issues: result.citability.issues,
     },
   ];

@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { Navigation } from "@/components/Navigation";
-import { useLanguage } from "@/lib/LanguageContext";
 
 interface Analysis {
   id: string;
@@ -24,9 +23,9 @@ function getScoreColor(score: number | null): string {
   return "var(--score-poor)";
 }
 
-function formatDate(dateString: string, language: string): string {
+function formatDate(dateString: string): string {
   const date = new Date(dateString);
-  return date.toLocaleDateString(language === "sv" ? "sv-SE" : "en-US", {
+  return date.toLocaleDateString("en-US", {
     year: "numeric",
     month: "short",
     day: "numeric",
@@ -47,7 +46,6 @@ function extractDomain(url: string): string {
 export default function HistoryPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const { t, language } = useLanguage();
   const [analyses, setAnalyses] = useState<Analysis[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
@@ -69,12 +67,12 @@ export default function HistoryPage() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || t.history.fetchError);
+        throw new Error(data.error || "Failed to fetch analyses");
       }
 
       setAnalyses(data.analyses);
     } catch (err) {
-      setError(err instanceof Error ? err.message : t.history.error);
+      setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
       setIsLoading(false);
     }
@@ -109,10 +107,10 @@ export default function HistoryPage() {
             <Image src="/logo.png" alt="AIoli" width={100} height={40} style={{ height: '32px', width: 'auto' }} />
           </Link>
           <h1 className="text-3xl font-bold mb-2" style={{ color: "var(--text-primary)" }}>
-            {t.history.title}
+            Analysis History
           </h1>
           <p style={{ color: "var(--text-secondary)" }}>
-            {t.history.subtitle}
+            Your previous SEO and AI visibility analyses
           </p>
         </div>
 
@@ -125,10 +123,10 @@ export default function HistoryPage() {
         {analyses.length === 0 ? (
           <div className="card p-8 text-center">
             <p className="text-lg mb-4" style={{ color: "var(--text-secondary)" }}>
-              {t.history.empty}
+              No analyses yet
             </p>
             <Link href="/" className="btn-primary inline-block px-6 py-3">
-              {t.history.startFirst}
+              Start your first analysis
             </Link>
           </div>
         ) : (
@@ -147,7 +145,7 @@ export default function HistoryPage() {
                     {analysis.url}
                   </p>
                   <p className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>
-                    {formatDate(analysis.createdAt, language)}
+                    {formatDate(analysis.createdAt)}
                   </p>
                 </div>
 

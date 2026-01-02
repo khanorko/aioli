@@ -618,6 +618,11 @@ h3 {
   opacity: 0.6;
 }
 
+.generate-report-btn-error {
+  background: var(--score-poor);
+  color: white;
+}
+
 /* Shimmer effect */
 .shimmer-overlay {
   position: absolute;

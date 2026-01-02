@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useLanguage } from "@/lib/LanguageContext";
 
 interface DiscoveredPages {
   domain: string;
@@ -19,7 +18,6 @@ interface ScanSelectorProps {
 type Step = "input" | "selecting" | "analyzing";
 
 export function ScanSelector({ onAnalyze, isLoading = false, userCredits }: ScanSelectorProps) {
-  const { t, language } = useLanguage();
   const [url, setUrl] = useState("");
   const [step, setStep] = useState<Step>("input");
   const [discovered, setDiscovered] = useState<DiscoveredPages | null>(null);
@@ -33,7 +31,7 @@ export function ScanSelector({ onAnalyze, isLoading = false, userCredits }: Scan
 
     let processedUrl = url.trim();
     if (!processedUrl) {
-      setError(language === "sv" ? "Ange en webbadress" : "Enter a web address");
+      setError("Enter a web address");
       return;
     }
 
@@ -44,7 +42,7 @@ export function ScanSelector({ onAnalyze, isLoading = false, userCredits }: Scan
     try {
       new URL(processedUrl);
     } catch {
-      setError(language === "sv" ? "Ogiltig webbadress" : "Invalid web address");
+      setError("Invalid web address");
       return;
     }
 
@@ -189,10 +187,7 @@ export function ScanSelector({ onAnalyze, isLoading = false, userCredits }: Scan
                 {discovered.domain}
               </h3>
               <p className="text-sm" style={{ color: "var(--text-muted)" }}>
-                {language === "sv"
-                  ? `Hittade ${discovered.totalFound} ${discovered.totalFound === 1 ? "sida" : "sidor"} via ${discovered.source === "sitemap" ? "sitemap" : "scanning"}`
-                  : `Found ${discovered.totalFound} ${discovered.totalFound === 1 ? "page" : "pages"} via ${discovered.source}`
-                }
+                Found {discovered.totalFound} {discovered.totalFound === 1 ? "page" : "pages"} via {discovered.source}
               </p>
             </div>
             <button
@@ -200,7 +195,7 @@ export function ScanSelector({ onAnalyze, isLoading = false, userCredits }: Scan
               className="text-sm px-3 py-1 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors"
               style={{ color: "var(--text-muted)" }}
             >
-              {language === "sv" ? "Ändra" : "Change"}
+              Change
             </button>
           </div>
 
@@ -231,10 +226,10 @@ export function ScanSelector({ onAnalyze, isLoading = false, userCredits }: Scan
               </div>
               <div className="flex-1">
                 <p className="font-medium" style={{ color: "var(--text-primary)" }}>
-                  {language === "sv" ? "Snabbanalys" : "Quick analysis"}
+                  Quick analysis
                 </p>
                 <p className="text-sm" style={{ color: "var(--text-muted)" }}>
-                  {language === "sv" ? "Endast startsidan" : "Homepage only"}
+                  Homepage only
                 </p>
               </div>
               <div className="text-right">
@@ -269,17 +264,14 @@ export function ScanSelector({ onAnalyze, isLoading = false, userCredits }: Scan
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
                     <p className="font-medium" style={{ color: "var(--text-primary)" }}>
-                      {language === "sv" ? "Sajt-scan" : "Site scan"}
+                      Site scan
                     </p>
                     <span className="text-xs px-2 py-0.5 rounded-full bg-[var(--plasma-blue)] text-white font-medium">
-                      {language === "sv" ? "Rekommenderat" : "Recommended"}
+                      Recommended
                     </span>
                   </div>
                   <p className="text-sm" style={{ color: "var(--text-muted)" }}>
-                    {language === "sv"
-                      ? `Analysera upp till ${Math.min(discovered.totalFound, 10)} sidor`
-                      : `Analyze up to ${Math.min(discovered.totalFound, 10)} pages`
-                    }
+                    Analyze up to {Math.min(discovered.totalFound, 10)} pages
                   </p>
                 </div>
                 <div className="text-right">
@@ -295,7 +287,7 @@ export function ScanSelector({ onAnalyze, isLoading = false, userCredits }: Scan
           {scanType === "site" && discovered.totalFound > 1 && (
             <div className="mb-6 p-4 rounded-xl bg-[var(--bg-secondary)]">
               <p className="text-xs font-medium mb-2" style={{ color: "var(--text-muted)" }}>
-                {language === "sv" ? "Sidor som analyseras:" : "Pages to analyze:"}
+                Pages to analyze:
               </p>
               <div className="space-y-1 max-h-32 overflow-y-auto">
                 {discovered.pages.slice(0, 10).map((page, i) => (
@@ -306,7 +298,7 @@ export function ScanSelector({ onAnalyze, isLoading = false, userCredits }: Scan
               </div>
               {discovered.totalFound > 10 && (
                 <p className="text-xs mt-2" style={{ color: "var(--text-muted)" }}>
-                  +{discovered.totalFound - 10} {language === "sv" ? "fler sidor hittades" : "more pages found"}
+                  +{discovered.totalFound - 10} more pages found
                 </p>
               )}
             </div>
@@ -316,13 +308,9 @@ export function ScanSelector({ onAnalyze, isLoading = false, userCredits }: Scan
           {!hasEnoughCredits && (
             <div className="mb-4 p-3 rounded-lg bg-[var(--score-poor)]/10 border border-[var(--score-poor)]/20">
               <p className="text-sm" style={{ color: "var(--score-poor)" }}>
-                {language === "sv"
-                  ? `Du behöver ${creditsNeeded} credits men har endast ${userCredits}.`
-                  : `You need ${creditsNeeded} credits but only have ${userCredits}.`
-                }
-                {" "}
-                <a href="/#priser" className="underline font-medium">
-                  {language === "sv" ? "Köp fler credits" : "Buy more credits"}
+                You need {creditsNeeded} credits but only have {userCredits}.{" "}
+                <a href="/#pricing" className="underline font-medium">
+                  Buy more credits
                 </a>
               </p>
             </div>
@@ -340,11 +328,11 @@ export function ScanSelector({ onAnalyze, isLoading = false, userCredits }: Scan
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                 </svg>
-                {language === "sv" ? "Analyserar..." : "Analyzing..."}
+                Analyzing...
               </span>
             ) : (
               <>
-                {language === "sv" ? "Starta analys" : "Start analysis"}
+                Start analysis
                 <span className="ml-2 opacity-75">({creditsNeeded} credits)</span>
               </>
             )}
@@ -363,10 +351,10 @@ export function ScanSelector({ onAnalyze, isLoading = false, userCredits }: Scan
           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
         </svg>
         <p className="text-lg font-medium" style={{ color: "var(--text-primary)" }}>
-          {language === "sv" ? "Analyserar din sajt..." : "Analyzing your site..."}
+          Analyzing your site...
         </p>
         <p className="text-sm mt-2" style={{ color: "var(--text-muted)" }}>
-          {language === "sv" ? "Detta kan ta upp till en minut" : "This may take up to a minute"}
+          This may take up to a minute
         </p>
       </div>
     </div>

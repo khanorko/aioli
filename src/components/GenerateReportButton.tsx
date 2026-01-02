@@ -19,7 +19,7 @@ interface GenerateReportButtonProps {
   isUnlocked?: boolean;
 }
 
-type ExportState = "idle" | "preparing" | "generating" | "complete";
+type ExportState = "idle" | "preparing" | "generating" | "complete" | "error";
 
 export function GenerateReportButton({
   analysisData,
@@ -28,6 +28,7 @@ export function GenerateReportButton({
 }: GenerateReportButtonProps) {
   const [exportState, setExportState] = useState<ExportState>("idle");
   const [showPrintView, setShowPrintView] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string>("");
   const printRef = useRef<HTMLDivElement>(null);
 
   const generateReportId = useCallback(() => {
@@ -37,65 +38,68 @@ export function GenerateReportButton({
   }, [analysisId]);
 
   const handleGenerateReport = useCallback(async () => {
-    if (exportState !== "idle") return;
+    if (exportState !== "idle" && exportState !== "error") return;
 
+    setErrorMessage("");
     setExportState("preparing");
     setShowPrintView(true);
 
     // Wait for PrintView to render
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 800));
 
     setExportState("generating");
 
     try {
       // Dynamic import of html2pdf to reduce bundle size
-      const html2pdf = (await import("html2pdf.js")).default;
+      const html2pdfModule = await import("html2pdf.js");
+      const html2pdf = html2pdfModule.default;
 
-      if (printRef.current) {
-        const reportId = generateReportId();
-        let domain = "website";
-        try {
-          domain = new URL(analysisData.url).hostname.replace(/\./g, "-");
-        } catch {
-          // Use default
-        }
-
-        const opt = {
-          margin: 0,
-          filename: `aioli-report-${domain}-${reportId}.pdf`,
-          image: { type: "jpeg", quality: 0.98 },
-          html2canvas: {
-            scale: 2,
-            useCORS: true,
-            letterRendering: true,
-            backgroundColor: "#FFFFFF",
-          },
-          jsPDF: {
-            unit: "mm",
-            format: "a4",
-            orientation: "portrait" as const,
-          },
-          pagebreak: { mode: ["css", "legacy"], before: ".page-break-before" },
-        };
-
-        await html2pdf().set(opt).from(printRef.current).save();
-
-        setExportState("complete");
-
-        // Reset after showing success - cleanup immediately but keep success state briefly
-        setShowPrintView(false);
-        setTimeout(() => {
-          setExportState("idle");
-        }, 2000);
-      } else {
-        // No ref available, reset
-        setExportState("idle");
-        setShowPrintView(false);
+      if (!printRef.current) {
+        throw new Error("Print view not ready");
       }
+
+      const reportId = generateReportId();
+      let domain = "website";
+      try {
+        domain = new URL(analysisData.url).hostname.replace(/\./g, "-");
+      } catch {
+        // Use default
+      }
+
+      const opt = {
+        margin: 0,
+        filename: `aioli-report-${domain}-${reportId}.pdf`,
+        image: { type: "jpeg", quality: 0.98 },
+        html2canvas: {
+          scale: 2,
+          useCORS: true,
+          letterRendering: true,
+          backgroundColor: "#FFFFFF",
+        },
+        jsPDF: {
+          unit: "mm",
+          format: "a4",
+          orientation: "portrait" as const,
+        },
+        pagebreak: { mode: ["css", "legacy"], before: ".page-break-before" },
+      };
+
+      await html2pdf().set(opt).from(printRef.current).save();
+
+      setExportState("complete");
+      setShowPrintView(false);
+      setTimeout(() => {
+        setExportState("idle");
+      }, 2000);
     } catch (error) {
       console.error("PDF generation error:", error);
-      setExportState("idle");
+      setErrorMessage(error instanceof Error ? error.message : "Failed to generate PDF");
+      setExportState("error");
       setShowPrintView(false);
+      setTimeout(() => {
+        setExportState("idle");
+        setErrorMessage("");
+      }, 3000);
     }
   }, [exportState, analysisData.url, generateReportId]);
 
@@ -123,6 +127,12 @@ export function GenerateReportButton({
       <>
         <CheckCircle className="w-4 h-4" strokeWidth={1.5} />
         <span>Downloaded!</span>
+      </>
+    ),
+    error: (
+      <>
+        <FileText className="w-4 h-4" strokeWidth={1.5} />
+        <span>{errorMessage || "Error - Try again"}</span>
       </>
     ),
   };
@@ -157,14 +167,16 @@ export function GenerateReportButton({
     <>
       <motion.button
         onClick={handleGenerateReport}
-        disabled={exportState !== "idle"}
+        disabled={exportState !== "idle" && exportState !== "error"}
         className={`generate-report-btn ${
           exportState === "complete"
             ? "generate-report-btn-success"
+            : exportState === "error"
+            ? "generate-report-btn-error"
             : "generate-report-btn-primary"
         }`}
-        whileHover={exportState === "idle" ? { scale: 1.02, y: -1 } : {}}
-        whileTap={exportState === "idle" ? { scale: 0.98 } : {}}
+        whileHover={exportState === "idle" || exportState === "error" ? { scale: 1.02, y: -1 } : {}}
+        whileTap={exportState === "idle" || exportState === "error" ? { scale: 0.98 } : {}}
       >
         <AnimatePresence mode="wait">
           <motion.div
@@ -180,7 +192,7 @@ export function GenerateReportButton({
         </AnimatePresence>
 
         {/* Shimmer effect overlay */}
-        {exportState === "idle" && (
+        {(exportState === "idle" || exportState === "error") && (
           <div className="shimmer-overlay" aria-hidden="true" />
         )}
       </motion.button>

@@ -61,7 +61,7 @@ function analyzeStructuredData($: CheerioAPI): LlmReadinessResult["structuredDat
   let score = hasSchemaOrg ? 70 : 0;
 
   if (!hasSchemaOrg) {
-    issues.push("Ingen Schema.org markup hittad (JSON-LD eller microdata)");
+    issues.push("No Schema.org markup found (JSON-LD or microdata)");
   } else {
     // Bonus for common useful types
     const usefulTypes = ["Article", "FAQPage", "HowTo", "Organization", "Person", "Product"];
@@ -69,7 +69,7 @@ function analyzeStructuredData($: CheerioAPI): LlmReadinessResult["structuredDat
     if (hasUsefulType) {
       score += 30;
     } else {
-      issues.push("Överväg att lägga till Article, FAQPage eller annan relevant schema-typ");
+      issues.push("Consider adding Article, FAQPage, or other relevant schema type");
     }
   }
 
@@ -96,7 +96,7 @@ function analyzeContentClarity($: CheerioAPI): LlmReadinessResult["contentClarit
   // Check for FAQ section
   const hasFaq =
     $('[itemtype*="FAQPage"]').length > 0 ||
-    $("h2, h3").filter((_, el) => /faq|frågor|vanliga/i.test($(el).text())).length > 0 ||
+    $("h2, h3").filter((_, el) => /faq|questions|frequently/i.test($(el).text())).length > 0 ||
     $("details").length > 0;
 
   // Check for definitions (using definition lists or specific patterns)
@@ -112,18 +112,18 @@ function analyzeContentClarity($: CheerioAPI): LlmReadinessResult["contentClarit
     if (avgParagraphLength >= 100 && avgParagraphLength <= 300) {
       score += 20;
     } else if (avgParagraphLength > 500) {
-      issues.push("Stycken är för långa i genomsnitt - dela upp för bättre läsbarhet");
+      issues.push("Paragraphs are too long on average - break them up for better readability");
       score -= 10;
     }
   } else {
-    issues.push("Inga textstycken hittade");
+    issues.push("No text paragraphs found");
     score -= 20;
   }
 
   if (hasFaq) {
     score += 20;
   } else {
-    issues.push("Ingen FAQ-sektion hittad - överväg att lägga till vanliga frågor");
+    issues.push("No FAQ section found - consider adding frequently asked questions");
   }
 
   if (hasDefinitions) {
@@ -165,19 +165,19 @@ function analyzeAuthorInfo($: CheerioAPI): LlmReadinessResult["authorInfo"] {
   if (hasAuthor) {
     score += 30;
   } else {
-    issues.push("Ingen författarinformation hittad (viktigt för E-E-A-T)");
+    issues.push("No author information found (important for E-E-A-T)");
   }
 
   if (hasDate) {
     score += 25;
   } else {
-    issues.push("Inget publiceringsdatum hittad");
+    issues.push("No publication date found");
   }
 
   if (hasLastModified) {
     score += 15;
   } else {
-    issues.push("Inget senast uppdaterad-datum hittat");
+    issues.push("No last updated date found");
   }
 
   return { hasAuthor, hasDate, hasLastModified, score: Math.min(100, score), issues };
@@ -216,20 +216,20 @@ async function analyzeAiCrawlerAccess(
   let score = 100;
 
   if (!allowsGptBot) {
-    issues.push("GPTBot är blockerad i robots.txt");
+    issues.push("GPTBot is blocked in robots.txt");
     score -= 25;
   }
   if (!allowsAnthropicBot) {
-    issues.push("Anthropic/Claude är blockerad i robots.txt");
+    issues.push("Anthropic/Claude is blocked in robots.txt");
     score -= 25;
   }
   if (!allowsPerplexityBot) {
-    issues.push("PerplexityBot är blockerad i robots.txt");
+    issues.push("PerplexityBot is blocked in robots.txt");
     score -= 25;
   }
 
   if (score === 100 && robotsTxt === null) {
-    issues.push("Ingen robots.txt - AI-crawlers har full åtkomst (standard)");
+    issues.push("No robots.txt - AI crawlers have full access (default)");
   }
 
   return {
@@ -254,7 +254,7 @@ function analyzeCitability(
   // Check for statistics (numbers with context)
   const hasStatistics =
     /\d+\s*%/.test(text) || // Percentages
-    /\d+\s*(million|miljon|billion|miljard)/i.test(text) || // Large numbers
+    /\d+\s*(million|billion)/i.test(text) || // Large numbers
     $("table").length > 0; // Data tables
 
   // Check for sources/citations
@@ -262,26 +262,26 @@ function analyzeCitability(
     $('a[rel="cite"]').length > 0 ||
     $("cite").length > 0 ||
     $("sup a").length > 0 || // Footnote style
-    /källa|source|referens/i.test(text);
+    /source|reference/i.test(text);
 
   let score = 30;
 
   if (hasQuotes) {
     score += 20;
   } else {
-    issues.push("Inga citat hittade - överväg att lägga till citerbara uttalanden");
+    issues.push("No quotes found - consider adding quotable statements");
   }
 
   if (hasStatistics) {
     score += 30;
   } else {
-    issues.push("Ingen statistik eller data hittad - siffror ökar trovärdigheten");
+    issues.push("No statistics or data found - numbers increase credibility");
   }
 
   if (hasSources) {
     score += 20;
   } else {
-    issues.push("Inga synliga källor - länka till primärkällor för högre trovärdighet");
+    issues.push("No visible sources - link to primary sources for higher credibility");
   }
 
   return {

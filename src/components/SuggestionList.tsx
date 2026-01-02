@@ -59,9 +59,9 @@ export function SuggestionList({ suggestions }: SuggestionListProps) {
   );
 
   const priorityLabels = {
-    high: "Hög prioritet",
-    medium: "Medium prioritet",
-    low: "Förbättringstips"
+    high: "High Priority",
+    medium: "Medium Priority",
+    low: "Improvement Tips"
   };
 
   return (
@@ -88,7 +88,7 @@ export function SuggestionList({ suggestions }: SuggestionListProps) {
                       <p className="text-xs mt-1" style={{ color: "var(--text-secondary)" }}>{suggestion.description}</p>
                       {suggestion.currentValue && (
                         <div className="mt-3 text-xs">
-                          <span style={{ color: "var(--text-muted)" }}>Nuvarande:</span>{" "}
+                          <span style={{ color: "var(--text-muted)" }}>Current:</span>{" "}
                           <code className="px-2 py-1 rounded font-mono text-xs" style={{ background: "rgba(239, 68, 68, 0.1)", color: "var(--score-poor)" }}>
                             {suggestion.currentValue}
                           </code>
@@ -96,7 +96,7 @@ export function SuggestionList({ suggestions }: SuggestionListProps) {
                       )}
                       {suggestion.suggestedValue && (
                         <div className="mt-2 text-xs">
-                          <span style={{ color: "var(--text-muted)" }}>Förslag:</span>{" "}
+                          <span style={{ color: "var(--text-muted)" }}>Suggestion:</span>{" "}
                           <code className="px-2 py-1 rounded font-mono text-xs" style={{ background: "rgba(16, 185, 129, 0.1)", color: "var(--score-great)" }}>
                             {suggestion.suggestedValue}
                           </code>

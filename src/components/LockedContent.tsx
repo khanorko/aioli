@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { useLanguage } from "@/lib/LanguageContext";
 
 interface LockedContentProps {
   children: React.ReactNode;
@@ -23,11 +22,10 @@ export function LockedContent({
 }: LockedContentProps) {
   const router = useRouter();
   const { update: updateSession } = useSession();
-  const { t } = useLanguage();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const displayTitle = title || t.locked.proContent;
+  const displayTitle = title || "Pro content";
 
   if (isUnlocked) {
     return <>{children}</>;
@@ -47,22 +45,18 @@ export function LockedContent({
       const data = await response.json();
 
       if (data.needsCredits) {
-        // Redirect to buy credits
-        router.push("/#priser");
+        router.push("/#pricing");
         return;
       }
 
       if (!response.ok) {
-        throw new Error(data.error || t.locked.error);
+        throw new Error(data.error || "Something went wrong");
       }
 
-      // Update session to refresh credits in navbar
       await updateSession();
-
-      // Refresh the page to show unlocked content
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : t.locked.error);
+      setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
       setIsLoading(false);
     }
@@ -88,8 +82,8 @@ export function LockedContent({
           </h3>
           <p className="text-sm mb-4" style={{ color: "var(--text-muted)" }}>
             {featureCount
-              ? `${featureCount} ${t.locked.insightsAvailable}`
-              : t.locked.unlockToSee
+              ? `${featureCount} insights available`
+              : "Unlock to see the details"
             }
           </p>
 
@@ -104,15 +98,15 @@ export function LockedContent({
             disabled={isLoading}
             className="btn-primary px-6 py-2 text-sm mb-2 w-full"
           >
-            {isLoading ? t.locked.unlocking : t.locked.unlockButton}
+            {isLoading ? "Unlocking..." : "Unlock (1 credit)"}
           </button>
 
           <Link
-            href="/#priser"
+            href="/#pricing"
             className="text-xs block"
             style={{ color: "var(--text-muted)" }}
           >
-            {t.locked.noCredits} →
+            No credits? Buy here →
           </Link>
         </div>
       </div>

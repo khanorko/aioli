@@ -42,8 +42,8 @@ export default async function AnalysisPage({ params }: PageProps) {
             height={80}
             className="mx-auto mb-6 animate-pulse"
           />
-          <h1 className="section-title text-2xl mb-2">Analyserar...</h1>
-          <p style={{ color: "var(--text-muted)" }}>Vänta medan vi granskar din sajt</p>
+          <h1 className="section-title text-2xl mb-2">Analyzing...</h1>
+          <p style={{ color: "var(--text-muted)" }}>Please wait while we review your site</p>
           <div className="flex justify-center gap-2 mt-6">
             <span className="w-2 h-2 rounded-full animate-bounce" style={{ background: "var(--text-secondary)", animationDelay: "0s" }}></span>
             <span className="w-2 h-2 rounded-full animate-bounce" style={{ background: "var(--text-secondary)", animationDelay: "0.2s" }}></span>
@@ -64,12 +64,12 @@ export default async function AnalysisPage({ params }: PageProps) {
               <path d="M12 8v4M12 16h.01"/>
             </svg>
           </div>
-          <h1 className="section-title text-2xl mb-2">Analysen misslyckades</h1>
+          <h1 className="section-title text-2xl mb-2">Analysis Failed</h1>
           <p style={{ color: "var(--text-muted)" }} className="mb-6">
-            Vi kunde inte analysera den här sajten. Kontrollera adressen och försök igen.
+            We couldn&apos;t analyze this site. Please check the address and try again.
           </p>
           <Link href="/" className="btn-primary px-6 py-3 inline-block">
-            Försök igen
+            Try again
           </Link>
         </div>
       </div>
@@ -85,7 +85,7 @@ export default async function AnalysisPage({ params }: PageProps) {
       <header className="header sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center gap-4 link hover:opacity-80 transition-opacity">
+            <Link href="/" className="flex items-center gap-4 hover:opacity-80 transition-opacity">
               <Image
                 src="/logo.png"
                 alt="AIoli"
@@ -93,7 +93,7 @@ export default async function AnalysisPage({ params }: PageProps) {
                 height={64}
                 style={{ height: '48px', width: 'auto' }}
               />
-              <span className="font-medium text-sm" style={{ color: "var(--text-secondary)" }}>← Ny analys</span>
+              <span className="font-medium text-sm" style={{ color: "var(--text-secondary)" }}>← Back</span>
             </Link>
             <span className="text-sm hidden sm:block" style={{ color: "var(--text-muted)" }}>
               SEO & AI Visibility Analysis
@@ -105,12 +105,12 @@ export default async function AnalysisPage({ params }: PageProps) {
       <div className="max-w-7xl mx-auto px-6 py-12">
         {/* Page Title */}
         <div className="mb-14 text-center">
-          <h1 className="section-title text-3xl md:text-4xl mb-4">Analysresultat</h1>
+          <h1 className="section-title text-3xl md:text-4xl mb-4">Analysis Results</h1>
           <p className="url-badge font-mono text-sm break-all px-4 py-2 inline-block">
             {analysis.url}
           </p>
           <p className="text-sm mt-3" style={{ color: "var(--text-muted)" }}>
-            Analyserad: {new Date(analysis.createdAt).toLocaleString("sv-SE")}
+            Analyzed: {new Date(analysis.createdAt).toLocaleString("en-US")}
           </p>
           <div className="mt-6 flex justify-center">
             <GenerateReportButton
@@ -134,10 +134,10 @@ export default async function AnalysisPage({ params }: PageProps) {
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-xl font-semibold mb-1" style={{ color: "var(--text-primary)" }}>
-                  Traditionell SEO
+                  Traditional SEO
                 </h2>
                 <p className="text-sm" style={{ color: "var(--text-muted)" }}>
-                  Så ser sökmotorer på din sajt
+                  How search engines see your site
                 </p>
               </div>
               <ScoreGauge score={analysis.seoScore || 0} label="" />
@@ -148,10 +148,10 @@ export default async function AnalysisPage({ params }: PageProps) {
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-xl font-semibold mb-1" style={{ color: "var(--text-primary)" }}>
-                  AI-synlighet
+                  AI Visibility
                 </h2>
                 <p className="text-sm" style={{ color: "var(--text-muted)" }}>
-                  Så ser ChatGPT & Claude på din sajt
+                  How ChatGPT & Claude see your site
                 </p>
               </div>
               <ScoreGauge score={analysis.llmScore || 0} label="" />
@@ -163,12 +163,12 @@ export default async function AnalysisPage({ params }: PageProps) {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-14">
           {/* SEO Details */}
           <AnalysisCard
-            title="SEO-detaljer"
-            description="Vad sökmotorer tittar på"
+            title="SEO Details"
+            description="What search engines look at"
           >
             <div className="space-y-4">
               <SeoChecklist
-                title="Meta-taggar"
+                title="Meta Tags"
                 items={[
                   {
                     label: "Title",
@@ -186,40 +186,40 @@ export default async function AnalysisPage({ params }: PageProps) {
               />
 
               <SeoChecklist
-                title="Rubriker"
+                title="Headings"
                 items={[
                   {
-                    label: "H1-rubrik",
+                    label: "H1 heading",
                     passed: results.seo?.headings?.h1?.length === 1,
                     value: results.seo?.headings?.h1?.[0],
                     issue: results.seo?.headings?.issues?.[0],
                   },
                   {
-                    label: "H2-rubriker",
+                    label: "H2 headings",
                     passed: (results.seo?.headings?.h2?.length || 0) > 0,
-                    value: `${results.seo?.headings?.h2?.length || 0} st`,
+                    value: `${results.seo?.headings?.h2?.length || 0} found`,
                   },
                 ]}
               />
 
               <SeoChecklist
-                title="Bilder"
+                title="Images"
                 items={[
                   {
-                    label: "Alt-text",
+                    label: "Alt text",
                     passed: results.seo?.images?.withoutAlt === 0,
-                    value: `${results.seo?.images?.withAlt || 0}/${results.seo?.images?.total || 0} med alt-text`,
+                    value: `${results.seo?.images?.withAlt || 0}/${results.seo?.images?.total || 0} with alt text`,
                     issue: results.seo?.images?.issues?.[0],
                   },
                 ]}
               />
 
               <SeoChecklist
-                title="Tekniskt"
+                title="Technical"
                 items={[
                   { label: "HTTPS", passed: results.seo?.technical?.https ?? false },
                   { label: "Canonical URL", passed: !!results.seo?.technical?.canonical },
-                  { label: "Viewport (mobil)", passed: results.seo?.technical?.viewport ?? false },
+                  { label: "Viewport (mobile)", passed: results.seo?.technical?.viewport ?? false },
                   { label: "robots.txt", passed: results.seo?.technical?.robotsTxt ?? false },
                   { label: "sitemap.xml", passed: results.seo?.technical?.sitemap ?? false },
                 ]}
@@ -229,13 +229,13 @@ export default async function AnalysisPage({ params }: PageProps) {
 
           {/* LLM Readiness Details */}
           <AnalysisCard
-            title="AI-synlighet"
-            description="Så uppfattar AI:n din sajt"
+            title="AI Visibility"
+            description="How AI perceives your site"
           >
             <LockedContent
               analysisId={analysis.id}
               isUnlocked={analysis.unlocked || isAdmin}
-              title="AI-synlighetsdetaljer"
+              title="AI Visibility Details"
               featureCount={4}
             >
               {results.llmReadiness && <LlmReadinessScore result={results.llmReadiness} />}
@@ -246,13 +246,13 @@ export default async function AnalysisPage({ params }: PageProps) {
         {/* Suggestions */}
         {suggestionsData.suggestions.length > 0 && (
           <AnalysisCard
-            title="Förbättringsförslag"
-            description="Rekommendationer baserat på analysen"
+            title="Improvement Suggestions"
+            description="Recommendations based on the analysis"
           >
             <LockedContent
               analysisId={analysis.id}
               isUnlocked={analysis.unlocked || isAdmin}
-              title="AI-genererade förslag"
+              title="AI-generated suggestions"
               featureCount={suggestionsData.suggestions.length}
             >
               <SuggestionList suggestions={suggestionsData.suggestions} />
@@ -264,13 +264,13 @@ export default async function AnalysisPage({ params }: PageProps) {
         <div className="mt-20 text-center">
           <div className="card p-8 inline-block">
             <h2 className="text-xl font-semibold mb-2" style={{ color: "var(--text-primary)" }}>
-              Vill du analysera en annan sajt?
+              Want to analyze another site?
             </h2>
             <p className="mb-5" style={{ color: "var(--text-muted)" }}>
-              Testa hur din eller dina konkurrenters sajter presterar.
+              Test how your or your competitors&apos; sites perform.
             </p>
             <Link href="/" className="btn-primary px-8 py-3 inline-block text-lg">
-              Ny analys
+              New analysis
             </Link>
           </div>
         </div>

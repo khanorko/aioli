@@ -23,7 +23,7 @@ export function Navbar() {
   const navItems = [
     { label: "Home", href: "/" },
     { label: "Features", href: "#features" },
-    { label: "Pricing", href: "#priser" },
+    { label: "Pricing", href: "#pricing" },
   ];
 
   return (
@@ -45,9 +45,9 @@ export function Navbar() {
             <Image
               src="/logo.png"
               alt="AIoli"
-              width={80}
-              height={32}
-              className="h-6 w-auto"
+              width={100}
+              height={40}
+              className="h-7 w-auto"
             />
           </Link>
 
