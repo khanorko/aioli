@@ -266,7 +266,7 @@ async function fetchSitemap(baseUrl: string): Promise<string[]> {
     try {
       const response = await fetch(sitemapUrl, {
         headers: {
-          "User-Agent": "AIoli-Bot/1.0 (SEO Analysis Tool)",
+          "User-Agent": "Aioli-Bot/1.0 (SEO Analysis Tool)",
         },
         signal: AbortSignal.timeout(10000),
       });
@@ -292,7 +292,7 @@ async function fetchSitemap(baseUrl: string): Promise<string[]> {
               try {
                 const nestedResponse = await fetch(nestedUrl, {
                   headers: {
-                    "User-Agent": "AIoli-Bot/1.0 (SEO Analysis Tool)",
+                    "User-Agent": "Aioli-Bot/1.0 (SEO Analysis Tool)",
                   },
                   signal: AbortSignal.timeout(10000),
                 });
@@ -338,7 +338,7 @@ async function crawlHomepage(baseUrl: string): Promise<string[]> {
   try {
     const response = await fetch(baseUrl, {
       headers: {
-        "User-Agent": "AIoli-Bot/1.0 (SEO Analysis Tool)",
+        "User-Agent": "Aioli-Bot/1.0 (SEO Analysis Tool)",
       },
       signal: AbortSignal.timeout(10000),
       redirect: "follow",

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ArrowLeft, ArrowRight, Clock, Calendar, CheckCircle } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "How to Optimize for ChatGPT: A Complete Guide | AIoli",
+  title: "How to Optimize for ChatGPT: A Complete Guide | Aioli™",
   description:
     "Learn how to make your website content more likely to be cited by ChatGPT, Claude, and other AI assistants. Actionable tips with examples.",
   alternates: {
@@ -289,7 +289,7 @@ Sitemap: https://yoursite.com/sitemap.xml`}
               Unlike traditional SEO rankings, it&apos;s hard to track when AI cites you. However, you can:
             </p>
             <ul className="list-disc list-inside text-zinc-300 mb-6 space-y-2">
-              <li>Use AIoli to measure your AI visibility score</li>
+              <li>Use Aioli™ to measure your AI visibility score</li>
               <li>Monitor referral traffic from ai.com, perplexity.ai, etc.</li>
               <li>Periodically ask ChatGPT questions about your niche and check if you&apos;re cited</li>
               <li>Track brand mentions using tools like Google Alerts</li>
@@ -345,7 +345,7 @@ Sitemap: https://yoursite.com/sitemap.xml`}
       {/* Footer */}
       <footer className="border-t border-white/10 py-8 px-6">
         <div className="max-w-3xl mx-auto text-center text-sm text-zinc-500">
-          © {new Date().getFullYear()} AIoli. All rights reserved.
+          © {new Date().getFullYear()} Aioli. All rights reserved.
         </div>
       </footer>
     </div>

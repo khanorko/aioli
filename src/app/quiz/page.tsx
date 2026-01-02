@@ -6,14 +6,14 @@ import { QuizPageClient } from "./QuizPageClient";
 import { BookOpen, Trophy, Sparkles, HelpCircle } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "AI Visibility Quiz - Test Your SEO Knowledge & Earn Credits | AIoli",
+  title: "AI Visibility Quiz - Test Your SEO Knowledge & Earn Credits | Aioli™",
   description:
     "Test your knowledge of AI visibility and SEO! Answer 5 random questions from our learning articles, score 100% to earn free credits, and compete on the leaderboard.",
   alternates: {
     canonical: "/quiz",
   },
   openGraph: {
-    title: "AI Visibility Quiz - Test Your SEO Knowledge | AIoli",
+    title: "AI Visibility Quiz - Test Your SEO Knowledge | Aioli™",
     description:
       "Test your knowledge of AI visibility and SEO! Score 100% to earn free credits.",
     url: "https://aioli-one.vercel.app/quiz",
@@ -30,7 +30,7 @@ const quizJsonLd = {
   url: "https://aioli-one.vercel.app/quiz",
   provider: {
     "@type": "Organization",
-    name: "AIoli",
+    name: "Aioli",
     url: "https://aioli-one.vercel.app",
   },
   educationalLevel: "Beginner to Intermediate",
@@ -104,7 +104,7 @@ export default async function QuizPage() {
             href="/"
             className="text-zinc-400 hover:text-white transition-colors text-sm"
           >
-            ← Back to AIoli
+            ← Back to Aioli™
           </Link>
           <Link
             href="/learn"
@@ -204,7 +204,7 @@ export default async function QuizPage() {
       {/* Footer */}
       <footer className="border-t border-white/10 py-8 px-6">
         <div className="max-w-5xl mx-auto text-center text-sm text-zinc-500">
-          © {new Date().getFullYear()} AIoli. All rights reserved.
+          © {new Date().getFullYear()} Aioli. All rights reserved.
         </div>
       </footer>
     </div>

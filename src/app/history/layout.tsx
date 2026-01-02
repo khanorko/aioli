@@ -1,14 +1,14 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Analysis History - Track Your SEO & AI Visibility Progress | AIoli",
+  title: "Analysis History - Track Your SEO & AI Visibility Progress | Aioli™",
   description:
     "View your website analysis history. Track SEO and AI visibility scores over time, compare results, and monitor your optimization progress.",
   alternates: {
     canonical: "/history",
   },
   openGraph: {
-    title: "Analysis History - Track Your Progress | AIoli",
+    title: "Analysis History - Track Your Progress | Aioli™",
     description:
       "View your website analysis history and track SEO and AI visibility scores over time.",
     url: "https://aioli-one.vercel.app/history",
@@ -25,12 +25,12 @@ const webPageJsonLd = {
   url: "https://aioli-one.vercel.app/history",
   isPartOf: {
     "@type": "WebSite",
-    name: "AIoli",
+    name: "Aioli",
     url: "https://aioli-one.vercel.app",
   },
   provider: {
     "@type": "Organization",
-    name: "AIoli",
+    name: "Aioli",
     url: "https://aioli-one.vercel.app",
   },
 };

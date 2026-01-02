@@ -20,7 +20,7 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "AIoli | Analyze Your Website's AI Visibility & SEO Score",
+  title: "Aioli™ | Analyze Your Website's AI Visibility & SEO Score",
   description: "Analyze your website for traditional SEO and AI visibility. See how well your site is prepared for both search engines and AI assistants.",
   metadataBase: new URL("https://aioli-one.vercel.app"),
   icons: {
@@ -31,14 +31,14 @@ export const metadata: Metadata = {
     canonical: "/",
   },
   keywords: ["SEO analysis", "AI visibility", "ChatGPT optimization", "Claude optimization", "website analysis", "search engine optimization", "LLM readiness"],
-  authors: [{ name: "AIoli" }],
-  creator: "AIoli",
-  publisher: "AIoli",
+  authors: [{ name: "Aioli" }],
+  creator: "Aioli",
+  publisher: "Aioli",
   openGraph: {
-    title: "AIoli - AI-powered SEO Analysis",
+    title: "Aioli™ - AI-powered SEO Analysis",
     description: "Analyze your website for traditional SEO and AI visibility. See how well your site is prepared for both search engines and AI assistants.",
     url: "https://aioli-one.vercel.app",
-    siteName: "AIoli",
+    siteName: "Aioli",
     type: "website",
     locale: "en_US",
     images: [
@@ -46,13 +46,13 @@ export const metadata: Metadata = {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "AIoli - AI-powered SEO Analysis Tool",
+        alt: "Aioli - AI-powered SEO Analysis Tool",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "AIoli - AI-powered SEO Analysis",
+    title: "Aioli™ - AI-powered SEO Analysis",
     description: "Analyze your website for traditional SEO and AI visibility.",
     images: ["/og-image.png"],
   },

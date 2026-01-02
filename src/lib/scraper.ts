@@ -26,7 +26,7 @@ export async function scrapePage(url: string): Promise<ScrapedPage> {
 
   const response = await fetch(url, {
     headers: {
-      "User-Agent": "AIoli-Bot/1.0 (SEO Analysis Tool)",
+      "User-Agent": "Aioli-Bot/1.0 (SEO Analysis Tool)",
       Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
     },
     redirect: "follow",
@@ -57,7 +57,7 @@ export async function fetchRobotsTxt(baseUrl: string): Promise<RobotsTxt | null>
     const url = new URL("/robots.txt", baseUrl);
     const response = await fetch(url.toString(), {
       headers: {
-        "User-Agent": "AIoli-Bot/1.0",
+        "User-Agent": "Aioli-Bot/1.0",
       },
     });
 

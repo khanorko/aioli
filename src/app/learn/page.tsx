@@ -3,14 +3,14 @@ import Link from "next/link";
 import { ArrowRight, BookOpen, Sparkles, BarChart3, Brain, Trophy } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Learn AI Visibility - Free Guides & Tutorials | AIoli",
+  title: "Learn AI Visibility - Free Guides & Tutorials | Aioli™",
   description:
     "Master AI visibility with our free guides. Learn how to optimize your website for ChatGPT, Claude, and Perplexity. Includes practical tutorials on Schema.org, content structure, and E-E-A-T.",
   alternates: {
     canonical: "/learn",
   },
   openGraph: {
-    title: "Learn AI Visibility - Free Guides & Tutorials | AIoli",
+    title: "Learn AI Visibility - Free Guides & Tutorials | Aioli™",
     description:
       "Master AI visibility with our free guides. Learn how to optimize for ChatGPT, Claude, and other AI assistants.",
     url: "https://aioli-one.vercel.app/learn",
@@ -27,7 +27,7 @@ const collectionJsonLd = {
   url: "https://aioli-one.vercel.app/learn",
   provider: {
     "@type": "Organization",
-    name: "AIoli",
+    name: "Aioli",
     url: "https://aioli-one.vercel.app",
   },
   hasPart: [
@@ -137,7 +137,7 @@ export default function LearnPage() {
             href="/"
             className="text-zinc-400 hover:text-white transition-colors text-sm"
           >
-            ← Back to AIoli
+            ← Back to Aioli™
           </Link>
         </div>
       </header>
@@ -295,7 +295,7 @@ export default function LearnPage() {
       {/* Footer */}
       <footer className="border-t border-white/10 py-8 px-6">
         <div className="max-w-5xl mx-auto text-center text-sm text-zinc-500">
-          © {new Date().getFullYear()} AIoli. All rights reserved.
+          © {new Date().getFullYear()} Aioli. All rights reserved.
         </div>
       </footer>
     </div>

@@ -40,7 +40,7 @@ export function Navbar() {
           <Link href="/" className="flex-shrink-0">
             <Image
               src="/logo.png"
-              alt="AIoli"
+              alt="Aioli"
               width={180}
               height={72}
               className="h-10 lg:h-12 w-auto object-contain brightness-110"

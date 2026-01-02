@@ -37,7 +37,7 @@ export default async function AnalysisPage({ params }: PageProps) {
         <div className="text-center">
           <Image
             src="/logo.png"
-            alt="AIoli"
+            alt="Aioli"
             width={80}
             height={80}
             className="mx-auto mb-6 animate-pulse"
@@ -88,7 +88,7 @@ export default async function AnalysisPage({ params }: PageProps) {
             <Link href="/" className="flex items-center gap-4 hover:opacity-80 transition-opacity">
               <Image
                 src="/logo.png"
-                alt="AIoli"
+                alt="Aioli"
                 width={160}
                 height={64}
                 style={{ height: '48px', width: 'auto' }}
@@ -356,7 +356,7 @@ export default async function AnalysisPage({ params }: PageProps) {
           <div className="flex items-center justify-center mb-3">
             <Image
               src="/logo.png"
-              alt="AIoli"
+              alt="Aioli"
               width={160}
               height={64}
               style={{ height: '48px', width: 'auto' }}

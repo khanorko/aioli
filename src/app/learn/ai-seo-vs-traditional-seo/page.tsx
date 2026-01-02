@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ArrowLeft, ArrowRight, Clock, Calendar, Check, X } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "AI SEO vs Traditional SEO: Key Differences Explained | AIoli",
+  title: "AI SEO vs Traditional SEO: Key Differences Explained | Aioli™",
   description:
     "What's the difference between optimizing for Google and optimizing for ChatGPT? Learn how AI SEO and traditional SEO complement each other.",
   alternates: {
@@ -26,7 +26,7 @@ const articleJsonLd = {
     "What's the difference between optimizing for Google and optimizing for ChatGPT? Learn how AI SEO and traditional SEO complement each other.",
   author: {
     "@type": "Organization",
-    name: "AIoli",
+    name: "Aioli",
   },
   datePublished: "2026-01-02",
   dateModified: "2026-01-02",
@@ -299,7 +299,7 @@ export default function AISEOvsTraditionalPage() {
                 Check Both Scores
               </h3>
               <p className="text-zinc-400 mb-4">
-                AIoli measures both traditional SEO factors and AI visibility in one analysis.
+                Aioli™ measures both traditional SEO factors and AI visibility in one analysis.
                 See where you stand.
               </p>
               <Link
@@ -333,7 +333,7 @@ export default function AISEOvsTraditionalPage() {
       {/* Footer */}
       <footer className="border-t border-white/10 py-8 px-6">
         <div className="max-w-3xl mx-auto text-center text-sm text-zinc-500">
-          © {new Date().getFullYear()} AIoli. All rights reserved.
+          © {new Date().getFullYear()} Aioli. All rights reserved.
         </div>
       </footer>
     </div>

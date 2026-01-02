@@ -8,7 +8,7 @@ import {
 } from "@fluentui/react-components";
 import { ReactNode } from "react";
 
-// AIoli brand colors
+// Aioli brand colors
 const aioliBrand: BrandVariants = {
   10: "#020305",
   20: "#111723",

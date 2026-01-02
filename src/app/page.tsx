@@ -5,7 +5,7 @@ import { HomeClient } from "@/components/HomeClient";
 const webAppJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebApplication",
-  name: "AIoli",
+  name: "Aioli",
   description:
     "Analyze your website for traditional SEO and AI visibility. See how well your site is prepared for both search engines and AI assistants.",
   url: "https://aioli-one.vercel.app",
@@ -21,7 +21,7 @@ const webAppJsonLd = {
   },
   creator: {
     "@type": "Organization",
-    name: "AIoli",
+    name: "Aioli",
     url: "https://aioli-one.vercel.app",
   },
   featureList: [
@@ -48,10 +48,10 @@ const faqJsonLd = {
     },
     {
       "@type": "Question",
-      name: "How does AIoli analyze my website?",
+      name: "How does Aioli™ analyze my website?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "AIoli performs a comprehensive analysis of your website including traditional SEO factors (meta tags, headings, images) and AI-specific factors (Schema.org markup, content clarity, citability, and author information).",
+        text: "Aioli™ performs a comprehensive analysis of your website including traditional SEO factors (meta tags, headings, images) and AI-specific factors (Schema.org markup, content clarity, citability, and author information).",
       },
     },
     {
@@ -69,7 +69,7 @@ const faqJsonLd = {
 const organizationJsonLd = {
   "@context": "https://schema.org",
   "@type": "Organization",
-  name: "AIoli",
+  name: "Aioli",
   url: "https://aioli-one.vercel.app",
   logo: "https://aioli-one.vercel.app/logo.png",
   sameAs: [],
@@ -99,13 +99,13 @@ export default function Home() {
 
       {/* Server-rendered SEO content (visually hidden but crawlable) */}
       <div className="sr-only">
-        <h1>AIoli - AI-Powered SEO Analysis Tool for AI Visibility</h1>
+        <h1>Aioli™ - AI-Powered SEO Analysis Tool for AI Visibility</h1>
 
-        <h2>What is AIoli?</h2>
+        <h2>What is Aioli™?</h2>
         <p>
-          AIoli is a comprehensive SEO analysis tool that evaluates your website for both
+          Aioli™ is a comprehensive SEO analysis tool that evaluates your website for both
           traditional search engine optimization and AI visibility. With over 50 SEO checks
-          and real-time AI scoring, AIoli helps you understand how Google, ChatGPT, and
+          and real-time AI scoring, Aioli™ helps you understand how Google, ChatGPT, and
           Claude perceive your content.
         </p>
 
@@ -127,9 +127,9 @@ export default function Home() {
           systems can cite.
         </p>
 
-        <h3>How does AIoli analyze my website?</h3>
+        <h3>How does Aioli analyze my website?</h3>
         <p>
-          AIoli performs a comprehensive analysis of your website including traditional
+          Aioli performs a comprehensive analysis of your website including traditional
           SEO factors (meta tags, headings, images) and AI-specific factors (Schema.org
           markup, content clarity, citability, and author information).
         </p>
@@ -143,13 +143,13 @@ export default function Home() {
 
         <figure>
           <blockquote>
-            "Traditional SEO optimizes for clicks; AIoli optimizes for answers."
+            "Traditional SEO optimizes for clicks; Aioli optimizes for answers."
           </blockquote>
-          <figcaption>— The AIoli Methodology</figcaption>
+          <figcaption>— The Aioli Methodology</figcaption>
         </figure>
 
         <footer>
-          <p>Published by AIoli. Last updated: <time dateTime="2026-01-02">January 2, 2026</time></p>
+          <p>Published by Aioli. Last updated: <time dateTime="2026-01-02">January 2, 2026</time></p>
         </footer>
       </div>
 

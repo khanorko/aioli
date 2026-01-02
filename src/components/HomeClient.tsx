@@ -302,10 +302,10 @@ export function HomeClient() {
             <div className="w-8 h-[2px] bg-gradient-to-r from-transparent via-emerald-500 to-transparent" />
           </div>
           <blockquote className="text-xl font-light italic text-zinc-300 tracking-wide">
-            "Traditional SEO optimizes for clicks; AIoli optimizes for answers."
+            "Traditional SEO optimizes for clicks; Aioli™ optimizes for answers."
           </blockquote>
           <figcaption className="mt-4 text-sm font-mono text-zinc-500">
-            — The AIoli Methodology
+            — The Aioli™ Methodology
           </figcaption>
         </figure>
       </section>
@@ -400,7 +400,7 @@ export function HomeClient() {
         </section>
       )}
 
-      {/* Why AIoli Section */}
+      {/* Why Aioli Section */}
       <section className="py-24 px-6 border-t border-white/5">
         <div className="max-w-5xl mx-auto">
           <div className="grid md:grid-cols-2 gap-16 items-center">
@@ -416,7 +416,7 @@ export function HomeClient() {
               </h2>
               <p className="text-[var(--text-secondary)] mb-8">
                 Traditional SEO tools miss how AI assistants interpret your content.
-                AIoli bridges that gap with dual analysis for search engines and LLMs.
+                Aioli™ bridges that gap with dual analysis for search engines and LLMs.
               </p>
               <div className="space-y-4">
                 {[
@@ -491,7 +491,7 @@ export function HomeClient() {
             <div className="flex items-center gap-3">
               <Image
                 src="/logo.png"
-                alt="AIoli"
+                alt="Aioli"
                 width={100}
                 height={40}
                 className="h-8 w-auto opacity-60"

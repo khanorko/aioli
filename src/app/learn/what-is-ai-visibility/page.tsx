@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ArrowLeft, ArrowRight, Clock, Calendar } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "What is AI Visibility? Definition & Complete Guide | AIoli",
+  title: "What is AI Visibility? Definition & Complete Guide | Aioli™",
   description:
     "AI visibility is the measure of how well your website content can be discovered, understood, and cited by AI assistants like ChatGPT, Claude, and Perplexity. Learn the key factors.",
   alternates: {
@@ -27,12 +27,12 @@ const articleJsonLd = {
     "AI visibility is the measure of how well your website content can be discovered, understood, and cited by AI assistants like ChatGPT, Claude, and Perplexity.",
   author: {
     "@type": "Organization",
-    name: "AIoli",
+    name: "Aioli",
     url: "https://aioli-one.vercel.app",
   },
   publisher: {
     "@type": "Organization",
-    name: "AIoli",
+    name: "Aioli",
     url: "https://aioli-one.vercel.app",
   },
   datePublished: "2026-01-02",
@@ -176,7 +176,7 @@ export default function WhatIsAIVisibilityPage() {
                 Check Your AI Visibility Score
               </h3>
               <p className="text-zinc-400 mb-4">
-                AIoli analyzes your website for all four pillars and gives you an actionable
+                Aioli™ analyzes your website for all four pillars and gives you an actionable
                 score with specific recommendations.
               </p>
               <Link
@@ -269,7 +269,7 @@ export default function WhatIsAIVisibilityPage() {
       {/* Footer */}
       <footer className="border-t border-white/10 py-8 px-6">
         <div className="max-w-3xl mx-auto text-center text-sm text-zinc-500">
-          © {new Date().getFullYear()} AIoli. All rights reserved.
+          © {new Date().getFullYear()} Aioli. All rights reserved.
         </div>
       </footer>
     </div>

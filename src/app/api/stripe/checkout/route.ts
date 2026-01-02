@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
           price_data: {
             currency: "sek",
             product_data: {
-              name: `AIoli Credits - ${creditPackage.name}`,
+              name: `Aioli™ Credits - ${creditPackage.name}`,
               description: `${creditPackage.credits} credits to unlock analysis results`,
             },
             unit_amount: creditPackage.priceOre,

@@ -27,7 +27,7 @@ export function Navigation() {
           <Link href="/" className="flex items-center hover:opacity-80 transition-opacity">
             <Image
               src="/logo.png"
-              alt="AIoli"
+              alt="Aioli"
               width={180}
               height={72}
               style={{ height: '64px', width: 'auto' }}
