@@ -21,11 +21,13 @@ function getScoreLabel(score: number): string {
   return "Needs Improvement";
 }
 
-function getScoreColorClass(score: number): string {
-  if (score >= 80) return "text-emerald-600";
-  if (score >= 60) return "text-amber-600";
-  if (score >= 40) return "text-orange-600";
-  return "text-red-600";
+// Use hex colors instead of Tailwind classes for PDF compatibility
+// (html2pdf doesn't support lab() color function used by modern Tailwind)
+function getScoreColor(score: number): string {
+  if (score >= 80) return "#059669"; // emerald-600
+  if (score >= 60) return "#D97706"; // amber-600
+  if (score >= 40) return "#EA580C"; // orange-600
+  return "#DC2626"; // red-600
 }
 
 export const PrintView = forwardRef<HTMLDivElement, PrintViewProps>(
@@ -119,8 +121,8 @@ export const PrintView = forwardRef<HTMLDivElement, PrintViewProps>(
               </div>
               <div className="flex items-end gap-3 mb-2">
                 <span
-                  className={`text-6xl font-light tracking-tight ${getScoreColorClass(seoScore)}`}
-                  style={{ fontFamily: "var(--font-geist-mono), monospace" }}
+                  className="text-6xl font-light tracking-tight"
+                  style={{ fontFamily: "var(--font-geist-mono), monospace", color: getScoreColor(seoScore) }}
                 >
                   {seoScore}
                 </span>
@@ -138,8 +140,8 @@ export const PrintView = forwardRef<HTMLDivElement, PrintViewProps>(
               </div>
               <div className="flex items-end gap-3 mb-2">
                 <span
-                  className={`text-6xl font-light tracking-tight ${getScoreColorClass(llmScore)}`}
-                  style={{ fontFamily: "var(--font-geist-mono), monospace" }}
+                  className="text-6xl font-light tracking-tight"
+                  style={{ fontFamily: "var(--font-geist-mono), monospace", color: getScoreColor(llmScore) }}
                 >
                   {llmScore}
                 </span>
@@ -172,7 +174,7 @@ export const PrintView = forwardRef<HTMLDivElement, PrintViewProps>(
             </h3>
             <ul className="space-y-2 text-sm">
               <li className="flex items-start gap-2">
-                <span className={results.seo?.title?.score >= 70 ? "text-emerald-600" : "text-red-600"}>
+                <span style={{ color: results.seo?.title?.score >= 70 ? "#059669" : "#DC2626" }}>
                   {results.seo?.title?.score >= 70 ? "✓" : "✗"}
                 </span>
                 <span>
@@ -180,7 +182,7 @@ export const PrintView = forwardRef<HTMLDivElement, PrintViewProps>(
                 </span>
               </li>
               <li className="flex items-start gap-2">
-                <span className={results.seo?.description?.score >= 70 ? "text-emerald-600" : "text-red-600"}>
+                <span style={{ color: results.seo?.description?.score >= 70 ? "#059669" : "#DC2626" }}>
                   {results.seo?.description?.score >= 70 ? "✓" : "✗"}
                 </span>
                 <span>
@@ -188,7 +190,7 @@ export const PrintView = forwardRef<HTMLDivElement, PrintViewProps>(
                 </span>
               </li>
               <li className="flex items-start gap-2">
-                <span className={results.llmReadiness?.structuredData?.hasSchemaOrg ? "text-emerald-600" : "text-red-600"}>
+                <span style={{ color: results.llmReadiness?.structuredData?.hasSchemaOrg ? "#059669" : "#DC2626" }}>
                   {results.llmReadiness?.structuredData?.hasSchemaOrg ? "✓" : "✗"}
                 </span>
                 <span>
@@ -196,7 +198,7 @@ export const PrintView = forwardRef<HTMLDivElement, PrintViewProps>(
                 </span>
               </li>
               <li className="flex items-start gap-2">
-                <span className={(results.llmReadiness?.contentClarity?.score || 0) >= 70 ? "text-emerald-600" : "text-amber-600"}>
+                <span style={{ color: (results.llmReadiness?.contentClarity?.score || 0) >= 70 ? "#059669" : "#D97706" }}>
                   {(results.llmReadiness?.contentClarity?.score || 0) >= 70 ? "✓" : "○"}
                 </span>
                 <span>
@@ -240,7 +242,7 @@ export const PrintView = forwardRef<HTMLDivElement, PrintViewProps>(
               <div className="grid grid-cols-[120px_1fr] gap-4 items-start">
                 <div className="text-sm font-medium">Title Tag</div>
                 <div>
-                  <div className={`text-sm font-medium mb-1 ${results.seo?.title?.score >= 70 ? "text-emerald-600" : "text-red-600"}`}>
+                  <div className="text-sm font-medium mb-1" style={{ color: results.seo?.title?.score >= 70 ? "#059669" : "#DC2626" }}>
                     {results.seo?.title?.score >= 70 ? "✓ Pass" : "✗ Needs Attention"}
                   </div>
                   {results.seo?.title?.value && (
@@ -258,7 +260,7 @@ export const PrintView = forwardRef<HTMLDivElement, PrintViewProps>(
               <div className="grid grid-cols-[120px_1fr] gap-4 items-start">
                 <div className="text-sm font-medium">Meta Description</div>
                 <div>
-                  <div className={`text-sm font-medium mb-1 ${results.seo?.description?.score >= 70 ? "text-emerald-600" : "text-red-600"}`}>
+                  <div className="text-sm font-medium mb-1" style={{ color: results.seo?.description?.score >= 70 ? "#059669" : "#DC2626" }}>
                     {results.seo?.description?.score >= 70 ? "✓ Pass" : "✗ Needs Attention"}
                   </div>
                   {results.seo?.description?.value && (
@@ -284,7 +286,7 @@ export const PrintView = forwardRef<HTMLDivElement, PrintViewProps>(
             <div className="grid grid-cols-2 gap-6">
               <div>
                 <div className="flex items-center gap-2 mb-2">
-                  <span className={results.seo?.headings?.h1?.length === 1 ? "text-emerald-600" : "text-red-600"}>
+                  <span style={{ color: results.seo?.headings?.h1?.length === 1 ? "#059669" : "#DC2626" }}>
                     {results.seo?.headings?.h1?.length === 1 ? "✓" : "✗"}
                   </span>
                   <span className="text-sm font-medium">H1 Headings</span>
@@ -296,7 +298,7 @@ export const PrintView = forwardRef<HTMLDivElement, PrintViewProps>(
               </div>
               <div>
                 <div className="flex items-center gap-2 mb-2">
-                  <span className={(results.seo?.headings?.h2?.length || 0) > 0 ? "text-emerald-600" : "text-amber-600"}>
+                  <span style={{ color: (results.seo?.headings?.h2?.length || 0) > 0 ? "#059669" : "#D97706" }}>
                     {(results.seo?.headings?.h2?.length || 0) > 0 ? "✓" : "○"}
                   </span>
                   <span className="text-sm font-medium">H2 Headings</span>
@@ -323,7 +325,7 @@ export const PrintView = forwardRef<HTMLDivElement, PrintViewProps>(
                 </div>
                 <div className="text-xs text-[#888888]">Images with alt text</div>
               </div>
-              <div className={`text-sm ${results.seo?.images?.withoutAlt === 0 ? "text-emerald-600" : "text-red-600"}`}>
+              <div className="text-sm" style={{ color: results.seo?.images?.withoutAlt === 0 ? "#059669" : "#DC2626" }}>
                 {results.seo?.images?.withoutAlt === 0 ? "✓ All images have alt text" : `✗ ${results.seo?.images?.withoutAlt} images missing alt text`}
               </div>
             </div>
@@ -345,7 +347,7 @@ export const PrintView = forwardRef<HTMLDivElement, PrintViewProps>(
               ].map((item) => (
                 <div key={item.label} className="flex items-center justify-between py-2 border-b border-[#F0F0F0]">
                   <span className="text-[#666666]">{item.label}</span>
-                  <span className={item.value ? "text-emerald-600 font-medium" : "text-red-600"}>
+                  <span className="font-medium" style={{ color: item.value ? "#059669" : "#DC2626" }}>
                     {item.value ? "✓ Yes" : "✗ No"}
                   </span>
                 </div>
@@ -383,7 +385,7 @@ export const PrintView = forwardRef<HTMLDivElement, PrintViewProps>(
             </h3>
 
             <div className="flex items-start gap-4 mb-4">
-              <div className={`text-lg ${results.llmReadiness?.structuredData?.hasSchemaOrg ? "text-emerald-600" : "text-red-600"}`}>
+              <div className="text-lg" style={{ color: results.llmReadiness?.structuredData?.hasSchemaOrg ? "#059669" : "#DC2626" }}>
                 {results.llmReadiness?.structuredData?.hasSchemaOrg ? "✓" : "✗"}
               </div>
               <div>
@@ -420,14 +422,11 @@ export const PrintView = forwardRef<HTMLDivElement, PrintViewProps>(
               <div className="flex-1">
                 <div className="h-2 bg-[#E5E5E5] rounded-full overflow-hidden">
                   <div
-                    className={`h-full rounded-full ${
-                      (results.llmReadiness?.contentClarity?.score || 0) >= 70
-                        ? "bg-emerald-500"
-                        : (results.llmReadiness?.contentClarity?.score || 0) >= 40
-                          ? "bg-amber-500"
-                          : "bg-red-500"
-                    }`}
-                    style={{ width: `${results.llmReadiness?.contentClarity?.score || 0}%` }}
+                    className="h-full rounded-full"
+                    style={{
+                      width: `${results.llmReadiness?.contentClarity?.score || 0}%`,
+                      backgroundColor: (results.llmReadiness?.contentClarity?.score || 0) >= 70 ? "#10B981" : (results.llmReadiness?.contentClarity?.score || 0) >= 40 ? "#F59E0B" : "#EF4444"
+                    }}
                   />
                 </div>
               </div>
@@ -455,14 +454,11 @@ export const PrintView = forwardRef<HTMLDivElement, PrintViewProps>(
               <div className="flex-1">
                 <div className="h-2 bg-[#E5E5E5] rounded-full overflow-hidden">
                   <div
-                    className={`h-full rounded-full ${
-                      (results.llmReadiness?.authorInfo?.score || 0) >= 70
-                        ? "bg-emerald-500"
-                        : (results.llmReadiness?.authorInfo?.score || 0) >= 40
-                          ? "bg-amber-500"
-                          : "bg-red-500"
-                    }`}
-                    style={{ width: `${results.llmReadiness?.authorInfo?.score || 0}%` }}
+                    className="h-full rounded-full"
+                    style={{
+                      width: `${results.llmReadiness?.authorInfo?.score || 0}%`,
+                      backgroundColor: (results.llmReadiness?.authorInfo?.score || 0) >= 70 ? "#10B981" : (results.llmReadiness?.authorInfo?.score || 0) >= 40 ? "#F59E0B" : "#EF4444"
+                    }}
                   />
                 </div>
               </div>
@@ -490,14 +486,11 @@ export const PrintView = forwardRef<HTMLDivElement, PrintViewProps>(
               <div className="flex-1">
                 <div className="h-2 bg-[#E5E5E5] rounded-full overflow-hidden">
                   <div
-                    className={`h-full rounded-full ${
-                      (results.llmReadiness?.citability?.score || 0) >= 70
-                        ? "bg-emerald-500"
-                        : (results.llmReadiness?.citability?.score || 0) >= 40
-                          ? "bg-amber-500"
-                          : "bg-red-500"
-                    }`}
-                    style={{ width: `${results.llmReadiness?.citability?.score || 0}%` }}
+                    className="h-full rounded-full"
+                    style={{
+                      width: `${results.llmReadiness?.citability?.score || 0}%`,
+                      backgroundColor: (results.llmReadiness?.citability?.score || 0) >= 70 ? "#10B981" : (results.llmReadiness?.citability?.score || 0) >= 40 ? "#F59E0B" : "#EF4444"
+                    }}
                   />
                 </div>
               </div>
@@ -545,13 +538,11 @@ export const PrintView = forwardRef<HTMLDivElement, PrintViewProps>(
                     {index + 1}. {suggestion.title}
                   </span>
                   <span
-                    className={`text-xs px-2 py-0.5 rounded font-medium ${
-                      suggestion.priority === "high"
-                        ? "bg-red-100 text-red-700"
-                        : suggestion.priority === "medium"
-                          ? "bg-amber-100 text-amber-700"
-                          : "bg-emerald-100 text-emerald-700"
-                    }`}
+                    className="text-xs px-2 py-0.5 rounded font-medium"
+                    style={{
+                      backgroundColor: suggestion.priority === "high" ? "#FEE2E2" : suggestion.priority === "medium" ? "#FEF3C7" : "#D1FAE5",
+                      color: suggestion.priority === "high" ? "#B91C1C" : suggestion.priority === "medium" ? "#B45309" : "#047857"
+                    }}
                   >
                     {suggestion.priority === "high" ? "High" : suggestion.priority === "medium" ? "Medium" : "Low"}
                   </span>
