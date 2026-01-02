@@ -297,7 +297,10 @@ export function HomeClient() {
 
       {/* Quote */}
       <section className="py-8 px-6">
-        <figure className="max-w-3xl mx-auto pl-6 border-l-2 border-emerald-500/50">
+        <figure className="max-w-3xl mx-auto text-center">
+          <div className="flex justify-center mb-4">
+            <div className="w-8 h-[2px] bg-gradient-to-r from-transparent via-emerald-500 to-transparent" />
+          </div>
           <blockquote className="text-xl font-light italic text-zinc-300 tracking-wide">
             "Traditional SEO optimizes for clicks; AIoli optimizes for answers."
           </blockquote>

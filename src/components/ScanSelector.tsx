@@ -145,11 +145,11 @@ export function ScanSelector({ onAnalyze, isLoading = false, userCredits }: Scan
             <button
               type="submit"
               disabled={isDiscovering}
-              className="flex items-center justify-center gap-2 font-medium px-8 h-12 rounded-full transition-all"
+              className="flex items-center justify-center gap-2 font-medium px-8 h-12 rounded-full transition-all hover:scale-105"
               style={{
                 background: isDiscovering ? "rgba(255, 255, 255, 0.8)" : "var(--accent-cream)",
                 color: "var(--bg-obsidian)",
-                boxShadow: "0 0 20px -5px rgba(245, 245, 240, 0.4), inset 0 -2px 4px rgba(0, 0, 0, 0.1)",
+                boxShadow: "0 0 30px -5px rgba(255, 255, 255, 0.5), 0 0 60px -10px rgba(255, 255, 255, 0.3), inset 0 -2px 4px rgba(0, 0, 0, 0.1)",
               }}
             >
               {isDiscovering ? (

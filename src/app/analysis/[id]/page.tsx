@@ -224,6 +224,80 @@ export default async function AnalysisPage({ params }: PageProps) {
                   { label: "sitemap.xml", passed: results.seo?.technical?.sitemap ?? false },
                 ]}
               />
+
+              {/* New: Social Meta */}
+              {results.seo?.social && (
+                <SeoChecklist
+                  title="Social Sharing"
+                  items={[
+                    {
+                      label: "Open Graph title",
+                      passed: !!results.seo.social.ogTitle,
+                      value: results.seo.social.ogTitle || undefined,
+                      issue: !results.seo.social.ogTitle ? "Missing og:title" : undefined,
+                    },
+                    {
+                      label: "Open Graph image",
+                      passed: !!results.seo.social.ogImage,
+                      issue: !results.seo.social.ogImage ? "No preview image for social shares" : undefined,
+                    },
+                    {
+                      label: "Twitter Card",
+                      passed: !!results.seo.social.twitterCard,
+                      value: results.seo.social.twitterCard || undefined,
+                    },
+                  ]}
+                />
+              )}
+
+              {/* New: Content Analysis */}
+              {results.seo?.content && (
+                <SeoChecklist
+                  title="Content"
+                  items={[
+                    {
+                      label: "Word count",
+                      passed: results.seo.content.wordCount >= 300,
+                      value: `${results.seo.content.wordCount} words (~${results.seo.content.readingTimeMinutes} min read)`,
+                      issue: results.seo.content.wordCount < 300 ? "Thin content - aim for 300+ words" : undefined,
+                    },
+                    {
+                      label: "Text-to-HTML ratio",
+                      passed: results.seo.content.textToHtmlRatio >= 10,
+                      value: `${results.seo.content.textToHtmlRatio}%`,
+                      issue: results.seo.content.textToHtmlRatio < 10 ? "Low ratio - too much code vs content" : undefined,
+                    },
+                  ]}
+                />
+              )}
+
+              {/* New: Advanced Technical */}
+              {results.seo?.advanced && (
+                <SeoChecklist
+                  title="Advanced"
+                  items={[
+                    {
+                      label: "Language",
+                      passed: !!results.seo.advanced.language,
+                      value: results.seo.advanced.language || undefined,
+                      issue: !results.seo.advanced.language ? "Missing lang attribute" : undefined,
+                    },
+                    {
+                      label: "Favicon",
+                      passed: results.seo.advanced.favicon,
+                    },
+                    {
+                      label: "Apple Touch Icon",
+                      passed: results.seo.advanced.appleTouchIcon,
+                    },
+                    {
+                      label: "Theme Color",
+                      passed: !!results.seo.advanced.themeColor,
+                      value: results.seo.advanced.themeColor || undefined,
+                    },
+                  ]}
+                />
+              )}
             </div>
           </AnalysisCard>
 

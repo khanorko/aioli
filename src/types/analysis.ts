@@ -29,7 +29,10 @@ export interface SeoResult {
     internal: number;
     external: number;
     broken: string[];
+    nofollow: number;
+    emptyAnchor: number;
     score: number;
+    issues: string[];
   };
   technical: {
     https: boolean;
@@ -37,6 +40,40 @@ export interface SeoResult {
     viewport: boolean;
     robotsTxt: boolean;
     sitemap: boolean;
+    score: number;
+    issues: string[];
+  };
+  // New: Social meta tags
+  social: {
+    ogTitle: string | null;
+    ogDescription: string | null;
+    ogImage: string | null;
+    ogType: string | null;
+    twitterCard: string | null;
+    twitterTitle: string | null;
+    twitterDescription: string | null;
+    twitterImage: string | null;
+    score: number;
+    issues: string[];
+  };
+  // New: Content analysis
+  content: {
+    wordCount: number;
+    readingTimeMinutes: number;
+    textToHtmlRatio: number;
+    hasKeywordInTitle: boolean;
+    hasKeywordInH1: boolean;
+    score: number;
+    issues: string[];
+  };
+  // New: Advanced technical
+  advanced: {
+    language: string | null;
+    charset: string | null;
+    favicon: boolean;
+    appleTouchIcon: boolean;
+    themeColor: string | null;
+    metaRobots: string | null;
     score: number;
     issues: string[];
   };
