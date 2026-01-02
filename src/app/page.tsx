@@ -121,9 +121,24 @@ function HomeContent() {
   ];
 
   return (
-    <div className="min-h-screen bg-[var(--bg-obsidian)]">
-      {/* Navbar */}
-      <Navbar />
+    <div className="relative min-h-screen bg-[#0a0a0a] overflow-hidden">
+      {/* Background texture image */}
+      <div className="absolute inset-0 z-0">
+        <Image
+          src="/din-genererade-bild.jpg"
+          alt=""
+          fill
+          className="object-cover mix-blend-overlay opacity-40"
+          priority
+        />
+        {/* Gradient fade so text remains readable */}
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0a0a0a]/80 to-[#0a0a0a]" />
+      </div>
+
+      {/* Content layer */}
+      <div className="relative z-10">
+        {/* Navbar */}
+        <Navbar />
 
       {/* Hero Section */}
       <section className="relative pt-32 pb-20 px-6 overflow-hidden">
@@ -467,6 +482,7 @@ function HomeContent() {
           </div>
         </div>
       </footer>
+      </div>{/* End content layer */}
     </div>
   );
 }
