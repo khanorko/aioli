@@ -93,7 +93,7 @@ export const PrintView = forwardRef<HTMLDivElement, PrintViewProps>(
           <div className="mb-16">
             <h1
               className="text-4xl font-semibold tracking-tight mb-4"
-              style={{ letterSpacing: "-0.03em" }}
+              style={{ letterSpacing: "-0.03em", color: "#111111" }}
             >
               SEO & AI Visibility
               <br />
