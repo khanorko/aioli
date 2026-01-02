@@ -373,21 +373,27 @@ export async function discoverPages(url: string, maxPages: number = 10): Promise
   const baseUrl = url.startsWith("http") ? url : `https://${url}`;
 
   try {
-    // Try sitemap first
-    let pages = await fetchSitemap(baseUrl);
-    let source: "sitemap" | "crawl" | "single" = "sitemap";
+    // Fetch sitemap and crawl homepage in parallel
+    const [sitemapPages, crawledPages] = await Promise.all([
+      fetchSitemap(baseUrl),
+      crawlHomepage(baseUrl),
+    ]);
 
-    // Fallback to crawling if no sitemap or only got a few pages
-    if (pages.length < 3) {
-      const crawledPages = await crawlHomepage(baseUrl);
-      if (crawledPages.length > pages.length) {
-        pages = crawledPages;
-        source = pages.length > 1 ? "crawl" : "single";
-      }
+    // Combine pages from both sources (crawled pages often have main navigation)
+    const allPages = [...new Set([...crawledPages, ...sitemapPages])];
+
+    // Determine source based on what we found
+    let source: "sitemap" | "crawl" | "single" = "single";
+    if (sitemapPages.length > 0 && crawledPages.length > 0) {
+      source = "sitemap"; // Combined
+    } else if (sitemapPages.length > 0) {
+      source = "sitemap";
+    } else if (crawledPages.length > 1) {
+      source = "crawl";
     }
 
-    // Filter and prioritize
-    const filteredPages = filterAndPrioritizePages(pages, baseUrl);
+    // Filter and prioritize - this will sort by relevance score
+    const filteredPages = filterAndPrioritizePages(allPages, baseUrl);
 
     // Ensure homepage is included
     const domain = extractDomain(baseUrl);
