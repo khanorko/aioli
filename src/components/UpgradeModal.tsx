@@ -77,7 +77,7 @@ export function UpgradeModal({ isOpen, onClose, email, analysesUsed = 3 }: Upgra
               <button
                 onClick={onClose}
                 className="absolute top-4 right-4 p-2 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors"
-                aria-label="Stäng"
+                aria-label="Close"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -93,33 +93,33 @@ export function UpgradeModal({ isOpen, onClose, email, analysesUsed = 3 }: Upgra
 
               {/* Content */}
               <h2 className="text-2xl font-bold text-center mb-2" style={{ color: "var(--text-primary)" }}>
-                Analysgräns nådd
+                Analysis Limit Reached
               </h2>
 
               <p className="text-center mb-6" style={{ color: "var(--text-secondary)" }}>
-                Du har använt <strong>{analysesUsed}/3</strong> gratis analyser denna månad.
-                Uppgradera till Pro för obegränsade analyser.
+                You have used <strong>{analysesUsed}/3</strong> free analyses this month.
+                Upgrade to Pro for unlimited analyses.
               </p>
 
               {/* Price */}
               <div className="text-center mb-6 p-4 rounded-xl" style={{ background: "var(--bg-secondary)" }}>
                 <span className="text-3xl font-bold" style={{ color: "var(--text-primary)" }}>299</span>
-                <span className="text-sm" style={{ color: "var(--text-muted)" }}> kr/mån</span>
+                <span className="text-sm" style={{ color: "var(--text-muted)" }}> SEK/mo</span>
               </div>
 
               {/* Features */}
               <ul className="space-y-2 mb-6">
                 <li className="flex items-center gap-2 text-sm" style={{ color: "var(--text-secondary)" }}>
                   <CheckIcon />
-                  Obegränsade analyser
+                  Unlimited analyses
                 </li>
                 <li className="flex items-center gap-2 text-sm" style={{ color: "var(--text-secondary)" }}>
                   <CheckIcon />
-                  PDF-export av resultat
+                  PDF export of results
                 </li>
                 <li className="flex items-center gap-2 text-sm" style={{ color: "var(--text-secondary)" }}>
                   <CheckIcon />
-                  Analyshistorik
+                  Analysis history
                 </li>
               </ul>
 
@@ -129,11 +129,11 @@ export function UpgradeModal({ isOpen, onClose, email, analysesUsed = 3 }: Upgra
                 disabled={isLoading}
                 className="btn-primary w-full py-3 text-lg disabled:opacity-50"
               >
-                {isLoading ? "Laddar..." : "Uppgradera till Pro"}
+                {isLoading ? "Loading..." : "Upgrade to Pro"}
               </button>
 
               <p className="text-xs text-center mt-4" style={{ color: "var(--text-muted)" }}>
-                Avbryt när som helst. Säker betalning via Stripe.
+                Cancel anytime. Secure payment via Stripe.
               </p>
             </div>
           </motion.div>

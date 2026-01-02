@@ -8,7 +8,7 @@ export async function POST(request: Request) {
 
   if (!session?.user?.id) {
     return NextResponse.json(
-      { error: "Du måste vara inloggad" },
+      { error: "You must be logged in" },
       { status: 401 }
     );
   }
@@ -25,13 +25,13 @@ export async function POST(request: Request) {
   const { analysisId } = body;
 
   if (!analysisId) {
-    return NextResponse.json({ error: "analysisId krävs" }, { status: 400 });
+    return NextResponse.json({ error: "analysisId is required" }, { status: 400 });
   }
 
   // Get analysis
   const analysis = await getAnalysis(analysisId);
   if (!analysis) {
-    return NextResponse.json({ error: "Analys hittades inte" }, { status: 404 });
+    return NextResponse.json({ error: "Analysis not found" }, { status: 404 });
   }
 
   // Check if already unlocked
@@ -42,7 +42,7 @@ export async function POST(request: Request) {
   // Check if user owns this analysis
   if (analysis.userId !== userId) {
     return NextResponse.json(
-      { error: "Du kan bara låsa upp dina egna analyser" },
+      { error: "You can only unlock your own analyses" },
       { status: 403 }
     );
   }
@@ -54,7 +54,7 @@ export async function POST(request: Request) {
     const user = await getUserById(userId);
     return NextResponse.json(
       {
-        error: "Du har inga credits kvar",
+        error: "You have no credits left",
         needsCredits: true,
         credits: user?.credits || 0
       },

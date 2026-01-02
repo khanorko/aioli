@@ -16,7 +16,7 @@ export async function generateWithGroq(
     messages: [
       {
         role: "system",
-        content: "Du är en SEO-expert som ger konkreta, actionbara förslag på svenska.",
+        content: "You are an SEO expert who provides concrete, actionable suggestions in English.",
       },
       {
         role: "user",

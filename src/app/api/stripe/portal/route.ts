@@ -8,7 +8,7 @@ export async function POST(request: NextRequest) {
 
     if (!email) {
       return NextResponse.json(
-        { error: "E-postadress krävs" },
+        { error: "Email is required" },
         { status: 400 }
       );
     }
@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
 
     if (!user || !user.stripeCustomerId) {
       return NextResponse.json(
-        { error: "Ingen prenumeration hittades" },
+        { error: "No subscription found" },
         { status: 404 }
       );
     }
@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("Stripe portal error:", error);
     return NextResponse.json(
-      { error: "Kunde inte öppna kundportalen" },
+      { error: "Could not open customer portal" },
       { status: 500 }
     );
   }

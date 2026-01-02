@@ -107,7 +107,7 @@ export async function POST(request: Request) {
 
   if (!session?.user?.id) {
     return NextResponse.json(
-      { error: "Du måste vara inloggad för att analysera" },
+      { error: "You must be logged in to analyze" },
       { status: 401 }
     );
   }
@@ -148,7 +148,7 @@ export async function POST(request: Request) {
     const user = await getUserById(userId);
     if (!user) {
       return NextResponse.json(
-        { error: "Användare hittades inte" },
+        { error: "User not found" },
         { status: 404 }
       );
     }
@@ -158,7 +158,7 @@ export async function POST(request: Request) {
     if (!isAdmin && user.credits < creditsNeeded) {
       return NextResponse.json(
         {
-          error: "Inte tillräckligt med credits",
+          error: "Not enough credits",
           needsCredits: true,
           creditsNeeded,
           creditsAvailable: user.credits,
@@ -173,7 +173,7 @@ export async function POST(request: Request) {
         const consumed = await consumeCredit(userId);
         if (!consumed) {
           return NextResponse.json(
-            { error: "Kunde inte använda credits", needsCredits: true },
+            { error: "Could not use credits", needsCredits: true },
             { status: 402 }
           );
         }

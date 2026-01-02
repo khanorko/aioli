@@ -11,7 +11,7 @@ export async function GET() {
 
     if (!session?.user?.id) {
       return NextResponse.json(
-        { error: "Inte inloggad" },
+        { error: "Not logged in" },
         { status: 401 }
       );
     }
@@ -35,7 +35,7 @@ export async function GET() {
   } catch (error) {
     console.error("User status error:", error);
     return NextResponse.json(
-      { error: "Kunde inte hämta användarstatus" },
+      { error: "Could not fetch user status" },
       { status: 500 }
     );
   }

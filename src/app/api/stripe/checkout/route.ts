@@ -4,11 +4,11 @@ import { authOptions } from "@/lib/auth";
 import { stripe, getBaseUrl } from "@/lib/stripe";
 import { getUserById, updateUser } from "@/lib/db";
 
-// Credit packages with prices in öre (Swedish cents)
+// Credit packages with prices in ore (Swedish cents)
 const CREDIT_PACKAGES: Record<string, { credits: number; priceOre: number; name: string }> = {
-  starter: { credits: 1, priceOre: 4900, name: "Testa - 1 credit" },
-  website: { credits: 5, priceOre: 14900, name: "Webbplats - 5 credits" },
-  agency: { credits: 15, priceOre: 29900, name: "Byrå - 15 credits" },
+  starter: { credits: 1, priceOre: 4900, name: "Starter - 1 credit" },
+  website: { credits: 5, priceOre: 14900, name: "Website - 5 credits" },
+  agency: { credits: 15, priceOre: 29900, name: "Agency - 15 credits" },
 };
 
 export async function POST(request: NextRequest) {
@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
 
     if (!session?.user?.id) {
       return NextResponse.json(
-        { error: "Du måste vara inloggad" },
+        { error: "You must be logged in" },
         { status: 401 }
       );
     }
@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
 
     if (!packageId || !CREDIT_PACKAGES[packageId]) {
       return NextResponse.json(
-        { error: "Ogiltigt paket" },
+        { error: "Invalid package" },
         { status: 400 }
       );
     }
@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
 
     if (!user) {
       return NextResponse.json(
-        { error: "Användare hittades inte" },
+        { error: "User not found" },
         { status: 404 }
       );
     }
@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
             currency: "sek",
             product_data: {
               name: `AIoli Credits - ${creditPackage.name}`,
-              description: `${creditPackage.credits} credits för att låsa upp analysresultat`,
+              description: `${creditPackage.credits} credits to unlock analysis results`,
             },
             unit_amount: creditPackage.priceOre,
           },
@@ -81,16 +81,16 @@ export async function POST(request: NextRequest) {
         packageId,
         credits: creditPackage.credits.toString(),
       },
-      locale: "sv",
+      locale: "en",
       allow_promotion_codes: true,
     });
 
     return NextResponse.json({ url: checkoutSession.url });
   } catch (error) {
     console.error("Stripe checkout error:", error);
-    const errorMessage = error instanceof Error ? error.message : "Okänt fel";
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json(
-      { error: `Kunde inte skapa betalningssession: ${errorMessage}` },
+      { error: `Could not create payment session: ${errorMessage}` },
       { status: 500 }
     );
   }

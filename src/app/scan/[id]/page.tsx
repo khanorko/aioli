@@ -44,9 +44,9 @@ export default async function SiteScanPage({ params }: PageProps) {
             height={80}
             className="mx-auto mb-6 animate-pulse"
           />
-          <h1 className="section-title text-2xl mb-2">Analyserar sajten...</h1>
+          <h1 className="section-title text-2xl mb-2">Analyzing site...</h1>
           <p style={{ color: "var(--text-muted)" }}>
-            {siteScan.completedPages} av {siteScan.totalPages} sidor klara
+            {siteScan.completedPages} of {siteScan.totalPages} pages completed
           </p>
           <div className="flex justify-center gap-2 mt-6">
             <span className="w-2 h-2 rounded-full animate-bounce" style={{ background: "var(--text-secondary)", animationDelay: "0s" }}></span>
@@ -76,7 +76,7 @@ export default async function SiteScanPage({ params }: PageProps) {
                 style={{ height: '48px', width: 'auto' }}
               />
               <span className="font-medium text-sm" style={{ color: "var(--text-secondary)" }}>
-                ← Ny analys
+                ← Back
               </span>
             </Link>
             <span className="text-sm hidden sm:block" style={{ color: "var(--text-muted)" }}>
@@ -89,12 +89,12 @@ export default async function SiteScanPage({ params }: PageProps) {
       <div className="max-w-7xl mx-auto px-6 py-12">
         {/* Page Title */}
         <div className="mb-14 text-center">
-          <h1 className="section-title text-3xl md:text-4xl mb-4">Sajtanalys</h1>
+          <h1 className="section-title text-3xl md:text-4xl mb-4">Site Analysis</h1>
           <p className="url-badge font-mono text-sm break-all px-4 py-2 inline-block">
             {siteScan.domain}
           </p>
           <p className="text-sm mt-3" style={{ color: "var(--text-muted)" }}>
-            {siteScan.totalPages} sidor analyserade • {new Date(siteScan.createdAt).toLocaleString("sv-SE")}
+            {siteScan.totalPages} pages analyzed • {new Date(siteScan.createdAt).toLocaleString("en-US")}
           </p>
         </div>
 
@@ -104,10 +104,10 @@ export default async function SiteScanPage({ params }: PageProps) {
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-xl font-semibold mb-1" style={{ color: "var(--text-primary)" }}>
-                  Genomsnittlig SEO
+                  Average SEO
                 </h2>
                 <p className="text-sm" style={{ color: "var(--text-muted)" }}>
-                  Medelvärde över {completedAnalyses.length} sidor
+                  Average across {completedAnalyses.length} pages
                 </p>
               </div>
               <ScoreGauge score={siteScan.avgSeoScore || 0} label="" />
@@ -118,10 +118,10 @@ export default async function SiteScanPage({ params }: PageProps) {
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-xl font-semibold mb-1" style={{ color: "var(--text-primary)" }}>
-                  Genomsnittlig AI-synlighet
+                  Average AI Visibility
                 </h2>
                 <p className="text-sm" style={{ color: "var(--text-muted)" }}>
-                  Medelvärde över {completedAnalyses.length} sidor
+                  Average across {completedAnalyses.length} pages
                 </p>
               </div>
               <ScoreGauge score={siteScan.avgLlmScore || 0} label="" />
@@ -132,7 +132,7 @@ export default async function SiteScanPage({ params }: PageProps) {
         {/* Page-by-page Results */}
         <div className="card p-8 mb-14">
           <h2 className="text-xl font-semibold mb-6" style={{ color: "var(--text-primary)" }}>
-            Resultat per sida
+            Results by Page
           </h2>
 
           <div className="overflow-x-auto">
@@ -140,7 +140,7 @@ export default async function SiteScanPage({ params }: PageProps) {
               <thead>
                 <tr className="border-b" style={{ borderColor: "var(--border-primary)" }}>
                   <th className="text-left py-3 px-4 font-medium text-sm" style={{ color: "var(--text-muted)" }}>
-                    Sida
+                    Page
                   </th>
                   <th className="text-center py-3 px-4 font-medium text-sm" style={{ color: "var(--text-muted)" }}>
                     SEO
@@ -211,7 +211,7 @@ export default async function SiteScanPage({ params }: PageProps) {
                               color: "white",
                             }}
                           >
-                            Visa
+                            View
                           </Link>
                         ) : (
                           <span
@@ -221,7 +221,7 @@ export default async function SiteScanPage({ params }: PageProps) {
                               color: "white",
                             }}
                           >
-                            Misslyckades
+                            Failed
                           </span>
                         )}
                       </td>
@@ -234,7 +234,7 @@ export default async function SiteScanPage({ params }: PageProps) {
 
           {failedAnalyses.length > 0 && (
             <p className="text-sm mt-4" style={{ color: "var(--text-muted)" }}>
-              {failedAnalyses.length} sidor kunde inte analyseras
+              {failedAnalyses.length} pages could not be analyzed
             </p>
           )}
         </div>
@@ -245,11 +245,11 @@ export default async function SiteScanPage({ params }: PageProps) {
             {/* SEO Distribution */}
             <div className="card p-6">
               <h3 className="font-semibold mb-4" style={{ color: "var(--text-primary)" }}>
-                SEO-poäng fördelning
+                SEO Score Distribution
               </h3>
               <div className="space-y-3">
                 <ScoreDistributionBar
-                  label="Bra (80+)"
+                  label="Good (80+)"
                   count={completedAnalyses.filter((a) => (a.seoScore || 0) >= 80).length}
                   total={completedAnalyses.length}
                   color="var(--score-good)"
@@ -261,7 +261,7 @@ export default async function SiteScanPage({ params }: PageProps) {
                   color="var(--score-ok)"
                 />
                 <ScoreDistributionBar
-                  label="Behöver förbättras (<60)"
+                  label="Needs Improvement (<60)"
                   count={completedAnalyses.filter((a) => (a.seoScore || 0) < 60).length}
                   total={completedAnalyses.length}
                   color="var(--score-poor)"
@@ -272,11 +272,11 @@ export default async function SiteScanPage({ params }: PageProps) {
             {/* AI Distribution */}
             <div className="card p-6">
               <h3 className="font-semibold mb-4" style={{ color: "var(--text-primary)" }}>
-                AI-synlighet fördelning
+                AI Visibility Distribution
               </h3>
               <div className="space-y-3">
                 <ScoreDistributionBar
-                  label="Bra (80+)"
+                  label="Good (80+)"
                   count={completedAnalyses.filter((a) => (a.llmScore || 0) >= 80).length}
                   total={completedAnalyses.length}
                   color="var(--score-good)"
@@ -288,7 +288,7 @@ export default async function SiteScanPage({ params }: PageProps) {
                   color="var(--score-ok)"
                 />
                 <ScoreDistributionBar
-                  label="Behöver förbättras (<60)"
+                  label="Needs Improvement (<60)"
                   count={completedAnalyses.filter((a) => (a.llmScore || 0) < 60).length}
                   total={completedAnalyses.length}
                   color="var(--score-poor)"
@@ -302,13 +302,13 @@ export default async function SiteScanPage({ params }: PageProps) {
         <div className="mt-20 text-center">
           <div className="card p-8 inline-block">
             <h2 className="text-xl font-semibold mb-2" style={{ color: "var(--text-primary)" }}>
-              Vill du analysera en annan sajt?
+              Want to analyze another site?
             </h2>
             <p className="mb-5" style={{ color: "var(--text-muted)" }}>
-              Testa hur din eller dina konkurrenters sajter presterar.
+              Test how your or your competitors&apos; sites perform.
             </p>
             <Link href="/" className="btn-primary px-8 py-3 inline-block text-lg">
-              Ny analys
+              New analysis
             </Link>
           </div>
         </div>
@@ -352,7 +352,7 @@ function ScoreDistributionBar({
     <div>
       <div className="flex justify-between text-sm mb-1">
         <span style={{ color: "var(--text-secondary)" }}>{label}</span>
-        <span style={{ color: "var(--text-muted)" }}>{count} sidor</span>
+        <span style={{ color: "var(--text-muted)" }}>{count} pages</span>
       </div>
       <div className="h-2 rounded-full overflow-hidden" style={{ background: "var(--bg-secondary)" }}>
         <div

@@ -8,7 +8,7 @@ export async function GET() {
 
   if (!session?.user?.id) {
     return NextResponse.json(
-      { error: "Du måste vara inloggad" },
+      { error: "You must be logged in" },
       { status: 401 }
     );
   }
@@ -21,7 +21,7 @@ export async function GET() {
   } catch (error) {
     console.error("Error fetching analyses:", error);
     return NextResponse.json(
-      { error: "Kunde inte hämta analyser" },
+      { error: "Could not fetch analyses" },
       { status: 500 }
     );
   }
