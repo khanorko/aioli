@@ -51,13 +51,15 @@ export const PrintView = forwardRef<HTMLDivElement, PrintViewProps>(
     return (
       <div
         ref={ref}
-        className="print-view bg-white text-[#111111] font-sans"
         style={{
           width: "210mm",
           minHeight: "297mm",
           padding: "20mm 15mm",
           fontSize: "10pt",
           lineHeight: "1.5",
+          backgroundColor: "#FFFFFF",
+          color: "#111111",
+          fontFamily: "system-ui, -apple-system, sans-serif",
         }}
       >
         {/* ============ PAGE 1: COVER & EXECUTIVE SUMMARY ============ */}

@@ -75,6 +75,30 @@ export function GenerateReportButton({
           useCORS: true,
           letterRendering: true,
           backgroundColor: "#FFFFFF",
+          // Avoid CSS parsing issues with modern color functions (lab, oklch)
+          foreignObjectRendering: false,
+          removeContainer: true,
+          onclone: (clonedDoc: Document) => {
+            // Force all elements to use computed RGB colors
+            const container = clonedDoc.getElementById("pdf-print-container");
+            if (container) {
+              const allElements = container.querySelectorAll("*");
+              allElements.forEach((el) => {
+                const htmlEl = el as HTMLElement;
+                const computed = window.getComputedStyle(htmlEl);
+                // Override any lab/oklch colors with computed RGB values
+                if (computed.color) {
+                  htmlEl.style.color = computed.color;
+                }
+                if (computed.backgroundColor && computed.backgroundColor !== "rgba(0, 0, 0, 0)") {
+                  htmlEl.style.backgroundColor = computed.backgroundColor;
+                }
+                if (computed.borderColor) {
+                  htmlEl.style.borderColor = computed.borderColor;
+                }
+              });
+            }
+          },
         },
         jsPDF: {
           unit: "mm",
@@ -211,9 +235,24 @@ export function GenerateReportButton({
               minHeight: "297mm",
               backgroundColor: "#FFFFFF",
               pointerEvents: "none",
+              // Force all colors to hex to avoid lab() color errors in html2pdf
+              colorScheme: "light",
             }}
             aria-hidden="true"
           >
+            {/* Override Tailwind's lab()/oklch() colors for html2canvas compatibility */}
+            <style>{`
+              #pdf-print-container, #pdf-print-container * {
+                --tw-text-opacity: 1 !important;
+                --tw-bg-opacity: 1 !important;
+                --tw-border-opacity: 1 !important;
+                forced-color-adjust: none !important;
+              }
+              #pdf-print-container *::before,
+              #pdf-print-container *::after {
+                forced-color-adjust: none !important;
+              }
+            `}</style>
             <PrintView
               ref={printRef}
               analysisData={analysisData}
