@@ -36,10 +36,49 @@
     "title": "Buy credits",
     "subtitle": "Analyze free - unlock details with credits",
     "popular": "Most popular",
+    "perAnalysis": "per analysis",
+    "perfectFor": "Perfect for:",
+    "youHave": "You have",
+    "buyMore": "Buy more",
     "packages": {
-      "starter": "Try",
-      "standard": "Standard",
-      "pro": "Pro"
+      "starter": {
+        "name": "Try",
+        "tagline": "Test on a single page",
+        "features": [
+          "1 page analysis",
+          "Full SEO report",
+          "AI visibility analysis",
+          "PDF export"
+        ],
+        "perfectFor": "a quick test of your homepage",
+        "cta": "Try one analysis"
+      },
+      "website": {
+        "name": "Website",
+        "tagline": "Analyze your entire site",
+        "features": [
+          "5 page analyses",
+          "Site scan (multiple pages)",
+          "Aggregated site report",
+          "All improvement suggestions",
+          "PDF export"
+        ],
+        "perfectFor": "small businesses and bloggers",
+        "cta": "Analyze your site"
+      },
+      "agency": {
+        "name": "Agency",
+        "tagline": "For multiple websites",
+        "features": [
+          "15 page analyses",
+          "Analyze multiple sites",
+          "Competitor analysis",
+          "Premium features",
+          "PDF export"
+        ],
+        "perfectFor": "agencies and consultants",
+        "cta": "Get started"
+      }
     },
     "credit": "credit",
     "credits": "credits",

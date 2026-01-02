@@ -6,9 +6,9 @@ import { getUserById, updateUser } from "@/lib/db";
 
 // Credit packages with prices in öre (Swedish cents)
 const CREDIT_PACKAGES: Record<string, { credits: number; priceOre: number; name: string }> = {
-  starter: { credits: 1, priceOre: 4900, name: "1 credit" },
-  standard: { credits: 5, priceOre: 14900, name: "5 credits" },
-  pro: { credits: 15, priceOre: 29900, name: "15 credits" },
+  starter: { credits: 1, priceOre: 4900, name: "Testa - 1 credit" },
+  website: { credits: 5, priceOre: 14900, name: "Webbplats - 5 credits" },
+  agency: { credits: 15, priceOre: 29900, name: "Byrå - 15 credits" },
 };
 
 export async function POST(request: NextRequest) {

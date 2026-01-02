@@ -36,10 +36,49 @@
     "title": "Köp credits",
     "subtitle": "Analysera gratis – lås upp detaljerna med credits",
     "popular": "Populärast",
+    "perAnalysis": "per analys",
+    "perfectFor": "Perfekt för:",
+    "youHave": "Du har",
+    "buyMore": "Köp fler",
     "packages": {
-      "starter": "Prova",
-      "standard": "Standard",
-      "pro": "Pro"
+      "starter": {
+        "name": "Testa",
+        "tagline": "Prova på en sida",
+        "features": [
+          "1 sidanalys",
+          "Full SEO-rapport",
+          "AI-synlighetsanalys",
+          "PDF-export"
+        ],
+        "perfectFor": "en snabb test av din startsida",
+        "cta": "Prova en analys"
+      },
+      "website": {
+        "name": "Webbplats",
+        "tagline": "Analysera hela sajten",
+        "features": [
+          "5 sidanalyser",
+          "Sajt-scan (flera sidor)",
+          "Aggregerad sajtrapport",
+          "Alla förbättringsförslag",
+          "PDF-export"
+        ],
+        "perfectFor": "småföretag och bloggare",
+        "cta": "Analysera din sajt"
+      },
+      "agency": {
+        "name": "Byrå",
+        "tagline": "För flera webbplatser",
+        "features": [
+          "15 sidanalyser",
+          "Analysera flera sajter",
+          "Konkurrentanalys",
+          "Premium-funktioner",
+          "PDF-export"
+        ],
+        "perfectFor": "byråer och konsulter",
+        "cta": "Kom igång"
+      }
     },
     "credit": "credit",
     "credits": "credits",
