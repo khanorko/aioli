@@ -67,7 +67,7 @@ export function CreditPackageCards() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto pt-2 items-end">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto pt-8 items-stretch">
         {CREDIT_PACKAGES.map((pkg) => (
           <CreditPackageCard key={pkg.id} package={pkg} userCredits={userCredits} />
         ))}
@@ -124,7 +124,7 @@ function CreditPackageCard({ package: pkg, userCredits }: { package: CreditPacka
   // Variant-based styles
   const getCardStyles = () => {
     if (pkg.variant === "popular") {
-      return "ring-2 ring-[var(--plasma-blue)] scale-105 shadow-lg shadow-[var(--plasma-blue)]/10";
+      return "ring-2 ring-[var(--plasma-blue)] shadow-lg shadow-[var(--plasma-blue)]/10";
     }
     if (pkg.variant === "premium") {
       return "bg-gradient-to-b from-[var(--bg-primary)] to-[var(--bg-secondary)]";
@@ -150,14 +150,15 @@ function CreditPackageCard({ package: pkg, userCredits }: { package: CreditPacka
   };
 
   return (
-    <div className={`card p-6 relative flex flex-col ${getCardStyles()}`}>
-      {/* Popular Badge */}
+    <div className={`relative flex flex-col ${pkg.popular ? "pt-4" : ""}`}>
+      {/* Popular Badge - positioned above the card */}
       {pkg.popular && (
-        <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-[var(--plasma-blue)] text-white text-xs font-semibold px-4 py-1.5 rounded-full whitespace-nowrap z-10 flex items-center gap-1.5">
+        <div className="absolute -top-1 left-1/2 -translate-x-1/2 bg-[var(--plasma-blue)] text-white text-xs font-semibold px-4 py-1.5 rounded-full whitespace-nowrap z-10 flex items-center gap-1.5 shadow-lg">
           <StarIcon />
           {t.pricing.popular}
         </div>
       )}
+      <div className={`card p-6 flex flex-col h-full ${getCardStyles()}`}>
 
       {/* Package Name & Tagline */}
       <div className="mb-4">
@@ -216,6 +217,7 @@ function CreditPackageCard({ package: pkg, userCredits }: { package: CreditPacka
       >
         {getCtaText()}
       </button>
+      </div>
     </div>
   );
 }
