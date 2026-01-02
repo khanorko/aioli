@@ -324,24 +324,13 @@ export function HomeClient() {
                 className="relative group"
               >
                 {/* Glass card */}
-                <div
-                  className="p-6 rounded-2xl text-center backdrop-blur-sm transition-all duration-300 group-hover:scale-[1.02]"
-                  style={{
-                    background: "rgba(255, 255, 255, 0.03)",
-                    border: "1px solid rgba(255, 255, 255, 0.10)",
-                  }}
-                >
-                  <div
-                    className="font-mono text-3xl font-light mb-1 bg-clip-text text-transparent"
-                    style={{
-                      backgroundImage: "linear-gradient(180deg, #EDEDED 0%, #A1A1AA 100%)",
-                    }}
-                  >
+                <div className="flex flex-col items-center justify-center p-8 rounded-2xl border border-white/5 border-t-white/10 bg-gradient-to-b from-white/[0.08] to-transparent backdrop-blur-sm shadow-[0_0_15px_-5px_rgba(0,0,0,0.5)] transition-all duration-300 group-hover:scale-[1.02]">
+                  <span className="text-4xl font-light tracking-tight text-white mb-2">
                     {metric.value}
-                  </div>
-                  <div className="text-xs uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>
+                  </span>
+                  <span className="text-xs font-mono font-medium text-zinc-500 tracking-widest uppercase">
                     {metric.label}
-                  </div>
+                  </span>
                 </div>
               </motion.div>
             ))}
