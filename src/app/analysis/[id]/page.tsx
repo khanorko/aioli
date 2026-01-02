@@ -8,7 +8,7 @@ import { AnalysisCard } from "@/components/AnalysisCard";
 import { SeoChecklist } from "@/components/SeoChecklist";
 import { LlmReadinessScore } from "@/components/LlmReadinessScore";
 import { SuggestionList } from "@/components/SuggestionList";
-import { PdfExportButton } from "@/components/PdfExportButton";
+import { GenerateReportButton } from "@/components/GenerateReportButton";
 import { LockedContent } from "@/components/LockedContent";
 import Link from "next/link";
 import Image from "next/image";
@@ -112,8 +112,8 @@ export default async function AnalysisPage({ params }: PageProps) {
           <p className="text-sm mt-3" style={{ color: "var(--text-muted)" }}>
             Analyserad: {new Date(analysis.createdAt).toLocaleString("sv-SE")}
           </p>
-          <div className="mt-4">
-            <PdfExportButton
+          <div className="mt-6 flex justify-center">
+            <GenerateReportButton
               analysisData={{
                 url: analysis.url,
                 seoScore: analysis.seoScore,
@@ -122,6 +122,7 @@ export default async function AnalysisPage({ params }: PageProps) {
                 results: analysis.results,
                 suggestions: analysis.suggestions,
               }}
+              analysisId={analysis.id}
               isUnlocked={analysis.unlocked || isAdmin}
             />
           </div>
