@@ -52,6 +52,99 @@ function isSameDomain(url: string, baseUrl: string): boolean {
 }
 
 /**
+ * Calculate page relevance score (higher = more relevant)
+ * Main sections and important pages get higher scores
+ */
+function getPageRelevanceScore(url: string): number {
+  try {
+    const pathname = new URL(url).pathname.toLowerCase();
+    let score = 50; // Base score
+
+    // Homepage gets highest score
+    if (pathname === "/" || pathname === "") return 100;
+
+    // Main section patterns (very important)
+    const mainSections = [
+      /^\/nyheter\/?$/,
+      /^\/sport\/?$/,
+      /^\/ekonomi\/?$/,
+      /^\/kultur\/?$/,
+      /^\/nojesbladet\/?$/,
+      /^\/noje\/?$/,
+      /^\/ledare\/?$/,
+      /^\/debatt\/?$/,
+      /^\/webb-tv\/?$/,
+      /^\/om-oss\/?$/,
+      /^\/kontakt\/?$/,
+      /^\/about\/?$/,
+      /^\/contact\/?$/,
+      /^\/products?\/?$/,
+      /^\/services?\/?$/,
+      /^\/tjanster\/?$/,
+      /^\/blog\/?$/,
+      /^\/blogg\/?$/,
+      /^\/news\/?$/,
+      /^\/features?\/?$/,
+      /^\/pricing\/?$/,
+      /^\/priser\/?$/,
+    ];
+
+    for (const pattern of mainSections) {
+      if (pattern.test(pathname)) {
+        return 90; // Very high score for main sections
+      }
+    }
+
+    // Depth penalty - deeper = less important
+    const depth = pathname.split("/").filter(Boolean).length;
+    score -= depth * 5;
+
+    // Single-segment paths are usually important (e.g., /about, /contact)
+    if (depth === 1 && pathname.length < 20) {
+      score += 20;
+    }
+
+    // Penalize low-value patterns heavily
+    const lowValuePatterns = [
+      /\/tagg\//,      // Swedish tags
+      /\/tag\//,       // English tags
+      /\/tags\//,      // Tags plural
+      /\/kategori\//,  // Swedish category
+      /\/category\//,  // English category
+      /\/author\//,    // Author pages
+      /\/forfattare\//,// Swedish author
+      /\/arkiv\//,     // Archive
+      /\/archive\//,   // Archive
+      /\/page\/\d+/,   // Pagination
+      /\/sida\/\d+/,   // Swedish pagination
+      /\/\d{4}\/\d{2}\//, // Date-based URLs (articles)
+      /\/p\/[a-z0-9]+$/, // Short ID URLs
+      /\/artikel\//,   // Swedish article
+      /\/article\//,   // English article
+      /\?/,            // Query parameters
+    ];
+
+    for (const pattern of lowValuePatterns) {
+      if (pattern.test(pathname)) {
+        score -= 50; // Heavy penalty
+      }
+    }
+
+    // Bonus for common important path keywords
+    const importantKeywords = ["om", "about", "kontakt", "contact", "priser", "pricing", "tjanster", "services"];
+    for (const keyword of importantKeywords) {
+      if (pathname.includes(keyword)) {
+        score += 10;
+      }
+    }
+
+    return Math.max(0, score);
+  } catch {
+    return 0;
+  }
+}
+
+/**
  * Filter and prioritize pages
  */
 function filterAndPrioritizePages(pages: string[], baseUrl: string): string[] {
@@ -65,9 +158,7 @@ function filterAndPrioritizePages(pages: string[], baseUrl: string): string[] {
     if (lower.includes("/wp-admin")) return false;
     if (lower.includes("/wp-content")) return false;
     if (lower.includes("/feed")) return false;
-    if (lower.includes("/tag/")) return false;
-    if (lower.includes("/author/")) return false;
-    if (lower.includes("/sitemaps/")) return false; // Skip sitemap URLs
+    if (lower.includes("/sitemaps/")) return false;
     if (lower.match(/\.(pdf|jpg|jpeg|png|gif|svg|css|js|xml|json)$/)) return false;
 
     return true;
@@ -76,20 +167,19 @@ function filterAndPrioritizePages(pages: string[], baseUrl: string): string[] {
   // Remove duplicates
   const unique = [...new Set(filtered.map(url => normalizeUrl(url, baseUrl)))];
 
-  // Prioritize: homepage first, then by path depth
+  // Sort by relevance score (highest first)
   return unique.sort((a, b) => {
-    const aPath = new URL(a).pathname;
-    const bPath = new URL(b).pathname;
+    const scoreA = getPageRelevanceScore(a);
+    const scoreB = getPageRelevanceScore(b);
 
-    // Homepage first
-    if (aPath === "/" || aPath === "") return -1;
-    if (bPath === "/" || bPath === "") return 1;
+    // If scores are equal, prefer shorter paths
+    if (scoreA === scoreB) {
+      const depthA = new URL(a).pathname.split("/").filter(Boolean).length;
+      const depthB = new URL(b).pathname.split("/").filter(Boolean).length;
+      return depthA - depthB;
+    }
 
-    // Shorter paths (more important pages) first
-    const aDepth = aPath.split("/").filter(Boolean).length;
-    const bDepth = bPath.split("/").filter(Boolean).length;
-
-    return aDepth - bDepth;
+    return scoreB - scoreA; // Higher score first
   });
 }
 
