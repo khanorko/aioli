@@ -41,23 +41,23 @@ export function Navbar() {
       >
         <div className="flex items-center gap-1">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-4 pr-4">
+          <Link href="/" className="flex items-center gap-4 pr-2 lg:pr-4">
             <Image
               src="/logo.png"
               alt="AIoli"
               width={140}
               height={56}
-              className="h-8 w-auto object-contain brightness-110"
+              className="h-7 lg:h-8 w-auto object-contain brightness-110"
               style={{ filter: "drop-shadow(0 0 8px rgba(255,255,255,0.15))" }}
               priority
             />
           </Link>
 
           {/* Divider */}
-          <div className="hidden md:block w-px h-4 bg-white/10" />
+          <div className="hidden lg:block w-px h-4 bg-white/10" />
 
           {/* Nav Links - Desktop */}
-          <div className="hidden md:flex items-center gap-1 pl-2">
+          <div className="hidden lg:flex items-center gap-1 pl-2">
             {navItems.map((item) => (
               <Link
                 key={item.label}
@@ -70,10 +70,10 @@ export function Navbar() {
           </div>
 
           {/* Divider */}
-          <div className="hidden md:block w-px h-4 bg-white/10 ml-2" />
+          <div className="hidden lg:block w-px h-4 bg-white/10 ml-2" />
 
           {/* Auth Section */}
-          <div className="hidden md:flex items-center gap-3 pl-3">
+          <div className="hidden lg:flex items-center gap-3 pl-3">
             {status === "loading" ? (
               <div className="w-20 h-8 rounded-md bg-white/5 animate-pulse" />
             ) : session ? (
@@ -107,10 +107,10 @@ export function Navbar() {
             )}
           </div>
 
-          {/* Mobile Menu Button */}
+          {/* Mobile Menu Button - show below lg breakpoint */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden p-2 ml-2"
+            className="lg:hidden p-2 ml-2"
           >
             {isMobileMenuOpen ? (
               <X className="w-5 h-5 text-text-secondary" strokeWidth={1.5} />
