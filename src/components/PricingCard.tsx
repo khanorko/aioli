@@ -124,17 +124,17 @@ function CreditPackageCard({ package: pkg, userCredits }: { package: CreditPacka
   // Variant-based styles
   const getCardStyles = () => {
     if (pkg.variant === "popular") {
-      return "ring-2 ring-[var(--plasma-blue)] shadow-lg shadow-[var(--plasma-blue)]/10";
+      return "ring-2 ring-[var(--plasma-blue)] shadow-xl shadow-[var(--plasma-blue)]/20 bg-gradient-to-b from-[rgba(45,91,255,0.08)] to-transparent";
     }
     if (pkg.variant === "premium") {
-      return "bg-gradient-to-b from-[var(--bg-primary)] to-[var(--bg-secondary)]";
+      return "";
     }
     return "";
   };
 
   const getButtonStyles = () => {
     if (pkg.variant === "basic") {
-      return "btn-secondary";
+      return "btn-primary opacity-90 hover:opacity-100";
     }
     if (pkg.variant === "premium") {
       return "btn-primary bg-gradient-to-r from-[var(--plasma-blue)] to-[#6366f1]";
@@ -142,7 +142,7 @@ function CreditPackageCard({ package: pkg, userCredits }: { package: CreditPacka
     return "btn-primary";
   };
 
-  // Get CTA text - use "Buy more" if user has credits
+  // Get CTA text - use "Buy more" only if user has credits > 0
   const getCtaText = () => {
     if (isLoading) return t.pricing.loading;
     if (hasCredits) return t.pricing.buyMore;
@@ -150,10 +150,10 @@ function CreditPackageCard({ package: pkg, userCredits }: { package: CreditPacka
   };
 
   return (
-    <div className={`relative flex flex-col ${pkg.popular ? "pt-4" : ""}`}>
-      {/* Popular Badge - positioned above the card */}
+    <div className={`relative flex flex-col ${pkg.popular ? "pt-6" : ""}`}>
+      {/* Popular Badge - positioned clearly above the card */}
       {pkg.popular && (
-        <div className="absolute -top-1 left-1/2 -translate-x-1/2 bg-[var(--plasma-blue)] text-white text-xs font-semibold px-4 py-1.5 rounded-full whitespace-nowrap z-10 flex items-center gap-1.5 shadow-lg">
+        <div className="absolute -top-2 left-1/2 -translate-x-1/2 bg-gradient-to-r from-[var(--plasma-blue)] to-[#6366f1] text-white text-sm font-bold px-5 py-2 rounded-full whitespace-nowrap z-10 flex items-center gap-2 shadow-lg shadow-[var(--plasma-blue)]/30">
           <StarIcon />
           {t.pricing.popular}
         </div>
@@ -272,7 +272,7 @@ function CheckIcon() {
 function StarIcon() {
   return (
     <svg
-      className="w-3.5 h-3.5"
+      className="w-4 h-4"
       fill="currentColor"
       viewBox="0 0 20 20"
     >
