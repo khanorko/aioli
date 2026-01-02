@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { Navigation } from "@/components/Navigation";
+import { HelpCircle, Clock, TrendingUp, RefreshCw } from "lucide-react";
 
 interface Analysis {
   id: string;
@@ -120,6 +121,31 @@ export default function HistoryPage() {
           </div>
         )}
 
+        {/* Features overview for crawlers */}
+        <div className="grid gap-4 md:grid-cols-3 mb-8">
+          <div className="card p-4">
+            <Clock className="w-5 h-5 text-emerald-400 mb-2" />
+            <h2 className="text-white font-medium mb-1">Track Over Time</h2>
+            <p className="text-sm" style={{ color: "var(--text-muted)" }}>
+              All your analyses are saved indefinitely for tracking progress.
+            </p>
+          </div>
+          <div className="card p-4">
+            <TrendingUp className="w-5 h-5 text-blue-400 mb-2" />
+            <h2 className="text-white font-medium mb-1">Compare Results</h2>
+            <p className="text-sm" style={{ color: "var(--text-muted)" }}>
+              See how your SEO and AI visibility scores improve over time.
+            </p>
+          </div>
+          <div className="card p-4">
+            <RefreshCw className="w-5 h-5 text-amber-400 mb-2" />
+            <h2 className="text-white font-medium mb-1">Re-analyze Anytime</h2>
+            <p className="text-sm" style={{ color: "var(--text-muted)" }}>
+              Run new analyses to measure the impact of your optimizations.
+            </p>
+          </div>
+        </div>
+
         {analyses.length === 0 ? (
           <div className="card p-8 text-center">
             <p className="text-lg mb-4" style={{ color: "var(--text-secondary)" }}>
@@ -182,6 +208,49 @@ export default function HistoryPage() {
             ))}
           </div>
         )}
+
+        {/* FAQ Section */}
+        <div className="mt-12">
+          <h2 className="text-xl font-medium text-white mb-6">Frequently Asked Questions</h2>
+          <div className="space-y-3">
+            <details className="card group">
+              <summary className="p-4 flex items-center justify-between cursor-pointer list-none text-white font-medium">
+                <span className="flex items-center gap-2">
+                  <HelpCircle className="w-4 h-4" style={{ color: "var(--text-muted)" }} />
+                  How long is my analysis history saved?
+                </span>
+                <span style={{ color: "var(--text-muted)" }} className="group-open:rotate-180 transition-transform">▼</span>
+              </summary>
+              <p className="px-4 pb-4 text-sm leading-relaxed" style={{ color: "var(--text-muted)" }}>
+                Your analysis history is saved indefinitely. You can access all your past analyses at any time to track your progress and compare results.
+              </p>
+            </details>
+            <details className="card group">
+              <summary className="p-4 flex items-center justify-between cursor-pointer list-none text-white font-medium">
+                <span className="flex items-center gap-2">
+                  <HelpCircle className="w-4 h-4" style={{ color: "var(--text-muted)" }} />
+                  Can I re-analyze a previously scanned website?
+                </span>
+                <span style={{ color: "var(--text-muted)" }} className="group-open:rotate-180 transition-transform">▼</span>
+              </summary>
+              <p className="px-4 pb-4 text-sm leading-relaxed" style={{ color: "var(--text-muted)" }}>
+                Yes! You can return to the homepage and analyze any URL again. This lets you track improvements over time after implementing SEO and AI visibility optimizations.
+              </p>
+            </details>
+            <details className="card group">
+              <summary className="p-4 flex items-center justify-between cursor-pointer list-none text-white font-medium">
+                <span className="flex items-center gap-2">
+                  <HelpCircle className="w-4 h-4" style={{ color: "var(--text-muted)" }} />
+                  What do the SEO and AI scores mean?
+                </span>
+                <span style={{ color: "var(--text-muted)" }} className="group-open:rotate-180 transition-transform">▼</span>
+              </summary>
+              <p className="px-4 pb-4 text-sm leading-relaxed" style={{ color: "var(--text-muted)" }}>
+                The SEO score (0-100) measures traditional search engine optimization factors like meta tags, headings, and technical SEO. The AI score measures how well your content can be discovered and cited by AI assistants like ChatGPT and Claude.
+              </p>
+            </details>
+          </div>
+        </div>
       </div>
     </div>
   );

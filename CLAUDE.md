@@ -90,6 +90,49 @@ src/
 - Packages: Starter (1), Website (5), Agency (15)
 - Admins bypass credit requirements
 
+## AI Readiness & SEO Best Practices
+
+**IMPORTANT**: This site analyzes AI visibility and SEO - it must lead by example!
+
+When creating new pages or components:
+
+1. **Schema.org Markup** - Add appropriate JSON-LD structured data:
+   - Use `FAQPage` for pages with FAQ sections
+   - Use `Article` for blog/learn articles
+   - Use `CollectionPage` for index/listing pages
+   - Use `WebPage` or `Quiz` for specialized pages
+
+2. **Meta Tags** - Every page needs:
+   - Title: 50-60 characters, descriptive
+   - Description: 150-160 characters
+   - Canonical URL
+   - OpenGraph tags
+
+3. **Content Structure**:
+   - Clear H1 (one per page)
+   - Logical heading hierarchy (H2, H3)
+   - FAQ sections where relevant (both visible and in schema)
+   - Citable facts and statistics
+
+4. **PDF Compatibility**:
+   - Use inline hex colors (not Tailwind classes) in PrintView
+   - Tailwind v4's `lab()`/`oklch()` colors break html2canvas
+
+Example schema pattern:
+```tsx
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [...]
+};
+
+// In component:
+<script
+  type="application/ld+json"
+  dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+/>
+```
+
 ## Environment Variables
 
 Required:

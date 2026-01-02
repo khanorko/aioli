@@ -347,7 +347,11 @@ h3 {
 }
 
 .bento-item {
-  background: rgba(255, 255, 255, 0.02);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.02) 0%,
+    rgba(255, 255, 255, 0.04) 100%
+  );
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--border-subtle);
@@ -357,7 +361,11 @@ h3 {
 }
 
 .bento-item:hover {
-  background: rgba(255, 255, 255, 0.04);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.04) 0%,
+    rgba(255, 255, 255, 0.06) 100%
+  );
   border-color: var(--border-hover);
   transform: translateY(-2px);
 }
@@ -593,17 +601,22 @@ h3 {
 }
 
 .generate-report-btn-primary {
-  background: var(--accent-cream);
+  background: white;
   color: var(--bg-obsidian);
   box-shadow:
-    0 0 20px rgba(245, 245, 240, 0.15),
+    0 0 20px -5px rgba(255, 255, 255, 0.6),
     0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .generate-report-btn-primary:hover {
+  transform: scale(1.05);
   box-shadow:
-    0 0 30px rgba(245, 245, 240, 0.25),
-    0 6px 16px rgba(0, 0, 0, 0.15);
+    0 0 40px -5px rgba(255, 255, 255, 0.8),
+    0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.generate-report-btn-primary:hover .shimmer-overlay {
+  animation: shimmer-fast 0.7s ease-out forwards;
 }
 
 .generate-report-btn-success {
@@ -649,6 +662,32 @@ h3 {
   }
 }
 
+@keyframes shimmer-fast {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* =========================
+   QUIZ STYLES
+   ========================= */
+
+.quiz-card {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.03) 0%,
+    rgba(255, 255, 255, 0.01) 100%
+  );
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border-subtle);
+  border-radius: 20px;
+  padding: 1.5rem;
+}
+
 /* =========================
    PRINT VIEW STYLES
    ========================= */
@@ -666,13 +705,22 @@ h3 {
 .print-page {
   position: relative;
   min-height: 257mm; /* A4 minus margins */
-  padding-bottom: 40px;
+  padding-bottom: 60px; /* Space for footer */
+  box-sizing: border-box;
+}
+
+.print-footer {
+  position: absolute;
+  bottom: 15px;
+  left: 0;
+  right: 0;
+  padding: 0 8px;
+  background: #FFFFFF;
 }
 
 .page-break-before {
   page-break-before: always;
   break-before: page;
-  margin-top: 20mm;
 }
 
 /* Print-specific overrides */

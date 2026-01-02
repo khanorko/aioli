@@ -22,7 +22,7 @@ export function Navbar() {
 
   const navItems = [
     { label: "Home", href: "/" },
-    { label: "Features", href: "#features" },
+    { label: "Learn", href: "/learn" },
     { label: "Pricing", href: "#pricing" },
   ];
 
@@ -92,7 +92,7 @@ export function Navbar() {
                 </Link>
                 <button
                   onClick={() => signOut()}
-                  className="nav-link"
+                  className="nav-link whitespace-nowrap"
                 >
                   Sign out
                 </button>

@@ -119,9 +119,17 @@ export function LlmReadinessScore({ result }: LlmReadinessScoreProps) {
             />
           </div>
           {category.issues.length > 0 && (
-            <ul className="mt-3 space-y-1">
+            <ul className="mt-3 space-y-2">
               {category.issues.map((issue, i) => (
-                <li key={i} className="text-xs flex items-start gap-2" style={{ color: "var(--score-poor)" }}>
+                <li
+                  key={i}
+                  className="text-xs flex items-start gap-2 px-3 py-1.5 rounded-md border"
+                  style={{
+                    background: "rgba(239, 68, 68, 0.1)",
+                    color: "#f87171",
+                    borderColor: "rgba(239, 68, 68, 0.2)"
+                  }}
+                >
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="flex-shrink-0 mt-0.5">
                     <circle cx="12" cy="12" r="10"/>
                     <line x1="12" y1="8" x2="12" y2="12"/>

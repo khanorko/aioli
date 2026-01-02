@@ -503,3 +503,200 @@ function mapRowToUser(row: Record<string, unknown>): User {
     createdAt: new Date(row.created_at as string),
   };
 }
+
+// ==================
+// QUIZ FUNCTIONALITY
+// ==================
+
+export interface QuizAttempt {
+  id: string;
+  userId: string;
+  userEmail: string;
+  score: number;
+  totalQuestions: number;
+  isPerfect: boolean;
+  timeTakenSeconds: number;
+  createdAt: Date;
+}
+
+export interface QuizReward {
+  earnedQuizCredit: boolean;
+  earnedShareCredit: boolean;
+}
+
+// Initialize quiz tables
+export async function initQuizTables() {
+  const db = getDb();
+
+  await db.execute(`
+    CREATE TABLE IF NOT EXISTS quiz_attempts (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL,
+      user_email TEXT NOT NULL,
+      score INTEGER NOT NULL,
+      total_questions INTEGER NOT NULL,
+      is_perfect INTEGER NOT NULL DEFAULT 0,
+      time_taken_seconds INTEGER NOT NULL,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
+  // Add quiz reward tracking columns to users table
+  try {
+    await db.execute(`ALTER TABLE users ADD COLUMN quiz_credit_earned INTEGER DEFAULT 0`);
+  } catch {
+    // Column already exists
+  }
+  try {
+    await db.execute(`ALTER TABLE users ADD COLUMN share_credit_earned INTEGER DEFAULT 0`);
+  } catch {
+    // Column already exists
+  }
+}
+
+// Record a quiz attempt and award credit if perfect (first time only)
+export async function recordQuizAttempt(
+  userId: string,
+  userEmail: string,
+  score: number,
+  totalQuestions: number,
+  timeTakenSeconds: number
+): Promise<{ creditAwarded: boolean; attemptId: string }> {
+  const db = getDb();
+  const id = generateId();
+  const isPerfect = score === totalQuestions;
+
+  await db.execute({
+    sql: `INSERT INTO quiz_attempts (id, user_id, user_email, score, total_questions, is_perfect, time_taken_seconds)
+          VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    args: [id, userId, userEmail, score, totalQuestions, isPerfect ? 1 : 0, timeTakenSeconds],
+  });
+
+  // Check if user has already earned quiz credit
+  const userResult = await db.execute({
+    sql: `SELECT quiz_credit_earned FROM users WHERE id = ?`,
+    args: [userId],
+  });
+
+  let creditAwarded = false;
+  if (isPerfect && userResult.rows.length > 0) {
+    const hasEarnedCredit = (userResult.rows[0].quiz_credit_earned as number) === 1;
+    if (!hasEarnedCredit) {
+      // Award credit and mark as earned
+      await db.execute({
+        sql: `UPDATE users SET credits = credits + 1, quiz_credit_earned = 1 WHERE id = ?`,
+        args: [userId],
+      });
+      creditAwarded = true;
+    }
+  }
+
+  return { creditAwarded, attemptId: id };
+}
+
+// Record share and award credit (first time only)
+export async function recordQuizShare(userId: string): Promise<boolean> {
+  const db = getDb();
+
+  // Check if user has already earned share credit
+  const userResult = await db.execute({
+    sql: `SELECT share_credit_earned FROM users WHERE id = ?`,
+    args: [userId],
+  });
+
+  if (userResult.rows.length === 0) return false;
+
+  const hasEarnedCredit = (userResult.rows[0].share_credit_earned as number) === 1;
+  if (hasEarnedCredit) return false;
+
+  // Award credit and mark as earned
+  await db.execute({
+    sql: `UPDATE users SET credits = credits + 1, share_credit_earned = 1 WHERE id = ?`,
+    args: [userId],
+  });
+
+  return true;
+}
+
+// Get user's quiz reward status
+export async function getUserQuizRewards(userId: string): Promise<QuizReward> {
+  const db = getDb();
+
+  const result = await db.execute({
+    sql: `SELECT quiz_credit_earned, share_credit_earned FROM users WHERE id = ?`,
+    args: [userId],
+  });
+
+  if (result.rows.length === 0) {
+    return { earnedQuizCredit: false, earnedShareCredit: false };
+  }
+
+  return {
+    earnedQuizCredit: (result.rows[0].quiz_credit_earned as number) === 1,
+    earnedShareCredit: (result.rows[0].share_credit_earned as number) === 1,
+  };
+}
+
+// Get quiz leaderboard (top scores with best times)
+export async function getQuizLeaderboard(limit = 10): Promise<QuizAttempt[]> {
+  const db = getDb();
+
+  // Get best attempt per user (highest score, then fastest time)
+  const result = await db.execute({
+    sql: `
+      SELECT q.*
+      FROM quiz_attempts q
+      INNER JOIN (
+        SELECT user_id, MAX(score) as max_score, MIN(time_taken_seconds) as min_time
+        FROM quiz_attempts
+        GROUP BY user_id
+      ) best ON q.user_id = best.user_id AND q.score = best.max_score
+      WHERE q.time_taken_seconds = (
+        SELECT MIN(time_taken_seconds)
+        FROM quiz_attempts
+        WHERE user_id = q.user_id AND score = q.score
+      )
+      ORDER BY q.score DESC, q.time_taken_seconds ASC
+      LIMIT ?
+    `,
+    args: [limit],
+  });
+
+  return result.rows.map((row) => ({
+    id: row.id as string,
+    userId: row.user_id as string,
+    userEmail: row.user_email as string,
+    score: row.score as number,
+    totalQuestions: row.total_questions as number,
+    isPerfect: (row.is_perfect as number) === 1,
+    timeTakenSeconds: row.time_taken_seconds as number,
+    createdAt: new Date(row.created_at as string),
+  }));
+}
+
+// Get user's best quiz attempt
+export async function getUserBestQuizAttempt(userId: string): Promise<QuizAttempt | null> {
+  const db = getDb();
+
+  const result = await db.execute({
+    sql: `SELECT * FROM quiz_attempts
+          WHERE user_id = ?
+          ORDER BY score DESC, time_taken_seconds ASC
+          LIMIT 1`,
+    args: [userId],
+  });
+
+  if (result.rows.length === 0) return null;
+
+  const row = result.rows[0];
+  return {
+    id: row.id as string,
+    userId: row.user_id as string,
+    userEmail: row.user_email as string,
+    score: row.score as number,
+    totalQuestions: row.total_questions as number,
+    isPerfect: (row.is_perfect as number) === 1,
+    timeTakenSeconds: row.time_taken_seconds as number,
+    createdAt: new Date(row.created_at as string),
+  };
+}

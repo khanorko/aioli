@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useSession, signIn } from "next-auth/react";
+import { Sparkles } from "lucide-react";
 
 interface CreditPackage {
   id: string;
@@ -158,7 +159,7 @@ function CreditPackageCard({ package: pkg, userCredits }: { package: CreditPacka
   // Variant-based styles
   const getCardStyles = () => {
     if (pkg.variant === "popular") {
-      return "ring-2 ring-[var(--plasma-blue)] shadow-xl shadow-[var(--plasma-blue)]/20 bg-gradient-to-b from-[rgba(45,91,255,0.08)] to-transparent";
+      return "ring-2 ring-emerald-500/50 shadow-[0_0_40px_-10px_rgba(16,185,129,0.3)] bg-gradient-to-b from-emerald-500/[0.08] to-transparent";
     }
     if (pkg.variant === "premium") {
       return "";
@@ -171,7 +172,7 @@ function CreditPackageCard({ package: pkg, userCredits }: { package: CreditPacka
       return "btn-primary opacity-90 hover:opacity-100";
     }
     if (pkg.variant === "premium") {
-      return "btn-primary bg-gradient-to-r from-[var(--plasma-blue)] to-[#6366f1]";
+      return "btn-primary bg-gradient-to-r from-emerald-600 to-emerald-500";
     }
     return "btn-primary";
   };
@@ -187,7 +188,7 @@ function CreditPackageCard({ package: pkg, userCredits }: { package: CreditPacka
     <div className={`relative flex flex-col ${pkg.popular ? "pt-6" : ""}`}>
       {/* Popular Badge - positioned clearly above the card */}
       {pkg.popular && (
-        <div className="absolute -top-2 left-1/2 -translate-x-1/2 bg-gradient-to-r from-[var(--plasma-blue)] to-[#6366f1] text-white text-sm font-bold px-5 py-2 rounded-full whitespace-nowrap z-10 flex items-center gap-2 shadow-lg shadow-[var(--plasma-blue)]/30">
+        <div className="absolute -top-2 left-1/2 -translate-x-1/2 bg-emerald-500 text-black text-sm font-bold px-5 py-2 rounded-full whitespace-nowrap z-10 flex items-center gap-2 shadow-lg shadow-emerald-500/30">
           <StarIcon />
           Most popular
         </div>
@@ -314,15 +315,5 @@ function StarIcon() {
 }
 
 function CreditIcon() {
-  return (
-    <svg
-      className="w-4 h-4"
-      style={{ color: "var(--plasma-blue)" }}
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-    >
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-    </svg>
-  );
+  return <Sparkles className="w-4 h-4 text-amber-400" strokeWidth={1.5} />;
 }

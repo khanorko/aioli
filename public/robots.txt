@@ -1,0 +1,6 @@
+# robots.txt for AIoli
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://aioli-one.vercel.app/sitemap.xml

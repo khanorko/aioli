@@ -134,9 +134,10 @@ export function ScanSelector({ onAnalyze, isLoading = false, userCredits }: Scan
               onChange={(e) => setUrl(e.target.value)}
               placeholder="example.com"
               disabled={isDiscovering}
-              className="flex-1 bg-transparent px-6 h-12 focus:outline-none font-mono text-sm leading-none"
+              className="flex-1 bg-transparent px-6 h-12 focus:outline-none font-mono text-sm"
               style={{
                 color: "var(--text-primary)",
+                lineHeight: "48px",
               }}
             />
 
