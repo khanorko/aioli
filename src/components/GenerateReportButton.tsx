@@ -82,11 +82,15 @@ export function GenerateReportButton({
 
         setExportState("complete");
 
-        // Reset after showing success
+        // Reset after showing success - cleanup immediately but keep success state briefly
+        setShowPrintView(false);
         setTimeout(() => {
           setExportState("idle");
-          setShowPrintView(false);
         }, 2000);
+      } else {
+        // No ref available, reset
+        setExportState("idle");
+        setShowPrintView(false);
       }
     } catch (error) {
       console.error("PDF generation error:", error);
@@ -181,20 +185,22 @@ export function GenerateReportButton({
         )}
       </motion.button>
 
-      {/* Hidden PrintView for PDF generation */}
+      {/* Hidden PrintView for PDF generation - positioned off-screen */}
       {showPrintView &&
         typeof document !== "undefined" &&
         createPortal(
           <div
+            id="pdf-print-container"
             style={{
-              position: "fixed",
-              left: "-9999px",
-              top: 0,
+              position: "absolute",
+              left: "-10000px",
+              top: "0",
               width: "210mm",
               minHeight: "297mm",
               backgroundColor: "#FFFFFF",
-              zIndex: -1,
+              pointerEvents: "none",
             }}
+            aria-hidden="true"
           >
             <PrintView
               ref={printRef}
