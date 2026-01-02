@@ -191,6 +191,6 @@
     "noCheckoutUrl": "No checkout URL received"
   },
   "success": {
-    "upgraded": "Thanks for your upgrade! You now have unlimited analyses."
+    "upgraded": "Payment successful! Your credits have been added."
   }
 }

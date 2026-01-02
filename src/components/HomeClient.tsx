@@ -44,7 +44,7 @@ export function HomeClient() {
 
   useEffect(() => {
     if (searchParams.get("success") === "true") {
-      setSuccessMessage("Thanks for your upgrade! You now have unlimited analyses.");
+      setSuccessMessage("Payment successful! Your credits have been added.");
       window.history.replaceState({}, "", "/");
       setTimeout(() => setSuccessMessage(""), 5000);
     }
