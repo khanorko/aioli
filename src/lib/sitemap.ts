@@ -163,8 +163,8 @@ function filterAndPrioritizePages(pages: string[], baseUrl: string): string[] {
     if (lower.includes("/static/")) return false; // Static asset folders
     if (lower.includes("/assets/")) return false; // Asset folders
 
-    // Skip non-HTML file extensions
-    if (lower.match(/\.(pdf|jpg|jpeg|png|gif|svg|webp|avif|ico|css|js|xml|json|txt|map|woff|woff2|ttf|otf|eot|mp3|mp4|wav|avi|mov|webm|zip|tar|gz|rar)$/)) return false;
+    // Skip non-HTML file extensions (handle query strings with (\?|$))
+    if (lower.match(/\.(pdf|jpg|jpeg|png|gif|svg|webp|avif|ico|css|js|xml|json|txt|map|woff|woff2|ttf|otf|eot|mp3|mp4|wav|avi|mov|webm|zip|tar|gz|rar)(\?|$)/)) return false;
 
     return true;
   });
@@ -361,7 +361,8 @@ async function crawlHomepage(baseUrl: string): Promise<string[]> {
         // Skip static assets early
         const hrefLower = href.toLowerCase();
         if (hrefLower.includes("/_next/") || hrefLower.includes("/static/") || hrefLower.includes("/assets/")) continue;
-        if (hrefLower.match(/\.(pdf|jpg|jpeg|png|gif|svg|webp|avif|ico|css|js|xml|json|txt|map|woff|woff2|ttf|otf|eot|mp3|mp4|wav|avi|mov|webm|zip|tar|gz|rar)$/)) continue;
+        // Check for file extensions (handle query strings with (\?|$))
+        if (hrefLower.match(/\.(pdf|jpg|jpeg|png|gif|svg|webp|avif|ico|css|js|xml|json|txt|map|woff|woff2|ttf|otf|eot|mp3|mp4|wav|avi|mov|webm|zip|tar|gz|rar)(\?|$)/)) continue;
 
         const normalizedUrl = normalizeUrl(href, finalUrl);
         if (isSameDomain(normalizedUrl, finalUrl)) {
