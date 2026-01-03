@@ -8,7 +8,7 @@ const webAppJsonLd = {
   name: "Aioli",
   description:
     "Analyze your website for traditional SEO and AI visibility. See how well your site is prepared for both search engines and AI assistants.",
-  url: "https://aioli-one.vercel.app",
+  url: "https://aioli.tools",
   applicationCategory: "SEO Tool",
   operatingSystem: "Web",
   browserRequirements: "Requires JavaScript",
@@ -22,7 +22,7 @@ const webAppJsonLd = {
   creator: {
     "@type": "Organization",
     name: "Aioli",
-    url: "https://aioli-one.vercel.app",
+    url: "https://aioli.tools",
   },
   featureList: [
     "SEO Analysis",
@@ -70,8 +70,8 @@ const organizationJsonLd = {
   "@context": "https://schema.org",
   "@type": "Organization",
   name: "Aioli",
-  url: "https://aioli-one.vercel.app",
-  logo: "https://aioli-one.vercel.app/logo.png",
+  url: "https://aioli.tools",
+  logo: "https://aioli.tools/logo.png",
   sameAs: [],
   contactPoint: {
     "@type": "ContactPoint",

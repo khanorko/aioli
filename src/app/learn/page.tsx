@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     title: "Learn AI Visibility - Free Guides & Tutorials | Aioli™",
     description:
       "Master AI visibility with our free guides. Learn how to optimize for ChatGPT, Claude, and other AI assistants.",
-    url: "https://aioli-one.vercel.app/learn",
+    url: "https://aioli.tools/learn",
   },
 };
 
@@ -24,31 +24,31 @@ const collectionJsonLd = {
   name: "AI Visibility Learning Center",
   description:
     "Free educational resources about AI visibility, SEO optimization for AI assistants, and modern search strategies.",
-  url: "https://aioli-one.vercel.app/learn",
+  url: "https://aioli.tools/learn",
   provider: {
     "@type": "Organization",
     name: "Aioli",
-    url: "https://aioli-one.vercel.app",
+    url: "https://aioli.tools",
   },
   hasPart: [
     {
       "@type": "Article",
       name: "What is AI Visibility?",
-      url: "https://aioli-one.vercel.app/learn/what-is-ai-visibility",
+      url: "https://aioli.tools/learn/what-is-ai-visibility",
       description:
         "Understand how AI assistants discover, interpret, and cite your website content.",
     },
     {
       "@type": "HowTo",
       name: "How to Optimize for ChatGPT",
-      url: "https://aioli-one.vercel.app/learn/optimize-for-chatgpt",
+      url: "https://aioli.tools/learn/optimize-for-chatgpt",
       description:
         "A practical guide to making your website more likely to be cited by AI assistants.",
     },
     {
       "@type": "Article",
       name: "AI SEO vs Traditional SEO",
-      url: "https://aioli-one.vercel.app/learn/ai-seo-vs-traditional-seo",
+      url: "https://aioli.tools/learn/ai-seo-vs-traditional-seo",
       description:
         "Key differences between optimizing for Google and optimizing for AI assistants.",
     },

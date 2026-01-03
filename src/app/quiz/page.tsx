@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     title: "AI Visibility Quiz - Test Your SEO Knowledge | Aioli™",
     description:
       "Test your knowledge of AI visibility and SEO! Score 100% to earn free credits.",
-    url: "https://aioli-one.vercel.app/quiz",
+    url: "https://aioli.tools/quiz",
   },
 };
 
@@ -27,11 +27,11 @@ const quizJsonLd = {
   name: "AI Visibility Knowledge Quiz",
   description:
     "Test your understanding of AI visibility, SEO optimization for AI assistants, and modern search strategies. 5 random questions from a pool of 20.",
-  url: "https://aioli-one.vercel.app/quiz",
+  url: "https://aioli.tools/quiz",
   provider: {
     "@type": "Organization",
     name: "Aioli",
-    url: "https://aioli-one.vercel.app",
+    url: "https://aioli.tools",
   },
   educationalLevel: "Beginner to Intermediate",
   about: [

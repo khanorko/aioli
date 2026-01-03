@@ -12,7 +12,7 @@ export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
 export function getBaseUrl() {
   // Use custom domain in production
   if (process.env.NODE_ENV === "production") {
-    return "https://aioli-one.vercel.app";
+    return "https://aioli.tools";
   }
   return process.env.NEXTAUTH_URL || "http://localhost:3000";
 }

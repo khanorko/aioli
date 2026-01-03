@@ -586,7 +586,7 @@ export const PrintView = forwardRef<HTMLDivElement, PrintViewProps>(
                     Generated on {analysisDate.toLocaleDateString("en-US")}
                   </div>
                   <div className="text-xs text-[#AAAAAA] font-mono">
-                    aioli-one.vercel.app
+                    aioli.tools
                   </div>
                 </div>
               </div>

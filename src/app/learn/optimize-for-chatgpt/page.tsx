@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     title: "How to Optimize for ChatGPT: A Complete Guide",
     description:
       "Learn how to make your website content more likely to be cited by ChatGPT, Claude, and other AI assistants.",
-    url: "https://aioli-one.vercel.app/learn/optimize-for-chatgpt",
+    url: "https://aioli.tools/learn/optimize-for-chatgpt",
     type: "article",
   },
 };

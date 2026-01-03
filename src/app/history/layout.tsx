@@ -11,7 +11,7 @@ export const metadata: Metadata = {
     title: "Analysis History - Track Your Progress | Aioli™",
     description:
       "View your website analysis history and track SEO and AI visibility scores over time.",
-    url: "https://aioli-one.vercel.app/history",
+    url: "https://aioli.tools/history",
   },
 };
 
@@ -22,16 +22,16 @@ const webPageJsonLd = {
   name: "Analysis History",
   description:
     "View your website analysis history. Track SEO and AI visibility scores over time, compare results, and monitor your optimization progress.",
-  url: "https://aioli-one.vercel.app/history",
+  url: "https://aioli.tools/history",
   isPartOf: {
     "@type": "WebSite",
     name: "Aioli",
-    url: "https://aioli-one.vercel.app",
+    url: "https://aioli.tools",
   },
   provider: {
     "@type": "Organization",
     name: "Aioli",
-    url: "https://aioli-one.vercel.app",
+    url: "https://aioli.tools",
   },
 };
 

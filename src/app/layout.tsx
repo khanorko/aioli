@@ -22,7 +22,7 @@ const spaceGrotesk = Space_Grotesk({
 export const metadata: Metadata = {
   title: "Aioli™ | Analyze Your Website's AI Visibility & SEO Score",
   description: "Analyze your website for traditional SEO and AI visibility. See how well your site is prepared for both search engines and AI assistants.",
-  metadataBase: new URL("https://aioli-one.vercel.app"),
+  metadataBase: new URL("https://aioli.tools"),
   icons: {
     icon: "/logo.png",
     apple: "/logo.png",
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Aioli™ - AI-powered SEO Analysis",
     description: "Analyze your website for traditional SEO and AI visibility. See how well your site is prepared for both search engines and AI assistants.",
-    url: "https://aioli-one.vercel.app",
+    url: "https://aioli.tools",
     siteName: "Aioli",
     type: "website",
     locale: "en_US",

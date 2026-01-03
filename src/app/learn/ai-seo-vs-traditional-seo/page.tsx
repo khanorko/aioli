@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     title: "AI SEO vs Traditional SEO: Key Differences Explained",
     description:
       "What's the difference between optimizing for Google and optimizing for ChatGPT?",
-    url: "https://aioli-one.vercel.app/learn/ai-seo-vs-traditional-seo",
+    url: "https://aioli.tools/learn/ai-seo-vs-traditional-seo",
     type: "article",
   },
 };

@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     title: "What is AI Visibility? Definition & Complete Guide",
     description:
       "AI visibility is the measure of how well your website content can be discovered, understood, and cited by AI assistants.",
-    url: "https://aioli-one.vercel.app/learn/what-is-ai-visibility",
+    url: "https://aioli.tools/learn/what-is-ai-visibility",
     type: "article",
   },
 };
@@ -28,12 +28,12 @@ const articleJsonLd = {
   author: {
     "@type": "Organization",
     name: "Aioli",
-    url: "https://aioli-one.vercel.app",
+    url: "https://aioli.tools",
   },
   publisher: {
     "@type": "Organization",
     name: "Aioli",
-    url: "https://aioli-one.vercel.app",
+    url: "https://aioli.tools",
   },
   datePublished: "2026-01-02",
   dateModified: "2026-01-02",

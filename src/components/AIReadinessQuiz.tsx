@@ -153,7 +153,7 @@ export function AIReadinessQuiz() {
   const handleShare = async () => {
     setIsSharing(true);
 
-    const quizUrl = "https://aioli-one.vercel.app/quiz";
+    const quizUrl = "https://aioli.tools/quiz";
     const shareText = `I scored ${score}/${questions.length} on the AI Visibility Quiz! Test your knowledge:`;
 
     // Try native share API first
