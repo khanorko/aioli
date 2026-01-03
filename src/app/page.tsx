@@ -14,9 +14,9 @@ const webAppJsonLd = {
   browserRequirements: "Requires JavaScript",
   offers: {
     "@type": "AggregateOffer",
-    lowPrice: "49",
-    highPrice: "299",
-    priceCurrency: "SEK",
+    lowPrice: "4.90",
+    highPrice: "29",
+    priceCurrency: "EUR",
     offerCount: "3",
   },
   creator: {

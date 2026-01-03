@@ -4,11 +4,11 @@ import { authOptions } from "@/lib/auth";
 import { stripe, getBaseUrl } from "@/lib/stripe";
 import { getUserById, updateUser } from "@/lib/db";
 
-// Credit packages with prices in ore (Swedish cents)
-const CREDIT_PACKAGES: Record<string, { credits: number; priceOre: number; name: string }> = {
-  starter: { credits: 1, priceOre: 4900, name: "Starter - 1 credit" },
-  website: { credits: 5, priceOre: 14900, name: "Website - 5 credits" },
-  agency: { credits: 15, priceOre: 29900, name: "Agency - 15 credits" },
+// Credit packages with prices in cents (EUR)
+const CREDIT_PACKAGES: Record<string, { credits: number; priceCents: number; name: string }> = {
+  starter: { credits: 1, priceCents: 490, name: "Starter - 1 credit" },
+  website: { credits: 5, priceCents: 1490, name: "Website - 5 credits" },
+  agency: { credits: 15, priceCents: 2900, name: "Agency - 15 credits" },
 };
 
 export async function POST(request: NextRequest) {
@@ -64,12 +64,12 @@ export async function POST(request: NextRequest) {
       line_items: [
         {
           price_data: {
-            currency: "sek",
+            currency: "eur",
             product_data: {
               name: `Aioli™ Credits - ${creditPackage.name}`,
               description: `${creditPackage.credits} credits to unlock analysis results`,
             },
-            unit_amount: creditPackage.priceOre,
+            unit_amount: creditPackage.priceCents,
           },
           quantity: 1,
         },

@@ -24,8 +24,8 @@ const CREDIT_PACKAGES: CreditPackage[] = [
     name: "Try",
     tagline: "Test on a single page",
     credits: 1,
-    price: 49,
-    pricePerCredit: 49,
+    price: 4.90,
+    pricePerCredit: 4.90,
     features: [
       "1 page analysis",
       "Full SEO report",
@@ -42,8 +42,8 @@ const CREDIT_PACKAGES: CreditPackage[] = [
     name: "Website",
     tagline: "Analyze your entire site",
     credits: 5,
-    price: 149,
-    pricePerCredit: 30,
+    price: 14.90,
+    pricePerCredit: 2.98,
     popular: true,
     features: [
       "5 page analyses",
@@ -61,8 +61,8 @@ const CREDIT_PACKAGES: CreditPackage[] = [
     name: "Agency",
     tagline: "For multiple websites",
     credits: 15,
-    price: 299,
-    pricePerCredit: 20,
+    price: 29,
+    pricePerCredit: 1.93,
     features: [
       "15 page analyses",
       "Analyze multiple sites",
@@ -207,12 +207,12 @@ function CreditPackageCard({ package: pkg, userCredits }: { package: CreditPacka
 
       {/* Price */}
       <div className="mb-4 pb-4 border-b" style={{ borderColor: "var(--border-primary)" }}>
+        <span className="text-lg" style={{ color: "var(--text-muted)" }}>€</span>
         <span className="text-4xl font-bold" style={{ color: "var(--text-primary)" }}>
           {pkg.price}
         </span>
-        <span className="text-lg" style={{ color: "var(--text-muted)" }}> kr</span>
         <p className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>
-          {pkg.pricePerCredit} kr per analysis
+          €{pkg.pricePerCredit.toFixed(2)} per analysis
         </p>
       </div>
 
