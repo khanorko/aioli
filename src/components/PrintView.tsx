@@ -149,7 +149,7 @@ export const PrintView = forwardRef<HTMLDivElement, PrintViewProps>(
 
           {/* Executive Summary Text */}
           <div className="mb-12">
-            <h2 className="text-lg font-semibold mb-4 tracking-tight">
+            <h2 className="text-lg font-semibold mb-4 tracking-tight" style={{ color: "#111111" }}>
               Executive Summary
             </h2>
             <p className="text-[#444444] leading-relaxed">
