@@ -24,8 +24,8 @@ export const metadata: Metadata = {
   description: "Analyze your website for traditional SEO and AI visibility. See how well your site is prepared for both search engines and AI assistants.",
   metadataBase: new URL("https://aioli.tools"),
   icons: {
-    icon: "/logo.png",
-    apple: "/logo.png",
+    icon: "/favicon.jpg",
+    apple: "/favicon.jpg",
   },
   alternates: {
     canonical: "/",

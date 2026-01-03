@@ -324,7 +324,7 @@ export function HomeClient() {
                 className="relative group"
               >
                 {/* Glass card */}
-                <div className="flex flex-col items-center justify-center p-8 rounded-2xl border border-white/5 border-t-white/10 bg-gradient-to-b from-white/[0.08] to-transparent backdrop-blur-sm shadow-[0_0_15px_-5px_rgba(0,0,0,0.5)] transition-all duration-300 group-hover:scale-[1.02]">
+                <div className="flex flex-col items-center justify-center p-8 rounded-2xl border border-white/10 border-t-white/15 bg-gradient-to-b from-white/15 to-white/[0.03] backdrop-blur-sm shadow-[0_0_15px_-5px_rgba(0,0,0,0.5)] transition-all duration-300 group-hover:scale-[1.02]">
                   <span className="text-4xl font-light tracking-tight text-white mb-2">
                     {metric.value}
                   </span>
