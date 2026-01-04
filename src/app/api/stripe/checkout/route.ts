@@ -6,8 +6,8 @@ import { getUserById, updateUser } from "@/lib/db";
 
 // Credit packages with prices in cents (EUR)
 const CREDIT_PACKAGES: Record<string, { credits: number; priceCents: number; name: string }> = {
-  starter: { credits: 1, priceCents: 490, name: "Starter - 1 credit" },
-  website: { credits: 5, priceCents: 1490, name: "Website - 5 credits" },
+  starter: { credits: 1, priceCents: 500, name: "Starter - 1 credit" },
+  website: { credits: 5, priceCents: 1500, name: "Website - 5 credits" },
   agency: { credits: 15, priceCents: 2900, name: "Agency - 15 credits" },
 };
 

@@ -24,8 +24,8 @@ const CREDIT_PACKAGES: CreditPackage[] = [
     name: "Try",
     tagline: "Test on a single page",
     credits: 1,
-    price: 4.90,
-    pricePerCredit: 4.90,
+    price: 5,
+    pricePerCredit: 5,
     features: [
       "1 page analysis",
       "Full SEO report",
@@ -42,8 +42,8 @@ const CREDIT_PACKAGES: CreditPackage[] = [
     name: "Website",
     tagline: "Analyze your entire site",
     credits: 5,
-    price: 14.90,
-    pricePerCredit: 2.98,
+    price: 15,
+    pricePerCredit: 3,
     popular: true,
     features: [
       "5 page analyses",
@@ -62,7 +62,7 @@ const CREDIT_PACKAGES: CreditPackage[] = [
     tagline: "For multiple websites",
     credits: 15,
     price: 29,
-    pricePerCredit: 1.93,
+    pricePerCredit: 2,
     features: [
       "15 page analyses",
       "Analyze multiple sites",
