@@ -486,7 +486,11 @@ function mapRowToSiteScan(row: Record<string, unknown>): SiteScan {
 }
 
 // Admin emails that bypass credit checks
-const ADMIN_EMAILS = ["johan.salo@gmail.com"];
+const ADMIN_EMAILS = [
+  "johan.salo@gmail.com",
+  "johan.salo@aiempowerlabs.com",
+  "johan.salo.ai@gmail.com"
+];
 
 export function isAdminEmail(email: string | null | undefined): boolean {
   if (!email) return false;
