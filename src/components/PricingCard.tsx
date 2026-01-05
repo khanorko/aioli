@@ -10,50 +10,66 @@ interface CreditPackage {
   tagline: string;
   credits: number;
   price: number;
-  pricePerCredit: number;
+  pricePerCredit?: number;
   popular?: boolean;
   features: string[];
   perfectFor: string;
   cta: string;
-  variant: "basic" | "popular" | "premium";
+  variant: "free" | "basic" | "popular" | "premium";
+  isFree?: boolean;
 }
 
 const CREDIT_PACKAGES: CreditPackage[] = [
   {
+    id: "free",
+    name: "Free",
+    tagline: "Try before you buy",
+    credits: 1,
+    price: 0,
+    features: [
+      "Unlimited analyses",
+      "Full SEO report",
+      "AI visibility score",
+      "1 free unlock included"
+    ],
+    perfectFor: "testing the tool",
+    cta: "Get started free",
+    variant: "free",
+    isFree: true,
+  },
+  {
     id: "starter",
-    name: "Try",
-    tagline: "Test on a single page",
+    name: "Starter",
+    tagline: "Unlock more insights",
     credits: 1,
     price: 5,
     pricePerCredit: 5,
     features: [
-      "1 page analysis",
-      "Full SEO report",
-      "AI visibility analysis",
+      "1 unlock credit",
+      "AI visibility details",
       "Improvement suggestions",
       "PDF export"
     ],
-    perfectFor: "a quick test of your homepage",
-    cta: "Try one analysis",
+    perfectFor: "a single deep analysis",
+    cta: "Buy 1 credit",
     variant: "basic",
   },
   {
     id: "website",
     name: "Website",
-    tagline: "Analyze your entire site",
+    tagline: "Best for full site analysis",
     credits: 5,
     price: 15,
     pricePerCredit: 3,
     popular: true,
     features: [
-      "5 page analyses",
-      "Site scan (multiple pages)",
-      "Aggregated site report",
+      "5 unlock credits",
+      "AI visibility details",
       "All improvement suggestions",
       "PDF export"
     ],
     perfectFor: "small businesses and bloggers",
-    cta: "Analyze your site",
+    cta: "Buy 5 credits",
     variant: "popular",
   },
   {
@@ -64,14 +80,13 @@ const CREDIT_PACKAGES: CreditPackage[] = [
     price: 29,
     pricePerCredit: 2,
     features: [
-      "15 page analyses",
+      "15 unlock credits",
       "Analyze multiple sites",
       "Competitor analysis",
-      "Premium features",
       "PDF export"
     ],
     perfectFor: "agencies and consultants",
-    cta: "Get started",
+    cta: "Buy 15 credits",
     variant: "premium",
   },
 ];
@@ -120,9 +135,16 @@ function CreditPackageCard({ package: pkg, userCredits }: { package: CreditPacka
 
   const hasCredits = userCredits > 0;
 
+  const isLoggedIn = !!session?.user?.email;
+
   const handlePurchase = async () => {
-    if (!session?.user?.email) {
+    if (!isLoggedIn) {
       signIn("google");
+      return;
+    }
+
+    // Free tier - user is already signed in, nothing to do
+    if (pkg.isFree) {
       return;
     }
 
@@ -158,6 +180,9 @@ function CreditPackageCard({ package: pkg, userCredits }: { package: CreditPacka
 
   // Variant-based styles
   const getCardStyles = () => {
+    if (pkg.variant === "free") {
+      return "border-dashed";
+    }
     if (pkg.variant === "popular") {
       return "ring-2 ring-emerald-500/50 shadow-[0_0_40px_-10px_rgba(16,185,129,0.3)] bg-gradient-to-b from-emerald-500/[0.08] to-transparent";
     }
@@ -168,6 +193,9 @@ function CreditPackageCard({ package: pkg, userCredits }: { package: CreditPacka
   };
 
   const getButtonStyles = () => {
+    if (pkg.variant === "free") {
+      return "btn-primary bg-white/10 hover:bg-white/20 border border-white/20";
+    }
     if (pkg.variant === "basic") {
       return "btn-primary opacity-90 hover:opacity-100";
     }
@@ -177,9 +205,12 @@ function CreditPackageCard({ package: pkg, userCredits }: { package: CreditPacka
     return "btn-primary";
   };
 
-  // Get CTA text - use "Buy more" only if user has credits > 0
+  // Get CTA text
   const getCtaText = () => {
     if (isLoading) return "Loading...";
+    if (pkg.isFree) {
+      return isLoggedIn ? "You're signed in!" : pkg.cta;
+    }
     if (hasCredits) return "Buy more";
     return pkg.cta;
   };
@@ -207,13 +238,28 @@ function CreditPackageCard({ package: pkg, userCredits }: { package: CreditPacka
 
       {/* Price */}
       <div className="mb-4 pb-4 border-b" style={{ borderColor: "var(--border-primary)" }}>
-        <span className="text-lg" style={{ color: "var(--text-muted)" }}>€</span>
-        <span className="text-4xl font-bold" style={{ color: "var(--text-primary)" }}>
-          {pkg.price}
-        </span>
-        <p className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>
-          €{pkg.pricePerCredit.toFixed(2)} per analysis
-        </p>
+        {pkg.isFree ? (
+          <>
+            <span className="text-4xl font-bold" style={{ color: "var(--text-primary)" }}>
+              Free
+            </span>
+            <p className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>
+              Sign up to get started
+            </p>
+          </>
+        ) : (
+          <>
+            <span className="text-lg" style={{ color: "var(--text-muted)" }}>€</span>
+            <span className="text-4xl font-bold" style={{ color: "var(--text-primary)" }}>
+              {pkg.price}
+            </span>
+            {pkg.pricePerCredit && (
+              <p className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>
+                €{pkg.pricePerCredit.toFixed(2)} per unlock
+              </p>
+            )}
+          </>
+        )}
       </div>
 
       {/* Features List */}

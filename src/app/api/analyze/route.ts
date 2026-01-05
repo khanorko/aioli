@@ -6,8 +6,6 @@ import {
   updateAnalysis,
   initDb,
   getUserById,
-  consumeCredit,
-  isAdminEmail,
   createSiteScan,
   updateSiteScan,
 } from "@/lib/db";
@@ -113,7 +111,6 @@ export async function POST(request: Request) {
   }
 
   const userId = session.user.id;
-  const userEmail = session.user.email;
 
   // Parse request body
   let requestBody;
@@ -135,7 +132,6 @@ export async function POST(request: Request) {
 
   // Limit to 10 URLs max
   const limitedUrls = urlsToAnalyze.slice(0, 10);
-  const creditsNeeded = limitedUrls.length;
 
   try {
     // Initialize database on first request
@@ -153,32 +149,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // Check credits (admin bypasses)
-    const isAdmin = isAdminEmail(userEmail);
-    if (!isAdmin && user.credits < creditsNeeded) {
-      return NextResponse.json(
-        {
-          error: "Not enough credits",
-          needsCredits: true,
-          creditsNeeded,
-          creditsAvailable: user.credits,
-        },
-        { status: 402 }
-      );
-    }
-
-    // Consume credits (one per page)
-    if (!isAdmin) {
-      for (let i = 0; i < creditsNeeded; i++) {
-        const consumed = await consumeCredit(userId);
-        if (!consumed) {
-          return NextResponse.json(
-            { error: "Could not use credits", needsCredits: true },
-            { status: 402 }
-          );
-        }
-      }
-    }
+    // Analysis is free - credits are only needed for unlocking detailed results
 
     // Single page analysis
     if (scanType === "single" || limitedUrls.length === 1) {
