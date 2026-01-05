@@ -99,13 +99,13 @@ export default function Home() {
 
       {/* Server-rendered SEO content (visually hidden but crawlable) */}
       <div className="sr-only">
-        <h1>Aioli™ - AI-Powered SEO Analysis Tool for AI Visibility</h1>
+        <h1>Aioli - AI-Powered SEO Analysis Tool for AI Visibility</h1>
 
-        <h2>What is Aioli™?</h2>
+        <h2>What is Aioli?</h2>
         <p>
-          Aioli™ is a comprehensive SEO analysis tool that evaluates your website for both
+          Aioli is a comprehensive SEO analysis tool that evaluates your website for both
           traditional search engine optimization and AI visibility. With over 50 SEO checks
-          and real-time AI scoring, Aioli™ helps you understand how Google, ChatGPT, and
+          and real-time AI scoring, Aioli helps you understand how Google, ChatGPT, and
           Claude perceive your content.
         </p>
 
