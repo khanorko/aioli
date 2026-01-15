@@ -145,3 +145,22 @@ Required:
 - `STRIPE_SECRET_KEY`
 - `STRIPE_WEBHOOK_SECRET`
 - `GROQ_API_KEY`
+
+## Agents
+
+Two specialized agents are available for analysis. Global definitions in `~/.claude/agents/`.
+
+### Business Developer Agent
+**Invoke:** "Run business developer analysis" or "@business-developer"
+**Memory:** `.claude/agents/business-memory.md` (project-specific)
+**Focus:** SaaS monetization, EMEA expansion, GDPR, competitive positioning
+
+### Product Manager Agent
+**Invoke:** "Run PM analysis" or "@product-manager"
+**Memory:** `.claude/agents/pm-memory.md` (project-specific)
+**PRDs:** `.claude/prds/` (project-specific)
+**Focus:** User-centric growth, RICE prioritization, activation/retention metrics
+
+### Memory Protocol
+Agents save all project-specific insights to this project's `.claude/agents/` folder.
+When compacting conversations, always update the relevant memory file.
