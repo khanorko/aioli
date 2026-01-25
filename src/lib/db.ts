@@ -67,6 +67,21 @@ export async function initDb() {
     )
   `);
 
+  await db.execute(`
+    CREATE TABLE IF NOT EXISTS brand_checks (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL,
+      brand_name TEXT NOT NULL,
+      website TEXT,
+      industry TEXT,
+      overall_score INTEGER DEFAULT 0,
+      status TEXT DEFAULT 'unknown',
+      ai_response TEXT,
+      recommendations TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
   // Migrations for existing tables
   try {
     await db.execute(`ALTER TABLE analyses ADD COLUMN user_id TEXT`);
@@ -701,6 +716,159 @@ export async function getUserBestQuizAttempt(userId: string): Promise<QuizAttemp
     totalQuestions: row.total_questions as number,
     isPerfect: (row.is_perfect as number) === 1,
     timeTakenSeconds: row.time_taken_seconds as number,
+    createdAt: new Date(row.created_at as string),
+  };
+}
+
+// =====================
+// BRAND CHECK FUNCTIONALITY
+// =====================
+
+export interface BrandCheck {
+  id: string;
+  userId: string;
+  brandName: string;
+  website: string | null;
+  industry: string | null;
+  overallScore: number;
+  status: 'known' | 'partial' | 'unknown' | 'confused';
+  aiResponse: string;
+  recommendations: string; // JSON array
+  createdAt: Date;
+}
+
+// Initialize brand checks table
+export async function initBrandCheckTable() {
+  const db = getDb();
+
+  await db.execute(`
+    CREATE TABLE IF NOT EXISTS brand_checks (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL,
+      brand_name TEXT NOT NULL,
+      website TEXT,
+      industry TEXT,
+      overall_score INTEGER DEFAULT 0,
+      status TEXT DEFAULT 'unknown',
+      ai_response TEXT,
+      recommendations TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+}
+
+// Create a brand check
+export async function createBrandCheck(
+  userId: string,
+  brandName: string,
+  website?: string,
+  industry?: string
+): Promise<BrandCheck> {
+  const db = getDb();
+  const id = generateId();
+  const now = new Date();
+
+  await db.execute({
+    sql: `INSERT INTO brand_checks (id, user_id, brand_name, website, industry) VALUES (?, ?, ?, ?, ?)`,
+    args: [id, userId, brandName, website || null, industry || null],
+  });
+
+  return {
+    id,
+    userId,
+    brandName,
+    website: website || null,
+    industry: industry || null,
+    overallScore: 0,
+    status: 'unknown',
+    aiResponse: '',
+    recommendations: '[]',
+    createdAt: now,
+  };
+}
+
+// Update brand check with results
+export async function updateBrandCheck(
+  id: string,
+  data: {
+    overallScore?: number;
+    status?: 'known' | 'partial' | 'unknown' | 'confused';
+    aiResponse?: string;
+    recommendations?: string;
+  }
+): Promise<void> {
+  const db = getDb();
+
+  const updates: string[] = [];
+  const args: (string | number)[] = [];
+
+  if (data.overallScore !== undefined) {
+    updates.push("overall_score = ?");
+    args.push(data.overallScore);
+  }
+  if (data.status !== undefined) {
+    updates.push("status = ?");
+    args.push(data.status);
+  }
+  if (data.aiResponse !== undefined) {
+    updates.push("ai_response = ?");
+    args.push(data.aiResponse);
+  }
+  if (data.recommendations !== undefined) {
+    updates.push("recommendations = ?");
+    args.push(data.recommendations);
+  }
+
+  if (updates.length === 0) return;
+
+  args.push(id);
+
+  await db.execute({
+    sql: `UPDATE brand_checks SET ${updates.join(", ")} WHERE id = ?`,
+    args,
+  });
+}
+
+// Get brand check by ID
+export async function getBrandCheck(id: string): Promise<BrandCheck | null> {
+  const db = getDb();
+
+  const result = await db.execute({
+    sql: `SELECT * FROM brand_checks WHERE id = ?`,
+    args: [id],
+  });
+
+  if (result.rows.length === 0) return null;
+
+  return mapRowToBrandCheck(result.rows[0]);
+}
+
+// Get user's brand checks
+export async function getUserBrandChecks(userId: string, limit = 20): Promise<BrandCheck[]> {
+  const db = getDb();
+
+  const result = await db.execute({
+    sql: `SELECT * FROM brand_checks
+          WHERE user_id = ?
+          ORDER BY created_at DESC
+          LIMIT ?`,
+    args: [userId, limit],
+  });
+
+  return result.rows.map((row) => mapRowToBrandCheck(row));
+}
+
+function mapRowToBrandCheck(row: Record<string, unknown>): BrandCheck {
+  return {
+    id: row.id as string,
+    userId: row.user_id as string,
+    brandName: row.brand_name as string,
+    website: row.website as string | null,
+    industry: row.industry as string | null,
+    overallScore: (row.overall_score as number) || 0,
+    status: (row.status as 'known' | 'partial' | 'unknown' | 'confused') || 'unknown',
+    aiResponse: (row.ai_response as string) || '',
+    recommendations: (row.recommendations as string) || '[]',
     createdAt: new Date(row.created_at as string),
   };
 }

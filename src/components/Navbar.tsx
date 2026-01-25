@@ -22,6 +22,7 @@ export function Navbar() {
 
   const navItems = [
     { label: "Home", href: "/" },
+    { label: "Brand Check", href: "/brand-check" },
     { label: "Learn", href: "/learn" },
     { label: "Pricing", href: "#pricing" },
   ];
