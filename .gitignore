@@ -43,3 +43,7 @@ next-env.d.ts
 /src/generated/prisma
 .env*.local
 *.txt
+
+# Claude Code
+CLAUDE.md
+claude-logs/
