@@ -24,13 +24,13 @@ const CREDIT_PACKAGES: CreditPackage[] = [
     id: "free",
     name: "Free",
     tagline: "Try before you buy",
-    credits: 1,
+    credits: 5,
     price: 0,
     features: [
       "Unlimited analyses",
       "Full SEO report",
       "AI visibility score",
-      "1 free unlock included"
+      "5 free unlocks included"
     ],
     perfectFor: "testing the tool",
     cta: "Get started free",

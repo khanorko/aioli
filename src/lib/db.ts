@@ -239,9 +239,9 @@ export async function createUser(email: string): Promise<User> {
   const id = generateId();
   const now = new Date();
 
-  // New users get 1 free credit
+  // New users get 5 free credits
   await db.execute({
-    sql: `INSERT INTO users (id, email, credits) VALUES (?, ?, 1)`,
+    sql: `INSERT INTO users (id, email, credits) VALUES (?, ?, 5)`,
     args: [id, email],
   });
 
