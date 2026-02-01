@@ -21,7 +21,8 @@ export function Navbar() {
   }, []);
 
   const navItems = [
-    { label: "Home", href: "/" },
+    { label: "AI Visibility", href: "/" },
+    { label: "WCAG", href: "/wcag" },
     { label: "Brand Check", href: "/brand-check" },
     { label: "Learn", href: "/learn" },
     { label: "Pricing", href: "#pricing" },

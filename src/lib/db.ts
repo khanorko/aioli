@@ -872,3 +872,174 @@ function mapRowToBrandCheck(row: Record<string, unknown>): BrandCheck {
     createdAt: new Date(row.created_at as string),
   };
 }
+
+// =====================
+// WCAG AUDIT FUNCTIONALITY
+// =====================
+
+import type { WcagLevel, PourScores, WcagAuditSummary, WcagTestResult } from './wcag/types';
+
+export interface WcagAudit {
+  id: string;
+  url: string;
+  userId: string;
+  version: '2.1' | '2.2';
+  level: WcagLevel;
+  pourScores: PourScores;
+  summary: WcagAuditSummary;
+  results: Record<string, WcagTestResult>;
+  status: 'processing' | 'completed' | 'failed';
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+// Initialize WCAG audits table
+export async function initWcagAuditTable() {
+  const db = getDb();
+
+  await db.execute(`
+    CREATE TABLE IF NOT EXISTS wcag_audits (
+      id TEXT PRIMARY KEY,
+      url TEXT NOT NULL,
+      user_id TEXT NOT NULL,
+      version TEXT DEFAULT '2.2',
+      level TEXT DEFAULT 'AA',
+      pour_scores TEXT,
+      summary TEXT,
+      results TEXT,
+      status TEXT DEFAULT 'processing',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (user_id) REFERENCES users(id)
+    )
+  `);
+}
+
+// Create a WCAG audit
+export async function createWcagAudit(
+  url: string,
+  userId: string,
+  version: '2.1' | '2.2' = '2.2',
+  level: WcagLevel = 'AA'
+): Promise<WcagAudit> {
+  const db = getDb();
+  const id = generateId();
+  const now = new Date();
+
+  await db.execute({
+    sql: `INSERT INTO wcag_audits (id, url, user_id, version, level, status) VALUES (?, ?, ?, ?, ?, 'processing')`,
+    args: [id, url, userId, version, level],
+  });
+
+  return {
+    id,
+    url,
+    userId,
+    version,
+    level,
+    pourScores: { perceivable: 0, operable: 0, understandable: 0, robust: 0, overall: 0 },
+    summary: { total: 0, passed: 0, failed: 0, needsBrowser: 0, needsManual: 0, notApplicable: 0 },
+    results: {},
+    status: 'processing',
+    createdAt: now,
+    updatedAt: now,
+  };
+}
+
+// Update WCAG audit with results
+export async function updateWcagAudit(
+  id: string,
+  data: {
+    pourScores?: PourScores;
+    summary?: WcagAuditSummary;
+    results?: Record<string, WcagTestResult>;
+    status?: 'processing' | 'completed' | 'failed';
+  }
+): Promise<void> {
+  const db = getDb();
+
+  const updates: string[] = [];
+  const args: (string | number)[] = [];
+
+  if (data.pourScores !== undefined) {
+    updates.push("pour_scores = ?");
+    args.push(JSON.stringify(data.pourScores));
+  }
+  if (data.summary !== undefined) {
+    updates.push("summary = ?");
+    args.push(JSON.stringify(data.summary));
+  }
+  if (data.results !== undefined) {
+    updates.push("results = ?");
+    args.push(JSON.stringify(data.results));
+  }
+  if (data.status !== undefined) {
+    updates.push("status = ?");
+    args.push(data.status);
+  }
+
+  if (updates.length === 0) return;
+
+  updates.push("updated_at = CURRENT_TIMESTAMP");
+  args.push(id);
+
+  await db.execute({
+    sql: `UPDATE wcag_audits SET ${updates.join(", ")} WHERE id = ?`,
+    args,
+  });
+}
+
+// Get WCAG audit by ID
+export async function getWcagAudit(id: string): Promise<WcagAudit | null> {
+  const db = getDb();
+
+  const result = await db.execute({
+    sql: `SELECT * FROM wcag_audits WHERE id = ?`,
+    args: [id],
+  });
+
+  if (result.rows.length === 0) return null;
+
+  return mapRowToWcagAudit(result.rows[0]);
+}
+
+// Get user's WCAG audits
+export async function getUserWcagAudits(userId: string, limit = 20): Promise<WcagAudit[]> {
+  const db = getDb();
+
+  const result = await db.execute({
+    sql: `SELECT * FROM wcag_audits
+          WHERE user_id = ?
+          ORDER BY created_at DESC
+          LIMIT ?`,
+    args: [userId, limit],
+  });
+
+  return result.rows.map((row) => mapRowToWcagAudit(row));
+}
+
+function mapRowToWcagAudit(row: Record<string, unknown>): WcagAudit {
+  const pourScores = row.pour_scores
+    ? JSON.parse(row.pour_scores as string)
+    : { perceivable: 0, operable: 0, understandable: 0, robust: 0, overall: 0 };
+
+  const summary = row.summary
+    ? JSON.parse(row.summary as string)
+    : { total: 0, passed: 0, failed: 0, needsBrowser: 0, needsManual: 0, notApplicable: 0 };
+
+  const results = row.results ? JSON.parse(row.results as string) : {};
+
+  return {
+    id: row.id as string,
+    url: row.url as string,
+    userId: row.user_id as string,
+    version: (row.version as '2.1' | '2.2') || '2.2',
+    level: (row.level as WcagLevel) || 'AA',
+    pourScores,
+    summary,
+    results,
+    status: (row.status as 'processing' | 'completed' | 'failed') || 'processing',
+    createdAt: new Date(row.created_at as string),
+    updatedAt: new Date(row.updated_at as string),
+  };
+}
