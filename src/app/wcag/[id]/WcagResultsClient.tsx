@@ -31,14 +31,25 @@ interface WcagIssue {
   fix: string;
 }
 
+interface TestedElement {
+  type: string;
+  count: number;
+  passed: number;
+  details?: string[];
+}
+
 interface WcagTestResult {
   criterion: string;
   status: "passed" | "failed" | "not-applicable" | "not-checked" | "needs-browser" | "needs-manual";
   confidence: number;
   issues: WcagIssue[];
+  testedElements?: TestedElement[];
   observations?: string;
   testedAt: string;
   title?: string;
+  description?: string;
+  fullText?: string;
+  exceptions?: string[];
   level?: string;
   principle?: string;
   guideline?: string;
@@ -215,6 +226,14 @@ function PourScoreRing({
   );
 }
 
+// Test type display config
+const testTypeConfig: Record<string, { label: string; color: string }> = {
+  automated: { label: "Automated", color: "text-emerald-400" },
+  "ai-assisted": { label: "AI Analysis", color: "text-purple-400" },
+  "browser-required": { label: "Browser Test", color: "text-amber-400" },
+  manual: { label: "Manual Test", color: "text-blue-400" },
+};
+
 function CriterionCard({
   criterion,
   result,
@@ -228,9 +247,11 @@ function CriterionCard({
 }) {
   const status = statusConfig[result.status] || statusConfig["not-checked"];
   const StatusIcon = status.icon;
+  const testType = testTypeConfig[result.testType || "manual"];
 
   return (
     <div className={`rounded-xl border border-white/10 overflow-hidden ${status.bgColor}`}>
+      {/* Header - always visible */}
       <button
         onClick={onToggle}
         className="w-full p-4 flex items-center justify-between text-left hover:bg-white/5 transition-colors"
@@ -242,11 +263,11 @@ function CriterionCard({
               <span className="font-mono text-sm text-zinc-400">{criterion}</span>
               {result.level && (
                 <span className="text-xs px-1.5 py-0.5 rounded bg-white/10 text-zinc-400">
-                  {result.level}
+                  Level {result.level}
                 </span>
               )}
             </div>
-            <div className="text-sm text-white">{result.title || criterion}</div>
+            <div className="text-sm text-white font-medium">{result.title || criterion}</div>
           </div>
         </div>
         <div className="flex items-center gap-3">
@@ -259,12 +280,64 @@ function CriterionCard({
         </div>
       </button>
 
+      {/* Expanded content */}
       {isExpanded && (
         <div className="px-4 pb-4 border-t border-white/5">
+          {/* Description */}
+          {(result.fullText || result.description) && (
+            <div className="mt-4">
+              <p className="text-sm text-zinc-300 leading-relaxed">
+                {result.fullText || result.description}
+              </p>
+              {result.exceptions && result.exceptions.length > 0 && (
+                <div className="mt-2 text-xs text-zinc-500">
+                  <span className="font-medium">Exceptions: </span>
+                  {result.exceptions.join(" • ")}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Test info */}
+          <div className="mt-4 flex items-center gap-4 text-xs">
+            <div className="flex items-center gap-1.5">
+              <span className="text-zinc-500">Test:</span>
+              <span className={testType.color}>{testType.label}</span>
+            </div>
+            {result.confidence > 0 && (
+              <div className="flex items-center gap-1.5">
+                <span className="text-zinc-500">Confidence:</span>
+                <span className="text-zinc-300">{Math.round(result.confidence * 100)}%</span>
+              </div>
+            )}
+          </div>
+
+          {/* What was tested */}
+          {result.testedElements && result.testedElements.length > 0 && (
+            <div className="mt-4">
+              <h4 className="text-xs font-medium text-zinc-400 mb-2">What was tested</h4>
+              <div className="space-y-1">
+                {result.testedElements.map((el, i) => (
+                  <div key={i} className="flex items-center gap-2 text-sm">
+                    {el.passed === el.count ? (
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                    ) : (
+                      <XCircle className="w-3.5 h-3.5 text-red-400" />
+                    )}
+                    <span className="text-zinc-300">
+                      {el.count} {el.type} - {el.passed} passed
+                      {el.count !== el.passed && `, ${el.count - el.passed} failed`}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Issues */}
           {result.issues && result.issues.length > 0 && (
             <div className="mt-4">
-              <h4 className="text-xs font-medium text-zinc-400 mb-2">Issues Found</h4>
+              <h4 className="text-xs font-medium text-zinc-400 mb-2">Issues Found ({result.issues.length})</h4>
               <div className="space-y-2">
                 {result.issues.map((issue, i) => (
                   <div
@@ -272,10 +345,10 @@ function CriterionCard({
                     className={`p-3 rounded-lg border ${severityColors[issue.severity]}`}
                   >
                     <div className="flex items-start justify-between gap-2 mb-1">
-                      <code className="text-xs bg-black/30 px-1.5 py-0.5 rounded">
+                      <code className="text-xs bg-black/30 px-1.5 py-0.5 rounded break-all">
                         {issue.element}
                       </code>
-                      <span className="text-xs font-medium uppercase">{issue.severity}</span>
+                      <span className="text-xs font-medium uppercase flex-shrink-0">{issue.severity}</span>
                     </div>
                     <p className="text-sm mb-2">{issue.description}</p>
                     <div className="text-xs text-zinc-400">
@@ -297,14 +370,14 @@ function CriterionCard({
 
           {/* W3C Link */}
           {result.w3cUrl && (
-            <div className="mt-4">
+            <div className="mt-4 pt-3 border-t border-white/5">
               <a
                 href={result.w3cUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1.5 text-xs text-blue-400 hover:text-blue-300"
               >
-                View W3C Documentation
+                W3C Understanding {criterion}
                 <ExternalLink className="w-3 h-3" />
               </a>
             </div>
@@ -328,13 +401,19 @@ export function WcagResultsClient() {
 
   // Dev mode bypass for localhost - use state to avoid hydration mismatch
   const [isDevMode, setIsDevMode] = useState(false);
+  const [devModeChecked, setDevModeChecked] = useState(false);
 
   useEffect(() => {
     const isLocalhost = window.location.hostname === "localhost";
-    setIsDevMode(isLocalhost && process.env.NODE_ENV === "development");
+    // Treat localhost as dev mode for easier testing
+    setIsDevMode(isLocalhost);
+    setDevModeChecked(true);
   }, []);
 
   useEffect(() => {
+    // Wait until dev mode check is complete
+    if (!devModeChecked) return;
+
     if (!isDevMode && authStatus === "unauthenticated") {
       router.push("/wcag");
       return;
@@ -343,10 +422,27 @@ export function WcagResultsClient() {
     if ((isDevMode || authStatus === "authenticated") && params.id) {
       fetchAudit();
     }
-  }, [authStatus, params.id, router, isDevMode]);
+  }, [authStatus, params.id, router, isDevMode, devModeChecked]);
 
   const fetchAudit = async () => {
     try {
+      // For dev mode audits, check sessionStorage first (not saved to DB)
+      const auditId = params.id as string;
+      if (auditId?.startsWith("dev-")) {
+        const cached = sessionStorage.getItem(`wcag-audit-${auditId}`);
+        if (cached) {
+          const data = JSON.parse(cached);
+          setAudit(data);
+          // Auto-expand failed criteria
+          const failed = Object.entries(data.results || {})
+            .filter(([, r]) => (r as WcagTestResult).status === "failed")
+            .map(([id]) => id);
+          setExpandedCriteria(new Set(failed.slice(0, 5)));
+          setIsLoading(false);
+          return;
+        }
+      }
+
       const response = await fetch(`/api/wcag/audit?id=${params.id}`);
       const data = await response.json();
 
@@ -497,44 +593,46 @@ export function WcagResultsClient() {
           </div>
         </section>
 
-        {/* POUR Scores */}
+        {/* POUR Tabs - Clickable */}
         <section className="pb-12 px-6">
           <div className="max-w-5xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="glass-card p-6 md:p-8"
             >
-              <h2 className="text-lg font-medium mb-6 flex items-center gap-2">
+              <h2 className="text-lg font-medium mb-4 flex items-center gap-2">
                 <Shield className="w-5 h-5 text-emerald-400" />
-                POUR Scores
+                POUR Principles
+                <span className="text-xs text-zinc-500 font-normal ml-2">Click to filter</span>
               </h2>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
-                <PourScoreRing
-                  score={audit.pourScores.perceivable}
-                  label="Perceivable"
-                  icon={Eye}
-                  config={pourConfig.perceivable}
-                />
-                <PourScoreRing
-                  score={audit.pourScores.operable}
-                  label="Operable"
-                  icon={Hand}
-                  config={pourConfig.operable}
-                />
-                <PourScoreRing
-                  score={audit.pourScores.understandable}
-                  label="Understandable"
-                  icon={Brain}
-                  config={pourConfig.understandable}
-                />
-                <PourScoreRing
-                  score={audit.pourScores.robust}
-                  label="Robust"
-                  icon={Wrench}
-                  config={pourConfig.robust}
-                />
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                {[
+                  { key: "perceivable", label: "Perceivable", icon: Eye, config: pourConfig.perceivable },
+                  { key: "operable", label: "Operable", icon: Hand, config: pourConfig.operable },
+                  { key: "understandable", label: "Understandable", icon: Brain, config: pourConfig.understandable },
+                  { key: "robust", label: "Robust", icon: Wrench, config: pourConfig.robust },
+                ].map(({ key, label, icon: Icon, config }) => {
+                  const score = audit.pourScores[key as keyof PourScores];
+                  const isSelected = filterPrinciple === key;
+                  return (
+                    <button
+                      key={key}
+                      onClick={() => setFilterPrinciple(isSelected ? "all" : key)}
+                      className={`p-4 rounded-xl border transition-all text-left ${
+                        isSelected
+                          ? `${config.bgColor} ${config.borderColor} ring-2 ring-offset-2 ring-offset-[#0a0a0a] ${config.borderColor.replace('border-', 'ring-')}`
+                          : "bg-white/5 border-white/10 hover:bg-white/10"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <Icon className={`w-5 h-5 ${config.color}`} strokeWidth={1.5} />
+                        <span className={`text-2xl font-bold ${config.color}`}>{score}%</span>
+                      </div>
+                      <div className="text-sm text-zinc-300">{label}</div>
+                    </button>
+                  );
+                })}
               </div>
             </motion.div>
           </div>

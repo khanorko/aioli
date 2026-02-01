@@ -60,6 +60,9 @@ export async function GET(request: Request) {
       enrichedResults[criterionId] = {
         ...result,
         title: criterion?.title || criterionId,
+        description: criterion?.description,
+        fullText: criterion?.fullText,
+        exceptions: criterion?.exceptions,
         level: criterion?.level,
         principle: criterion?.principle,
         guideline: criterion?.guideline,

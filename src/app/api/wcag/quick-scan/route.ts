@@ -10,11 +10,12 @@ import {
   consumeCredit,
 } from "@/lib/db";
 import { scrapePage } from "@/lib/scraper";
-import { getCriteriaByLevel } from "@/lib/wcag/criteria";
+import { getCriteriaByLevelAndVersion } from "@/lib/wcag/criteria";
 import { runAnalyzer, hasAnalyzer } from "@/lib/wcag/analyzers";
 import { getWcagAnalysisPrompt, getAiAssistedPrompt } from "@/lib/wcag/prompts";
 import type {
   WcagLevel,
+  WcagVersion,
   WcagTestResult,
   WcagStatus,
   PourScores,
@@ -85,7 +86,11 @@ function parseAiResponse(response: string, criterionId: string): WcagTestResult 
 }
 
 // Calculate POUR scores from results
-function calculatePourScores(results: Record<string, WcagTestResult>): PourScores {
+function calculatePourScores(
+  results: Record<string, WcagTestResult>,
+  level: WcagLevel,
+  version: WcagVersion
+): PourScores {
   const principles: Record<WcagPrinciple, { passed: number; total: number }> = {
     perceivable: { passed: 0, total: 0 },
     operable: { passed: 0, total: 0 },
@@ -93,7 +98,7 @@ function calculatePourScores(results: Record<string, WcagTestResult>): PourScore
     robust: { passed: 0, total: 0 },
   };
 
-  const criteria = getCriteriaByLevel("AA");
+  const criteria = getCriteriaByLevelAndVersion(level, version);
 
   for (const criterion of criteria) {
     const result = results[criterion.id];
@@ -198,7 +203,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
   }
 
-  const { url, level = "AA" } = body;
+  const { url, level = "AA", version = "2.2" } = body;
 
   if (!url) {
     return NextResponse.json({ error: "URL is required" }, { status: 400 });
@@ -207,6 +212,11 @@ export async function POST(request: Request) {
   // Validate level
   if (!["A", "AA", "AAA"].includes(level)) {
     return NextResponse.json({ error: "Invalid WCAG level" }, { status: 400 });
+  }
+
+  // Validate version
+  if (!["2.1", "2.2"].includes(version)) {
+    return NextResponse.json({ error: "Invalid WCAG version" }, { status: 400 });
   }
 
   try {
@@ -239,15 +249,15 @@ export async function POST(request: Request) {
     if (isDevBypass) {
       auditId = `dev-${Date.now()}`;
     } else {
-      const audit = await createWcagAudit(url, userId, "2.2", level as WcagLevel);
+      const audit = await createWcagAudit(url, userId, version as WcagVersion, level as WcagLevel);
       auditId = audit.id;
     }
 
     // Scrape page
     const page = await scrapePage(url);
 
-    // Get criteria for requested level
-    const criteria = getCriteriaByLevel(level as WcagLevel);
+    // Get criteria for requested level and version
+    const criteria = getCriteriaByLevelAndVersion(level as WcagLevel, version as WcagVersion);
 
     // Run all analyzers
     const results: Record<string, WcagTestResult> = {};
@@ -302,7 +312,7 @@ export async function POST(request: Request) {
     }
 
     // Calculate scores
-    const pourScores = calculatePourScores(results);
+    const pourScores = calculatePourScores(results, level as WcagLevel, version as WcagVersion);
     const summary = calculateSummary(results);
 
     // Update audit with results (skip in dev mode)
@@ -324,10 +334,10 @@ export async function POST(request: Request) {
     }
 
     // Return results
-    return NextResponse.json({
+    const responseData: Record<string, unknown> = {
       id: auditId,
       url,
-      version: "2.2",
+      version,
       level,
       pourScores,
       summary,
@@ -341,7 +351,15 @@ export async function POST(request: Request) {
         })
         .slice(0, 5),
       createdAt: new Date().toISOString(),
-    });
+    };
+
+    // In dev mode, include full results since they're not in DB
+    if (isDevBypass) {
+      responseData.results = results;
+      responseData.status = "completed";
+    }
+
+    return NextResponse.json(responseData);
   } catch (error) {
     console.error("WCAG audit error:", error);
     return NextResponse.json(

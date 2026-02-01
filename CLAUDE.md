@@ -85,10 +85,11 @@ src/
 
 ## Credits System
 
-- Users buy credits to unlock analysis details
+- **New users get 5 free credits** on signup
 - 1 credit = 1 page analysis unlock
-- Packages: Starter (1), Website (5), Agency (15)
+- Packages: Starter (1 credit, €5), Website (5 credits, €15), Agency (15 credits, €29)
 - Admins bypass credit requirements
+- Quiz: +1 credit for perfect score, +1 credit for sharing result
 
 ## AI Readiness & SEO Best Practices
 
@@ -131,6 +132,18 @@ const jsonLd = {
   type="application/ld+json"
   dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
 />
+```
+
+## Deployment
+
+- **GitHub**: [khanorko/aioli](https://github.com/khanorko/aioli)
+- **Vercel**: [johan-salos-projects/aioli](https://vercel.com/johan-salos-projects/aioli)
+- **Production URL**: https://aioli.tools
+- **Git email**: `johan.salo.ai@gmail.com` (khanorko account)
+
+Deploy manuellt:
+```bash
+vercel --prod
 ```
 
 ## Environment Variables

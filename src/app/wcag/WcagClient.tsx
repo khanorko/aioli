@@ -74,26 +74,37 @@ const pourPrinciples = [
   },
 ];
 
-// WCAG Level options
-const levelOptions = [
-  { value: "A", label: "Level A", description: "30 criteria - Essential accessibility" },
-  { value: "AA", label: "Level AA", description: "50 criteria - Recommended (EU/ADA)" },
-  { value: "AAA", label: "Level AAA", description: "86 criteria - Maximum accessibility" },
+// WCAG Version options
+const versionOptions = [
+  { value: "2.2", label: "WCAG 2.2", description: "Latest (Oct 2023) - 6 new criteria" },
+  { value: "2.1", label: "WCAG 2.1", description: "June 2018 - Widely adopted" },
+];
+
+// WCAG Level options (will be updated based on version)
+const getLevelOptions = (version: string) => [
+  { value: "A", label: "Level A", description: version === "2.2" ? "30 criteria" : "28 criteria" },
+  { value: "AA", label: "Level AA", description: version === "2.2" ? "55 criteria" : "49 criteria" },
+  { value: "AAA", label: "Level AAA", description: "Maximum accessibility" },
 ];
 
 export function WcagClient() {
   const router = useRouter();
   const { data: session, status } = useSession();
   const [url, setUrl] = useState("");
+  const [version, setVersion] = useState<"2.1" | "2.2">("2.2");
   const [level, setLevel] = useState("AA");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [isDevMode, setIsDevMode] = useState(false);
 
+  // Get level options based on selected version
+  const levelOptions = getLevelOptions(version);
+
   // Dev mode bypass for localhost - must use useEffect to avoid hydration mismatch
   useEffect(() => {
     const isLocalhost = window.location.hostname === "localhost";
-    setIsDevMode(isLocalhost && process.env.NODE_ENV === "development");
+    // Treat localhost as dev mode for easier testing
+    setIsDevMode(isLocalhost);
   }, []);
 
   const effectiveSession = isDevMode ? { user: { email: "dev@localhost", credits: 20 } } : session;
@@ -134,6 +145,7 @@ export function WcagClient() {
         body: JSON.stringify({
           url: processedUrl,
           level,
+          version,
         }),
       });
 
@@ -145,6 +157,11 @@ export function WcagClient() {
           return;
         }
         throw new Error(data.error || "Something went wrong");
+      }
+
+      // In dev mode, store full results in sessionStorage since they're not in DB
+      if (data.id.startsWith("dev-")) {
+        sessionStorage.setItem(`wcag-audit-${data.id}`, JSON.stringify(data));
       }
 
       router.push(`/wcag/${data.id}`);
@@ -200,7 +217,7 @@ export function WcagClient() {
                   }}
                 >
                   <Shield className="w-3.5 h-3.5" strokeWidth={1.5} />
-                  WCAG 2.2 Accessibility Audit
+                  WCAG 2.1 / 2.2 Accessibility Audit
                 </span>
               </motion.div>
 
@@ -236,8 +253,8 @@ export function WcagClient() {
                 className="text-lg md:text-xl max-w-2xl mx-auto mb-12"
                 style={{ color: "var(--text-muted)" }}
               >
-                AI-powered WCAG 2.2 accessibility audit. Test 50+ criteria and get actionable fixes
-                to make your website accessible to everyone.
+                AI-powered WCAG accessibility audit. Test 49-55 criteria based on version and get
+                actionable fixes to make your website accessible to everyone.
               </motion.p>
             </motion.div>
           </div>
@@ -282,6 +299,36 @@ export function WcagClient() {
                       className="w-full pl-12 pr-4 py-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-zinc-600 focus:outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/50 transition-all"
                       required
                     />
+                  </div>
+                </div>
+
+                {/* WCAG Version Selection */}
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-3">
+                    WCAG Version
+                  </label>
+                  <div className="grid grid-cols-2 gap-3">
+                    {versionOptions.map((option) => (
+                      <button
+                        key={option.value}
+                        type="button"
+                        onClick={() => setVersion(option.value as "2.1" | "2.2")}
+                        className={`p-4 rounded-xl border text-left transition-all ${
+                          version === option.value
+                            ? "bg-emerald-500/10 border-emerald-500/50"
+                            : "bg-white/5 border-white/10 hover:border-white/20"
+                        }`}
+                      >
+                        <div
+                          className={`font-medium mb-1 ${
+                            version === option.value ? "text-emerald-400" : "text-white"
+                          }`}
+                        >
+                          {option.label}
+                        </div>
+                        <div className="text-xs text-zinc-500">{option.description}</div>
+                      </button>
+                    ))}
                   </div>
                 </div>
 
@@ -586,7 +633,7 @@ export function WcagClient() {
                   className="h-8 w-auto opacity-60"
                 />
               </div>
-              <p className="text-sm text-[var(--text-muted)]">WCAG 2.2 Accessibility Audit</p>
+              <p className="text-sm text-[var(--text-muted)]">WCAG 2.1 / 2.2 Accessibility Audit</p>
             </div>
           </div>
         </footer>
