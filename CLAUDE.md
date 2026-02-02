@@ -140,11 +140,14 @@ const jsonLd = {
 - **Vercel**: [johan-salos-projects/aioli](https://vercel.com/johan-salos-projects/aioli)
 - **Production URL**: https://aioli.tools
 - **Git email**: `johan.salo.ai@gmail.com` (khanorko account)
+- **Full account info**: See `.claude/project-info.md`
 
 Deploy manuellt:
 ```bash
-vercel --prod
+vercel --prod --archive=tgz
 ```
+
+Note: Use `--archive=tgz` to avoid Vercel's 5000 file upload limit.
 
 ## Environment Variables
 
