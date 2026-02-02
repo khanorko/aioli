@@ -12,15 +12,15 @@
   --bg-surface-elevated: #1E1E1E;
   --bg-surface-hover: #252525;
 
-  /* Text */
+  /* Text (WCAG AA: 4.5:1 for normal text) */
   --text-primary: #EDEDED;
   --text-secondary: #A1A1AA;
-  --text-muted: #71717A;
+  --text-muted: #8A8A94; /* Changed from #71717A for better contrast on elevated surfaces */
 
-  /* Borders - Translucent */
-  --border-subtle: rgba(255, 255, 255, 0.06);
-  --border-default: rgba(255, 255, 255, 0.1);
-  --border-hover: rgba(255, 255, 255, 0.2);
+  /* Borders - Translucent (WCAG: 3:1 contrast for UI components) */
+  --border-subtle: rgba(255, 255, 255, 0.12);
+  --border-default: rgba(255, 255, 255, 0.15);
+  --border-hover: rgba(255, 255, 255, 0.25);
 
   /* Accent - Cream (Aioli signature) */
   --accent-cream: #F5F5F0;

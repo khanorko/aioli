@@ -142,7 +142,7 @@ export function HomeClient() {
         <Navbar />
 
       {/* Hero Section */}
-      <section className="relative pt-32 pb-20 px-6 overflow-hidden">
+      <section id="main" className="relative pt-32 pb-20 px-6 overflow-hidden">
         {/* Aurora glow effect - enhanced */}
         <div
           className="absolute top-0 left-1/2 -translate-x-1/2 w-[150%] max-w-[1200px] h-[600px] pointer-events-none"

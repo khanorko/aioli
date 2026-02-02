@@ -29,17 +29,17 @@ const config: Config = {
           muted: "#E8E8E3",
           glow: "rgba(245, 245, 240, 0.15)",
         },
-        // Border colors
+        // Border colors (WCAG: 3:1 contrast for UI components)
         border: {
-          subtle: "rgba(255, 255, 255, 0.06)",
-          DEFAULT: "rgba(255, 255, 255, 0.1)",
-          hover: "rgba(255, 255, 255, 0.2)",
+          subtle: "rgba(255, 255, 255, 0.12)",
+          DEFAULT: "rgba(255, 255, 255, 0.15)",
+          hover: "rgba(255, 255, 255, 0.25)",
         },
-        // Text colors
+        // Text colors (WCAG AA: 4.5:1 for normal text)
         text: {
           primary: "#EDEDED",
           secondary: "#A1A1AA",
-          muted: "#71717A",
+          muted: "#8A8A94", // Changed from #71717A for better contrast on elevated surfaces
         },
         // Functional colors (kept for compatibility)
         score: {
